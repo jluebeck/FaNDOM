@@ -283,10 +283,10 @@ int main (int argc, char *argv[]) {
 //        cout << "\n";
 //    }
 
-    double readWall = chrono::duration_cast<chrono::milliseconds>(readWallE - readWallS).count()/1000;
-    double ppWall = chrono::duration_cast<chrono::milliseconds>(ppWallE - ppWallS).count()/1000;
-    double alnWall = chrono::duration_cast<chrono::milliseconds>(alnWallE - alnWallS).count()/1000;
-    double outWall = chrono::duration_cast<chrono::milliseconds>(outWallE - outWallS).count()/1000;
+    double readWall = chrono::duration_cast<chrono::milliseconds>(readWallE - readWallS).count()/1000.;
+    double ppWall = chrono::duration_cast<chrono::milliseconds>(ppWallE - ppWallS).count()/1000.;
+    double alnWall = chrono::duration_cast<chrono::milliseconds>(alnWallE - alnWallS).count()/1000.;
+    double outWall = chrono::duration_cast<chrono::milliseconds>(outWallE - outWallS).count()/1000.;
 
     clock_t end = clock();
     chrono::steady_clock::time_point endWall = chrono::steady_clock::now();
