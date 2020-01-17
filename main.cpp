@@ -158,6 +158,9 @@ int main (int argc, char *argv[]) {
         exit(0);
     } else if (sample_name.empty()) {
         cout << "Sample name [-s=] unspecified\n";
+    } else if (seed_file.empty()) {
+        cout << "Seed file must be specified for now\n";
+        exit(0);
     } else if (bedfile.empty()) {
         cout << "Bed file not supplied, not subsecting alignments\n";
     }
