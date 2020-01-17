@@ -292,8 +292,8 @@ int main (int argc, char *argv[]) {
     chrono::steady_clock::time_point endWall = chrono::steady_clock::now();
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     double elapsedWall = chrono::duration_cast<chrono::seconds>(endWall - beginWall).count();
-    printf("Total multithreaded CPU time for run %.3f\n seconds ",elapsed_secs);
-    printf("Total CPU wall time for run %.3f seconds\n",elapsedWall);
+    printf("Total multithreaded CPU time for run: %.3f seconds\n",elapsed_secs);
+    printf("Total CPU wall time for run: %.3f seconds\n",elapsedWall);
     cout << "Estimated wall time breakdown (seconds): \n";
     printf("Reading data: %.3f\n",readWall);
     printf("Preprocessing data: %.3f\n",ppWall);
