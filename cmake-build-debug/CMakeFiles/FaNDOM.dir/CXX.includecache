@@ -8,6 +8,22 @@
 
 /home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/OMHelper.h
 
+/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/OMIO.cpp
+iostream
+-
+vector
+-
+map
+-
+ctime
+-
+set
+-
+sstream
+-
+OMIO.h
+/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/OMIO.h
+
 /home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/OMIO.h
 iostream
 -
@@ -17,24 +33,6 @@ fstream
 -
 set
 -
-
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/fandomAligner.cpp
-vector
--
-tuple
--
-cmath
--
-algorithm
--
-map
--
-fstream
--
-OMIO.h
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/OMIO.h
-fandomAligner.h
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/fandomAligner.h
 
 /home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/fandomAligner.h
 OMIO.h

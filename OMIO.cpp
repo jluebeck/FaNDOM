@@ -214,10 +214,10 @@ map<int,vector<double>> parse_bnx(const string &fname) {
 map<int, vector<seedData>> parse_seeds(const string &fname, map<int, vector<double>> &ref_cmaps) {
     cout << "Parsing seeds from " << fname << "\n";
     map<int, vector<seedData>> mol_seed_data;
+    int seed_num = 0;
     ifstream infile(fname);
     if (infile.is_open()) {
         string line;
-        int seed_num = 0;
         while (getline (infile,line)) {
             if (line[0] == '#') {
                 cout << "skipping header line on seeds\n";
@@ -264,6 +264,7 @@ map<int, vector<seedData>> parse_seeds(const string &fname, map<int, vector<doub
             }
         }
     }
+    cout << "Read " << seed_num << " seeds\n";
     return mol_seed_data;
 }
 

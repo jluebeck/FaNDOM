@@ -68,9 +68,10 @@ map<int, vector<Alignment>> run_aln(map<int,vector<double>> &ref_cmaps, map<int,
 
                     //check alignment length to see if usable
 //                    cout << curr_aln.alignment.size() << " asize " << curr_aln.ref_id << " " << curr_aln.mol_id << " " << a << " " << b << " " << mol_vect.back() << "\n";
-//                    if (curr_aln.alignment.size() == 0) {
-//                        cout << "0 len alignment for " << curr_aln.ref_id << " " << curr_aln.mol_id << " " << a << " " << b << " " << mol_vect.back() << "\n";
-//                    }
+                    if (curr_aln.alignment.empty()) {
+                        cout << "0 len alignment for " << curr_aln.ref_id << " " << curr_aln.mol_id << " " << a << " " << b << " " << mol_vect.back() << "\n";
+                        continue;
+                    }
                     double curr_score = get<2>(curr_aln.alignment.back());
                     if (curr_aln.alignment.size() < min_aln_len || curr_score/curr_aln.alignment.size() < 5000) { //TODO: ADD A BETTER SCORE THRESHOLD
                         continue;
