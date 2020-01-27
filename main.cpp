@@ -100,10 +100,19 @@ map<int, vector<Alignment>> run_aln(map<int,vector<double>> &ref_cmaps, map<int,
 }
 
 //-----------------------------------------------------------------------
-//handle args
+//check filenames
+bool hasEnding (string const& fullString, string const& ending) {
+    if (fullString.length() >= ending.length()) {
+        return (0 == fullString.compare(fullString.length() - ending.length(), ending.length(), ending));
+    } else {
+        return false;
+    }
+}
 
+
+//handle args
 tuple<string,string,string,string,string,string> parse_args(int argc, char *argv[]) {
-    string ref_cmap_file, bnxfile, bedfile, keyfile, sample_name, seed_file;
+    string ref_cmap_file, queryfile, bedfile, keyfile, sample_name, seed_file;
 
     for (int i = 1; i < argc; ++i) {
         if (string(argv[i]).rfind("-t=", 0) == 0) {
@@ -112,8 +121,8 @@ tuple<string,string,string,string,string,string> parse_args(int argc, char *argv
         } else if (string(argv[i]).rfind("-r=", 0) == 0) {
             ref_cmap_file = string(argv[i]).substr(string(argv[i]).find('=') + 1);
 
-        } else if (string(argv[i]).rfind("-m=", 0) == 0) {
-            bnxfile = string(argv[i]).substr(string(argv[i]).find('=') + 1);
+        } else if (string(argv[i]).rfind("-q=", 0) == 0) {
+            queryfile = string(argv[i]).substr(string(argv[i]).find('=') + 1);
 
         } else if (string(argv[i]).rfind("-b=", 0) == 0) {
             bedfile = string(argv[i]).substr(string(argv[i]).find('=') + 1);
@@ -128,7 +137,7 @@ tuple<string,string,string,string,string,string> parse_args(int argc, char *argv
             seed_file = string(argv[i]).substr(string(argv[i]).find('=') + 1);
         }
     }
-    return make_tuple(ref_cmap_file,bnxfile,bedfile,keyfile,sample_name,seed_file);
+    return make_tuple(ref_cmap_file,queryfile,bedfile,keyfile,sample_name,seed_file);
 }
 
 /*
@@ -145,8 +154,8 @@ int main (int argc, char *argv[]) {
 
     //-----------------------------
     //get args
-    string ref_cmap_file, bnxfile, bedfile, keyfile, sample_name, seed_file;
-    tie(ref_cmap_file,bnxfile,bedfile,keyfile, sample_name, seed_file) = parse_args(argc,argv);
+    string ref_cmap_file, queryfile, bedfile, keyfile, sample_name, seed_file;
+    tie(ref_cmap_file,queryfile,bedfile,keyfile, sample_name, seed_file) = parse_args(argc,argv);
     if (!bedfile.empty()) {
         subsect = true;
     }
@@ -154,7 +163,7 @@ int main (int argc, char *argv[]) {
     if (ref_cmap_file.empty()) {
         cout << "Reference genome .cmap file [-r=] unspecified\n";
         exit(0);
-    } else if (bnxfile.empty()) {
+    } else if (queryfile.empty()) {
         cout << "Molecule .bnx file [-b=] unspecified\n";
         exit(0);
     } else if (sample_name.empty()) {
@@ -166,7 +175,7 @@ int main (int argc, char *argv[]) {
         cout << "Bed file not supplied, not subsecting alignments\n";
     }
 
-    for (const string &fname: {ref_cmap_file,bnxfile,seed_file}) {
+    for (const string &fname: {ref_cmap_file,queryfile,seed_file}) {
         if (!file_exists(fname)) {
             cout << fname << " does not exist\n";
             exit(1);
@@ -179,7 +188,7 @@ int main (int argc, char *argv[]) {
     }
 
     cout << "reference genome cmap file: " << ref_cmap_file << "\n";
-    cout << "molecule bnx file: " << bnxfile << "\n";
+    cout << "query file: " << queryfile << "\n";
     cout << "\nNumber of threads for alignment: " << n_threads << "\n";
     if (bedfile.empty()) {
         cout << "no bed file supplied for subsecting\n";
@@ -207,10 +216,19 @@ int main (int argc, char *argv[]) {
     map<int, vector<seedData>> mol_seed_data = parse_seeds(seed_file,ref_cmaps);
     cout << "Read seeds from " << mol_seed_data.size() << " molecules\n";
 
-    //parse BNXfile
-    cout << "Reading molecules\n";
-    map<int, vector<double>> mol_maps = parse_bnx(bnxfile);
-    cout << "Parsed BNX. Preprocessing...\n";
+    //parse queryfile
+    cout << "Reading queries\n";
+    map<int, vector<double>> mol_maps;
+    if (hasEnding(queryfile,".bnx")) {
+        mol_maps = parse_bnx(queryfile);
+    } else if (hasEnding(queryfile,".cmap")) {
+        mol_maps = parse_cmap(queryfile);
+    } else {
+        perror("query file had unrecognized file extension\n");
+        return 1;
+    }
+
+    cout << "Parsed query. Preprocessing...\n";
     chrono::steady_clock::time_point readWallE = chrono::steady_clock::now();
 
     //-----------------------------------------------------------

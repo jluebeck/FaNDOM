@@ -8,22 +8,6 @@
 
 /home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/OMHelper.h
 
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/OMIO.cpp
-iostream
--
-vector
--
-map
--
-ctime
--
-set
--
-sstream
--
-OMIO.h
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/OMIO.h
-
 /home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/OMIO.h
 iostream
 -
