@@ -21,7 +21,7 @@ const int min_map_len = 25000;
 int n_threads = 6;
 int min_aln_len = 6;
 bool subsect = false;
-float aln_padding = 5000;
+float aln_padding = 1000;
 //array<float,16> bins;
 map<int,vector<pair<int,int>>> bed_data;
 
@@ -135,6 +135,9 @@ tuple<string,string,string,string,string,string> parse_args(int argc, char *argv
 
         } else if (string(argv[i]).rfind("-seeds=", 0) == 0) {
             seed_file = string(argv[i]).substr(string(argv[i]).find('=') + 1);
+
+        } else if (string(argv[i]).rfind("-padding=", 0) == 0) {
+            aln_padding = stof(string(argv[i]).substr(string(argv[i]).find('=') + 1));
         }
     }
     return make_tuple(ref_cmap_file,queryfile,bedfile,keyfile,sample_name,seed_file);
