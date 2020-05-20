@@ -169,7 +169,7 @@ bool hasEnding (string const& fullString, string const& ending) {
     }
 }
 
-//handle args
+//handle argss
 tuple<string,string,string,string,string,string> parse_args(int argc, char *argv[]) {
     string ref_cmap_file, queryfile, bedfile, keyfile, sample_name, seed_file;
 
