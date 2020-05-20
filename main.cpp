@@ -96,7 +96,8 @@ map<int, vector<Alignment>> run_aln(map<int,vector<double>> &ref_cmaps, map<int,
 
 //run the filter and call the alignment
 // TODO: Siavash: Is variable "number" the thread number? Can you rename the variable as "thread_num"?
-map<int, vector<Alignment>> filt_and_aln(int number, map<int,vector<double>> &ref_cmaps, map<int,vector<double>> &mols,
+// Siavash: Done
+map<int, vector<Alignment>> filt_and_aln(int thread_num, map<int,vector<double>> &ref_cmaps, map<int,vector<double>> &mols,
                                         map<int, dis_to_index> &ref_DTI, map<int, int> &ref_lens,
                                         threadsafe_queue<int> &mol_id_queue) {
 //    string s = output_dir + "_" + to_string(number) + ".txt";
@@ -141,7 +142,7 @@ map<int, vector<Alignment>> filt_and_aln(int number, map<int,vector<double>> &re
         }
         if (counter > 5000) {
 
-            seed_batch = OMFilter(qq, number, ref_DTI, ref_lens, ref_cmaps, mols, SV_detection);
+            seed_batch = OMFilter(qq, thread_num, ref_DTI, ref_lens, ref_cmaps, mols, SV_detection);
             all_seeds.insert(seed_batch.begin(), seed_batch.end());
             counter = 0;
             qq.clear();
@@ -149,7 +150,7 @@ map<int, vector<Alignment>> filt_and_aln(int number, map<int,vector<double>> &re
     }
     //cleanup
     if (! qq.empty()) {
-        seed_batch = OMFilter(qq, number, ref_DTI, ref_lens, ref_cmaps, mols, SV_detection);
+        seed_batch = OMFilter(qq, thread_num, ref_DTI, ref_lens, ref_cmaps, mols, SV_detection);
         all_seeds.insert(seed_batch.begin(), seed_batch.end());
     }
 
