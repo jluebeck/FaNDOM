@@ -1,10 +1,3 @@
-#include <vector>
-#include <tuple>
-#include <cmath>
-#include <algorithm>
-#include <map>
-#include <fstream>
-#include "OMIO.h"
 #include "fandomAligner.h"
 
 using namespace std;

@@ -1,6 +1,8 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/FaNDOM.dir/OMFilter.cpp.o"
   "CMakeFiles/FaNDOM.dir/OMHelper.cpp.o"
   "CMakeFiles/FaNDOM.dir/OMIO.cpp.o"
+  "CMakeFiles/FaNDOM.dir/SeedGraph.cpp.o"
   "CMakeFiles/FaNDOM.dir/fandomAligner.cpp.o"
   "CMakeFiles/FaNDOM.dir/main.cpp.o"
   "FaNDOM"

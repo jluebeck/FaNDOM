@@ -1,9 +1,16 @@
+#ifndef FANDOM_FANDOMALIGNER_H
+#define FANDOM_FANDOMALIGNER_H
+
+#include <vector>
+#include <tuple>
+#include <cmath>
+#include <algorithm>
+#include <map>
+#include <fstream>
 #include "OMIO.h"
 
 using namespace std;
 
-#ifndef FANDOM_FANDOMALIGNER_H
-#define FANDOM_FANDOMALIGNER_H
 struct Alignment {
     vector<tuple<int,int,double>> alignment;
     int ref_id;

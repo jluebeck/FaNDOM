@@ -3,7 +3,6 @@
 #include <vector>
 #include <map>
 #include <ctime>
-#include <set>
 #include <future>
 #include <chrono>
 
@@ -11,92 +10,153 @@
 #include "OMIO.h"
 #include "OMHelper.h"
 #include "fandomAligner.h"
+#include "OMFilter.h"
+#include "SeedGraph.h"
 
 using namespace std;
 
+//Alignment variables
 const int lookback = 5;
 const int min_map_lab = 10;
 const int min_map_len = 25000;
-//const double fact_lookup [11] = {1,1,2,6,24,120,720,5040,40320,362880,3628800};
-int n_threads = 6;
+float aln_padding = 1000;
+
+//Data filtering
+int SV_detection = 0;
+int n_threads = 1;
 int min_aln_len = 6;
 bool subsect = false;
-float aln_padding = 1000;
-//array<float,16> bins;
 map<int,vector<pair<int,int>>> bed_data;
 
+
 //------------------------------------------------------------------------------------------
-//Do bookkeeping and manage work for each thread
+//Run Fandom alignment on a batch of seeds
 map<int, vector<Alignment>> run_aln(map<int,vector<double>> &ref_cmaps, map<int,vector<double>> &mols,
-        map<int, vector<seedData>> &mol_seed_data, threadsafe_queue<int> &mol_ids_queue) {
+        map<int, vector<seedData>> &mol_seed_data) {
 
     map<int, vector<Alignment>> results;
-    while(true) {
-        int mol_id = mol_ids_queue.pop();
-//        if (mol_ids_queue.empty()) {
-        if (!mol_id) {
-            break;
-        } else {
-//            const int mol_id = mol_ids_queue.pop();
-            //DEBUG PRINT vvvv
-            cout << mol_id << "\n";
-            int qsize = mol_ids_queue.size();
-            if (qsize % 10000 == 0) {
-                cout << qsize << " molecules left in queue\n";
-            }
-            double best_score = 0;
-            vector<Alignment> mol_alns;
-            vector<double> mol_vect = mols[mol_id];
-            vector<seedData> curr_mol_seed_data = mol_seed_data[mol_id];
-            map<int, vector<seedData>> curr_mol_seeds = mol_seeds_to_aln_regions(curr_mol_seed_data, ref_cmaps, mol_vect, aln_padding);
-            for (auto &x: curr_mol_seeds) {
-                int ref_id = x.first;
-                vector<seedData> seed_list = x.second;
+    for (auto &item: mol_seed_data) {
+        int mol_id = item.first;
+        vector<seedData> curr_mol_seed_data = item.second;
+//        cout << mol_id << " m_id " << curr_mol_seed_data.size() << " seeds\n";
 
-                vector<double> ref_vect = ref_cmaps[ref_id];
-                for (const auto &s: seed_list) {
-                    int a = s.ref_aln_lb;
-                    int b = s.ref_aln_rb;
+        double best_score = 0;
+        vector<Alignment> mol_alns;
+        vector<double> mol_vect = mols[mol_id];
+        //TODO: Siavash, this following function in OMHelper creates an alignment window from the seeds it is given. This step can be optimized
+        map<int, vector<seedData>> curr_mol_seeds = mol_seeds_to_aln_regions(curr_mol_seed_data, ref_cmaps, mol_vect, aln_padding);
+        for (auto &x: curr_mol_seeds) {
+            int ref_id = x.first;
+            vector<seedData> seed_list = x.second;
+//            cout << seed_list.size() << " seeds for mol " << mol_id << " rid " << ref_id << "\n";
+            vector<double> ref_vect = ref_cmaps[ref_id];
+            for (const auto &s: seed_list) {
+                int a = s.ref_aln_lb;
+                int b = s.ref_aln_rb;
 //                    cout << mol_id << " " << ref_id << " " << a << "," << b << "\n";
-                    vector<vector<double>> S((b - a), vector<double>(mol_vect.size() - 1, 0));
-                    vector<vector<pair<int, int>>> previous((b - a),
-                                                            vector<pair<int, int>>(mol_vect.size() - 1, {-1, -1}));
-                    dp_aln(S, previous, mol_vect, ref_vect, a, b, lookback);
-                    Alignment curr_aln = dp_backtracking(S, previous, a, ref_id, mol_id);
-                    curr_aln.seed_num = s.seed_num;
+                vector<vector<double>> S((b - a), vector<double>(mol_vect.size() - 1, 0));
+                vector<vector<pair<int, int>>> previous((b - a),
+                                                        vector<pair<int, int>>(mol_vect.size() - 1, {-1, -1}));
+                dp_aln(S, previous, mol_vect, ref_vect, a, b, lookback);
+                Alignment curr_aln = dp_backtracking(S, previous, a, ref_id, mol_id);
+                curr_aln.seed_num = s.seed_num;
 //                    cout << "f\n";
 
-                    //check alignment length to see if usable
+                //check alignment length to see if usable
 //                    cout << curr_aln.alignment.size() << " asize " << curr_aln.ref_id << " " << curr_aln.mol_id << " " << a << " " << b << " " << mol_vect.back() << "\n";
-                    if (curr_aln.alignment.empty()) {
-                        cout << "0 len alignment for " << curr_aln.ref_id << " " << curr_aln.mol_id << " " << a << " " << b << " " << mol_vect.back() << "\n";
-                        continue;
-                    }
-                    double curr_score = get<2>(curr_aln.alignment.back());
-                    if (curr_aln.alignment.size() < min_aln_len || curr_score/curr_aln.alignment.size() < 5000) { //TODO: ADD A BETTER SCORE THRESHOLD
-                        continue;
-                    }
+                if (curr_aln.alignment.empty()) {
+                    cout << "0 len alignment for " << curr_aln.ref_id << " " << curr_aln.mol_id << " " << a << " " << b << " " << mol_vect.back() << "\n";
+                    continue;
+                }
+                double curr_score = get<2>(curr_aln.alignment.back());
+                if (curr_aln.alignment.size() < min_aln_len || curr_score/curr_aln.alignment.size() < 5000) { //TODO: ADD A BETTER SCORE THRESHOLD
+                    continue;
+                }
 //                    cout << "f1\n";
 
-                    if (curr_score > best_score) {
-                        best_score = curr_score;
-                    }
-                    mol_alns.push_back(curr_aln);
+                if (curr_score > best_score) {
+                    best_score = curr_score;
                 }
+                mol_alns.push_back(curr_aln);
             }
-            //check if secondary alignments and set the status
-            int is_multimapped = (int) (mol_alns.size() > 1);
-            for (auto &curr_aln: mol_alns) {
-                curr_aln.is_multimapped = is_multimapped;
-                if (get<2>(curr_aln.alignment.back()) < best_score) {
-                    curr_aln.is_secondary = 1;
-                }
-            }
-            results[mol_id] = mol_alns;
         }
+        //check if secondary alignments and set the status
+        int is_multimapped = (int) (mol_alns.size() > 1);
+        for (auto &curr_aln: mol_alns) {
+            curr_aln.is_multimapped = is_multimapped;
+            if (get<2>(curr_aln.alignment.back()) < best_score) {
+                curr_aln.is_secondary = 1;
+            }
+        }
+        results[mol_id] = mol_alns;
     }
 //    prom_obj->set_value(results);
     return results;
+}
+
+//run the filter and call the alignment
+// TODO: Siavash: Is variable "number" the thread number? Can you rename the variable as "thread_num"?
+map<int, vector<Alignment>> filt_and_aln(int number, map<int,vector<double>> &ref_cmaps, map<int,vector<double>> &mols,
+                                        map<int, dis_to_index> &ref_DTI, map<int, int> &ref_lens,
+                                        threadsafe_queue<int> &mol_id_queue) {
+//    string s = output_dir + "_" + to_string(number) + ".txt";
+//    string s2 = sv_dir + "_" + to_string(number) + ".txt";
+//    sout[number].open(s);
+//    svout[number].open(s2);
+    int counter = 0;
+    vector<query> qq;
+    map<int, vector<seedData>> seed_batch;
+    map<int, vector<seedData>> all_seeds;
+    map<int, vector<Alignment>> all_alns;
+
+    while (true) {
+        int q_id = mol_id_queue.pop();
+        if (!q_id) {
+            break;
+        } else {
+            int qsize = mol_id_queue.size();
+            if (qsize % 10000 == 0) {
+                cout << qsize << " entries left in queue\n";
+            }
+            vector<double> q_posns = mols[q_id];
+//            if (SV_detection == 1 && q_dist[q_dist.size() - 1] - q_dist[0] > 150000) {
+//                query q;
+//                q.number = q_id;
+//                // cout << q_id << endl;
+//                q.distance = calculate_genomic_distance(query_genome[q_id]);
+//                q.length = query_num_to_length[q_id];
+//                q.find_loc = 0;
+//                qq.push_back(q);
+//                counter = counter + q.length + w;
+//            } else if (SV_detection== 0) {
+            query q;    ///TODO: Siavash, consider using a default constructor for structs, then you can specify the following fields as arguments
+            q.number = q_id;
+            // cout << q_id << endl;
+            q.distance = calculate_genomic_distance(mols[q_id]);
+            q.length = mols[q_id].size() - 1;
+            q.find_loc = 0;
+            qq.push_back(q);
+            counter = counter + q.length + w;
+//            }
+        }
+        if (counter > 5000) {
+
+            seed_batch = OMFilter(qq, number, ref_DTI, ref_lens, ref_cmaps, mols, SV_detection);
+            all_seeds.insert(seed_batch.begin(), seed_batch.end());
+            counter = 0;
+            qq.clear();
+        }
+    }
+    //cleanup
+    if (! qq.empty()) {
+        seed_batch = OMFilter(qq, number, ref_DTI, ref_lens, ref_cmaps, mols, SV_detection);
+        all_seeds.insert(seed_batch.begin(), seed_batch.end());
+    }
+
+//    cout << number << " allseedsize " << all_seeds.size() << "\n";
+    //CALL ALIGNMENT ON ALL THESE SEEDS
+    map<int, vector<Alignment>> result = run_aln(ref_cmaps, mols, all_seeds);
+    return result;
 }
 
 //-----------------------------------------------------------------------
@@ -108,7 +168,6 @@ bool hasEnding (string const& fullString, string const& ending) {
         return false;
     }
 }
-
 
 //handle args
 tuple<string,string,string,string,string,string> parse_args(int argc, char *argv[]) {
@@ -124,11 +183,11 @@ tuple<string,string,string,string,string,string> parse_args(int argc, char *argv
         } else if (string(argv[i]).rfind("-q=", 0) == 0) {
             queryfile = string(argv[i]).substr(string(argv[i]).find('=') + 1);
 
-        } else if (string(argv[i]).rfind("-b=", 0) == 0) {
-            bedfile = string(argv[i]).substr(string(argv[i]).find('=') + 1);
-
-        } else if (string(argv[i]).rfind("-k=", 0) == 0) {
-            keyfile = string(argv[i]).substr(string(argv[i]).find('=') + 1);
+//        } else if (string(argv[i]).rfind("-b=", 0) == 0) {
+//            bedfile = string(argv[i]).substr(string(argv[i]).find('=') + 1);
+//
+//        } else if (string(argv[i]).rfind("-k=", 0) == 0) {
+//            keyfile = string(argv[i]).substr(string(argv[i]).find('=') + 1);
 
         } else if (string(argv[i]).rfind("-sname=", 0) == 0) {
             sample_name = string(argv[i]).substr(string(argv[i]).find('=') + 1);
@@ -138,8 +197,67 @@ tuple<string,string,string,string,string,string> parse_args(int argc, char *argv
 
         } else if (string(argv[i]).rfind("-padding=", 0) == 0) {
             aln_padding = stof(string(argv[i]).substr(string(argv[i]).find('=') + 1));
+
+//        } else if (string(argv[i]).rfind("-o=", 0) == 0) {
+//            output_dir = string(argv[i]).substr(string(argv[i]).find('=') + 1);
+
+        } else if ((string(argv[i]).rfind("-w=", 0) == 0)) {
+            w = stoi(string(argv[i]).substr(string(argv[i]).find('=') + 1));
+
+        } else if ((string(argv[i]).rfind("-band_width=", 0) == 0)) {
+            band_width = stoi(string(argv[i]).substr(string(argv[i]).find('=') + 1));
+
+        } else if ((string(argv[i]).rfind("-tolerance=", 0) == 0)) {
+            tolerance = stoi(string(argv[i]).substr(string(argv[i]).find('=') + 1));
+
+        } else if ((string(argv[i]).rfind("-rank=", 0) == 0)) {
+            ranked = stoi(string(argv[i]).substr(string(argv[i]).find('=') + 1));
+
+        } else if ((string(argv[i]).rfind("-threshold=", 0) == 0)) {
+            threshold = stoi(string(argv[i]).substr(string(argv[i]).find('=') + 1));
+
+        } else if ((string(argv[i]).rfind("-SV=", 0) == 0)) {
+            SV_detection = stoi(string(argv[i]).substr(string(argv[i]).find('=') + 1));
+
+//        } else if ((string(argv[i]).rfind("-svdir=", 0) == 0)) {
+//            sv_dir = string(argv[i]).substr(string(argv[i]).find('=') + 1);
+
         }
     }
+
+    if (ref_cmap_file.empty()) {
+        cout << "Reference genome .cmap file [-r=] unspecified\n";
+        exit(1);
+    } else if (queryfile.empty()) {
+        cout << "Query file [-q=] unspecified\n";
+        exit(1);
+    } else if (sample_name.empty()) {
+        cout << "Sample output name [-s=] unspecified\n";
+//    } else if (seed_file.empty()) {
+//        cout << "Seed file must be specified for now\n";
+//        exit(1);
+//    } else if (output_dir.empty()) {
+//        cout << "No output directory specified\n";
+//        exit(1);
+    }
+
+    for (const string &fname: {ref_cmap_file,queryfile}) {
+        if (!file_exists(fname)) {
+            cout << fname << " does not exist\n";
+            exit(1);
+        }
+    }
+
+//    if (y3 + y5 == 0) {
+//        cout << "Output directory file [-o=] unspecified\n";
+//        exit(1);
+//    } else if (y5 == 1) {
+//        if (y4 == 0) {
+//            cout << "SV directory file [-svdir=] unspecified\n";
+//            exit(1);
+//        }
+//    }
+
     return make_tuple(ref_cmap_file,queryfile,bedfile,keyfile,sample_name,seed_file);
 }
 
@@ -159,45 +277,22 @@ int main (int argc, char *argv[]) {
     //get args
     string ref_cmap_file, queryfile, bedfile, keyfile, sample_name, seed_file;
     tie(ref_cmap_file,queryfile,bedfile,keyfile, sample_name, seed_file) = parse_args(argc,argv);
-    if (!bedfile.empty()) {
-        subsect = true;
-    }
-
-    if (ref_cmap_file.empty()) {
-        cout << "Reference genome .cmap file [-r=] unspecified\n";
-        exit(0);
-    } else if (queryfile.empty()) {
-        cout << "Molecule .bnx file [-b=] unspecified\n";
-        exit(0);
-    } else if (sample_name.empty()) {
-        cout << "Sample name [-s=] unspecified\n";
-    } else if (seed_file.empty()) {
-        cout << "Seed file must be specified for now\n";
-        exit(0);
-    } else if (bedfile.empty()) {
-        cout << "Bed file not supplied, not subsecting alignments\n";
-    }
-
-    for (const string &fname: {ref_cmap_file,queryfile,seed_file}) {
-        if (!file_exists(fname)) {
-            cout << fname << " does not exist\n";
-            exit(1);
-        }
-    }
-
-    if (keyfile.empty()) {
-        string rcf_base = ref_cmap_file.substr(ref_cmap_file.find('.'),ref_cmap_file.length());
-        keyfile = rcf_base + "_key.txt";
-    }
+//    if (!bedfile.empty()) {
+//        subsect = true;
+//    }
+//    if (keyfile.empty()) {
+//        string rcf_base = ref_cmap_file.substr(ref_cmap_file.find('.'),ref_cmap_file.length());
+//        keyfile = rcf_base + "_key.txt";
+//    }
 
     cout << "reference genome cmap file: " << ref_cmap_file << "\n";
     cout << "query file: " << queryfile << "\n";
-    cout << "\nNumber of threads for alignment: " << n_threads << "\n";
-    if (bedfile.empty()) {
-        cout << "no bed file supplied for subsecting\n";
-    } else {
-        cout << "bed file: " << bedfile << "\n" << "key file: " << keyfile << "\n";
-    }
+    cout << "\nNumber of threads for filtering & alignment: " << n_threads << "\n";
+//    if (bedfile.empty()) {
+//        cout << "no bed file supplied for subsecting\n";
+//    } else {
+//        cout << "bed file: " << bedfile << "\n" << "key file: " << keyfile << "\n";
+//    }
 
     //------------------------
     //parse inputs
@@ -210,14 +305,12 @@ int main (int argc, char *argv[]) {
 //    for (auto &x: ref_cmaps) {
 //        cout << x.first << " " << x.second.size() << "\n";
 //    }
-
-    //parse key and bed
-    map<string,pair<int,double>> key_data = parse_key(keyfile);
-    bed_data = parse_bed(bedfile,key_data);
-
+//    //parse key and bed
+//    map<string,pair<int,double>> key_data = parse_key(keyfile);
+//    bed_data = parse_bed(bedfile,key_data);
     //parse seeds
-    map<int, vector<seedData>> mol_seed_data = parse_seeds(seed_file,ref_cmaps);
-    cout << "Read seeds from " << mol_seed_data.size() << " molecules\n";
+//    map<int, vector<seedData>> mol_seed_data = parse_seeds(seed_file,ref_cmaps);
+//    cout << "Read seeds from " << mol_seed_data.size() << " molecules\n";
 
     //parse queryfile
     cout << "Reading queries\n";
@@ -235,7 +328,13 @@ int main (int argc, char *argv[]) {
     chrono::steady_clock::time_point readWallE = chrono::steady_clock::now();
 
     //-----------------------------------------------------------
-    //Preprocessing for alignments
+    //Preprocessing data for alignments
+
+    //map of number of labels per entry
+    map<int, int> ref_num_to_length = calculate_length(ref_cmaps);
+
+    //create map of genomic distance to label number
+    map<int, dis_to_index> ref_DTI = genomic_distance(ref_genome_unrev);
 
     //make the mol_id_queue
     chrono::steady_clock::time_point ppWallS = chrono::steady_clock::now();
@@ -246,11 +345,11 @@ int main (int argc, char *argv[]) {
     //int test_count = 0;
     for (const auto &i: mol_maps) {
         int mol_id = i.first;
-        //CHECK IF IT'S IN THE SEEDS
-        if (mol_seed_data.find(mol_id) != mol_seed_data.end()) {
-            mol_id_queue.push(mol_id);
-//            break;
-        }
+//        //CHECK IF IT'S IN THE SEEDS
+//        if (mol_seed_data.find(mol_id) != mol_seed_data.end()) {
+        mol_id_queue.push(mol_id);
+////            break;
+//        }
         //DEBUG
 //        if (test_count > 500) {
 //            break;
@@ -258,7 +357,6 @@ int main (int argc, char *argv[]) {
 //        test_count++;
     }
 
-    //TODO: REMOVE ALL SEEDS OUTSIDE BED DATA
     chrono::steady_clock::time_point ppWallE = chrono::steady_clock::now();
 
     //------------------------------------------------------
@@ -268,7 +366,9 @@ int main (int argc, char *argv[]) {
     vector<future< map<int, vector<Alignment>>>> futs;
     vector<promise< map<int, vector<Alignment>>>> promises(n_threads);
     for (int i = 0; i < n_threads; i++) {
-        futs.push_back(async(launch::async, run_aln, ref(ref_cmaps), ref(mol_maps), ref(mol_seed_data), ref(mol_id_queue)));
+//        futs.push_back(async(launch::async, run_aln, ref(ref_cmaps), ref(mol_maps), ref(mol_seed_data), ref(mol_id_queue)));
+        futs.push_back(async(launch:: async, filt_and_aln, i, ref(ref_cmaps), ref(mol_maps), ref(ref_DTI),
+                ref(ref_num_to_length), ref(mol_id_queue)));
     }
 
     //-------------------------------------------------------
@@ -281,8 +381,8 @@ int main (int argc, char *argv[]) {
             combined_results.insert(combined_results.end(),x.second.begin(),x.second.end());
         }
     }
-    cout << "Finished molecule alignment. \n";
     chrono::steady_clock::time_point alnWallE = chrono::steady_clock::now();
+    cout << "Finished molecule alignment. \n" << combined_results.size() << " total alignments\n";
 
     //------------------------------------------------------
     //write output
@@ -316,13 +416,13 @@ int main (int argc, char *argv[]) {
     clock_t end = clock();
     chrono::steady_clock::time_point endWall = chrono::steady_clock::now();
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-    double elapsedWall = chrono::duration_cast<chrono::seconds>(endWall - beginWall).count();
+    double elapsedWall = chrono::duration_cast<chrono::milliseconds>(endWall - beginWall).count();
     printf("Total multithreaded CPU time for run: %.3f seconds\n",elapsed_secs);
     printf("Total CPU wall time for run: %.3f seconds\n",elapsedWall);
     cout << "Estimated wall time breakdown (seconds): \n";
     printf("Reading data: %.3f\n",readWall);
     printf("Preprocessing data: %.3f\n",ppWall);
-    printf("Generating alignments (includes seed boundary identification): %.3f\n",alnWall);
+    printf("Generating seeds and alignments: %.3f\n",alnWall);
     printf("Writing alignments: %.3f\n", outWall);
     cout << endl;
 

@@ -1,13 +1,17 @@
+#ifndef FANDOM_OMIO_H
+#define FANDOM_OMIO_H
+
 #include <iostream>
 #include <cstdio>
 #include <fstream>
-#include <set>
 
+#include <vector>
+#include <map>
+#include <ctime>
+#include <set>
+#include <sstream>
 
 using namespace std;
-
-#ifndef FANDOM_OMIO_H
-#define FANDOM_OMIO_H
 
 //inline bool file_exists (const string &fname) {
 //    ifstream f(fname.c_str());

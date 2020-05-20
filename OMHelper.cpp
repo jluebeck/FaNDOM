@@ -1,9 +1,3 @@
-#include <iostream>
-#include <vector>
-#include <map>
-#include <set>
-#include <algorithm>
-#include "OMIO.h"
 #include "OMHelper.h"
 
 using namespace std;
@@ -68,6 +62,7 @@ map<int,vector<seedData>> mol_seeds_to_aln_regions(vector<seedData> &mol_seeds, 
 //        }
 
     //TODO: SORT, FURTHER MERGING AND FILTERING
+
     }
 
     return mol_aln_bounds;
@@ -186,6 +181,15 @@ map<int,vector<double>> make_reverse_cmap(map<int,vector<double>> &cmap_map) {
         full_cmap_map[rev_map_id].push_back(curr_posns.back());
     }
     return full_cmap_map;
+}
+
+/////////////This function for calculating length of each contigs in terms of label//////////////////////////////
+map<int, int> calculate_length(const map<int, vector<double>> &contigs) {
+    map<int, int> contigs_to_length;
+    for (auto &contig : contigs) {
+        contigs_to_length.insert({contig.first, contig.second.size() - 1});
+    }
+    return contigs_to_length;
 }
 
 //-------------------------------------------------------------------------------
