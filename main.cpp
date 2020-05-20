@@ -44,6 +44,7 @@ map<int, vector<Alignment>> run_aln(map<int,vector<double>> &ref_cmaps, map<int,
         vector<Alignment> mol_alns;
         vector<double> mol_vect = mols[mol_id];
         //TODO: Siavash, this following function in OMHelper creates an alignment window from the seeds it is given. This step can be optimized
+        /// Siavash: How??
         map<int, vector<seedData>> curr_mol_seeds = mol_seeds_to_aln_regions(curr_mol_seed_data, ref_cmaps, mol_vect, aln_padding);
         for (auto &x: curr_mol_seeds) {
             int ref_id = x.first;
@@ -96,7 +97,7 @@ map<int, vector<Alignment>> run_aln(map<int,vector<double>> &ref_cmaps, map<int,
 
 //run the filter and call the alignment
 // TODO: Siavash: Is variable "number" the thread number? Can you rename the variable as "thread_num"?
-// Siavash: Done
+/// Siavash: Done
 map<int, vector<Alignment>> filt_and_aln(int thread_num, map<int,vector<double>> &ref_cmaps, map<int,vector<double>> &mols,
                                         map<int, dis_to_index> &ref_DTI, map<int, int> &ref_lens,
                                         threadsafe_queue<int> &mol_id_queue) {
@@ -130,12 +131,8 @@ map<int, vector<Alignment>> filt_and_aln(int thread_num, map<int,vector<double>>
 //                qq.push_back(q);
 //                counter = counter + q.length + w;
 //            } else if (SV_detection== 0) {
-            query q;    ///TODO: Siavash, consider using a default constructor for structs, then you can specify the following fields as arguments
-            q.number = q_id;
-            // cout << q_id << endl;
-            q.distance = calculate_genomic_distance(mols[q_id]);
-            q.length = mols[q_id].size() - 1;
-            q.find_loc = 0;
+            query q (q_id, calculate_genomic_distance(mols[q_id]),mols[q_id].size() - 1,0);    ///TODO: Siavash, consider using a default constructor for structs, then you can specify the following fields as arguments
+            /// Siavash: Done
             qq.push_back(q);
             counter = counter + q.length + w;
 //            }
