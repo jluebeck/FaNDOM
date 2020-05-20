@@ -1,3 +1,4 @@
-test_files/seedtest1_aln.txt
 test_files/*_aln.txt
 test_files/*.gz
+*.o
+cmake-build-debug/
