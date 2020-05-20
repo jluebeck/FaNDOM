@@ -1,8 +1,8 @@
-test_files/*_aln.txt
-test_files/*.gz
-*.o
-cmake-build-debug/
 *.cbp
+*.o
+
+test_files/
+cmake-build-debug/
 
 # User-specific stuff:
 .idea/workspace.xml
