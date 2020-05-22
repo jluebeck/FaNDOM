@@ -11,7 +11,6 @@
 #include "OMHelper.h"
 #include "fandomAligner.h"
 #include "OMFilter.h"
-#include "SeedGraph.h"
 
 using namespace std;
 
@@ -96,8 +95,6 @@ map<int, vector<Alignment>> run_aln(map<int,vector<double>> &ref_cmaps, map<int,
 }
 
 //run the filter and call the alignment
-// TODO: Siavash: Is variable "number" the thread number? Can you rename the variable as "thread_num"?
-/// Siavash: Done
 map<int, vector<Alignment>> filt_and_aln(int thread_num, map<int,vector<double>> &ref_cmaps, map<int,vector<double>> &mols,
                                         map<int, dis_to_index> &ref_DTI, map<int, int> &ref_lens,
                                         threadsafe_queue<int> &mol_id_queue) {
@@ -108,8 +105,10 @@ map<int, vector<Alignment>> filt_and_aln(int thread_num, map<int,vector<double>>
     int counter = 0;
     vector<query> qq;
     map<int, vector<seedData>> seed_batch;
-    map<int, vector<seedData>> all_seeds;
-    map<int, vector<Alignment>> all_alns;
+    map<int, vector<Alignment>> curr;
+//    map<int, vector<seedData>> all_seeds;
+//    map<int, vector<Alignment>> all_alns;
+    map<int, vector<Alignment>> result;
 
     while (true) {
         int q_id = mol_id_queue.pop();
@@ -131,8 +130,7 @@ map<int, vector<Alignment>> filt_and_aln(int thread_num, map<int,vector<double>>
 //                qq.push_back(q);
 //                counter = counter + q.length + w;
 //            } else if (SV_detection== 0) {
-            query q (q_id, calculate_genomic_distance(mols[q_id]),mols[q_id].size() - 1,0);    ///TODO: Siavash, consider using a default constructor for structs, then you can specify the following fields as arguments
-            /// Siavash: Done
+            query q (q_id, calculate_genomic_distance(mols[q_id]),mols[q_id].size() - 1,0);
             qq.push_back(q);
             counter = counter + q.length + w;
 //            }
@@ -140,7 +138,9 @@ map<int, vector<Alignment>> filt_and_aln(int thread_num, map<int,vector<double>>
         if (counter > 5000) {
 
             seed_batch = OMFilter(qq, thread_num, ref_DTI, ref_lens, ref_cmaps, mols, SV_detection);
-            all_seeds.insert(seed_batch.begin(), seed_batch.end());
+            curr = run_aln(ref_cmaps, mols, seed_batch);
+            result.insert(curr.begin(), curr.end());
+//            all_seeds.insert(seed_batch.begin(), seed_batch.end());
             counter = 0;
             qq.clear();
         }
@@ -148,12 +148,14 @@ map<int, vector<Alignment>> filt_and_aln(int thread_num, map<int,vector<double>>
     //cleanup
     if (! qq.empty()) {
         seed_batch = OMFilter(qq, thread_num, ref_DTI, ref_lens, ref_cmaps, mols, SV_detection);
-        all_seeds.insert(seed_batch.begin(), seed_batch.end());
+        curr = run_aln(ref_cmaps, mols, seed_batch);
+        result.insert(curr.begin(), curr.end());
+//        all_seeds.insert(seed_batch.begin(), seed_batch.end());
     }
 
 //    cout << number << " allseedsize " << all_seeds.size() << "\n";
     //CALL ALIGNMENT ON ALL THESE SEEDS
-    map<int, vector<Alignment>> result = run_aln(ref_cmaps, mols, all_seeds);
+
     return result;
 }
 

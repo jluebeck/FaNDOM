@@ -6,6 +6,9 @@ cmake_minimum_required(VERSION 3.1)
 project(FaNDOM)
 
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_FLAGS "-O3 -funroll-loops")
+#message(STATUS "Flags: ${CMAKE_CXX_FLAGS}")
+
 
 add_executable(FaNDOM main.cpp OMIO.cpp OMIO.h OMHelper.cpp OMHelper.h threadsafe_queue.h fandomAligner.cpp fandomAligner.h OMFilter.cpp OMFilter.h SeedGraph.cpp SeedGraph.h)
 

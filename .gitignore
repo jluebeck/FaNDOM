@@ -3,6 +3,7 @@
 
 test_files/
 cmake-build-debug/
+cmake-build-default/
 
 # User-specific stuff:
 .idea/workspace.xml
