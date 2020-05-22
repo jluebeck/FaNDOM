@@ -1,4 +1,4 @@
-#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
 
 #IncludeRegexScan: ^.*$
 
@@ -6,11 +6,11 @@
 
 #IncludeRegexTransform: 
 
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/OMFilter.cpp
+/home/sraeisid/Merged_FaNDOM/FaNDOM/OMFilter.cpp
 OMFilter.h
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/OMFilter.h
+/home/sraeisid/Merged_FaNDOM/FaNDOM/OMFilter.h
 
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/OMFilter.h
+/home/sraeisid/Merged_FaNDOM/FaNDOM/OMFilter.h
 vector
 -
 map
@@ -22,15 +22,15 @@ cmath
 algorithm
 -
 SeedGraph.h
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/SeedGraph.h
+/home/sraeisid/Merged_FaNDOM/FaNDOM/SeedGraph.h
 OMIO.h
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/OMIO.h
+/home/sraeisid/Merged_FaNDOM/FaNDOM/OMIO.h
 
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/OMHelper.cpp
+/home/sraeisid/Merged_FaNDOM/FaNDOM/OMHelper.cpp
 OMHelper.h
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/OMHelper.h
+/home/sraeisid/Merged_FaNDOM/FaNDOM/OMHelper.h
 
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/OMHelper.h
+/home/sraeisid/Merged_FaNDOM/FaNDOM/OMHelper.h
 iostream
 -
 vector
@@ -42,13 +42,13 @@ set
 algorithm
 -
 OMIO.h
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/OMIO.h
+/home/sraeisid/Merged_FaNDOM/FaNDOM/OMIO.h
 
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/OMIO.cpp
+/home/sraeisid/Merged_FaNDOM/FaNDOM/OMIO.cpp
 OMIO.h
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/OMIO.h
+/home/sraeisid/Merged_FaNDOM/FaNDOM/OMIO.h
 
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/OMIO.h
+/home/sraeisid/Merged_FaNDOM/FaNDOM/OMIO.h
 iostream
 -
 cstdio
@@ -66,11 +66,11 @@ set
 sstream
 -
 
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/SeedGraph.cpp
+/home/sraeisid/Merged_FaNDOM/FaNDOM/SeedGraph.cpp
 SeedGraph.h
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/SeedGraph.h
+/home/sraeisid/Merged_FaNDOM/FaNDOM/SeedGraph.h
 
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/SeedGraph.h
+/home/sraeisid/Merged_FaNDOM/FaNDOM/SeedGraph.h
 vector
 -
 list
@@ -84,11 +84,11 @@ cmath
 set
 -
 
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/fandomAligner.cpp
+/home/sraeisid/Merged_FaNDOM/FaNDOM/fandomAligner.cpp
 fandomAligner.h
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/fandomAligner.h
+/home/sraeisid/Merged_FaNDOM/FaNDOM/fandomAligner.h
 
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/fandomAligner.h
+/home/sraeisid/Merged_FaNDOM/FaNDOM/fandomAligner.h
 vector
 -
 tuple
@@ -102,9 +102,9 @@ map
 fstream
 -
 OMIO.h
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/OMIO.h
+/home/sraeisid/Merged_FaNDOM/FaNDOM/OMIO.h
 
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/main.cpp
+/home/sraeisid/Merged_FaNDOM/FaNDOM/main.cpp
 iostream
 -
 cstdio
@@ -120,17 +120,17 @@ future
 chrono
 -
 threadsafe_queue.h
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/threadsafe_queue.h
+/home/sraeisid/Merged_FaNDOM/FaNDOM/threadsafe_queue.h
 OMIO.h
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/OMIO.h
+/home/sraeisid/Merged_FaNDOM/FaNDOM/OMIO.h
 OMHelper.h
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/OMHelper.h
+/home/sraeisid/Merged_FaNDOM/FaNDOM/OMHelper.h
 fandomAligner.h
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/fandomAligner.h
+/home/sraeisid/Merged_FaNDOM/FaNDOM/fandomAligner.h
 OMFilter.h
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/OMFilter.h
+/home/sraeisid/Merged_FaNDOM/FaNDOM/OMFilter.h
 
-/home/jens/Dropbox/BafnaLab/bionano_analysis/method_development/FaNDOM/threadsafe_queue.h
+/home/sraeisid/Merged_FaNDOM/FaNDOM/threadsafe_queue.h
 queue
 -
 mutex

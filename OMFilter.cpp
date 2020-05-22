@@ -7,7 +7,7 @@ int tolerance = 350;
 int ranked = 300;
 //int a[57000][9000] = {0};   ///Unused?
 int threshold = 3;
-int band_width = 10000;
+int band_width = 6000;
 
 
 
@@ -113,75 +113,83 @@ void calculate_seeds_score_in_band(vector<query> &qq, int ref_contig, vector<dou
             int straight_counter = 0;
             int rev_counter = 0;
             answer best_rev_ans = answer{best_straight_score, ref_contig, -1, '+'};
-            for (int cc = 0; cc < q.seeds_straight.size(); cc++) {
-                if (q.seeds_straight[cc].size() > 3) {
-                    long straight_score = 10000000;
-                    pair<long, vector<pair<int, int>>> score_path = solve_graph_straight(q.seeds_straight[cc], q_dist,
-                                                                                         ref_dist, w);
-                    straight_score = score_path.first;
-                    if (abs(prev_index - cc) > 1) {
-                        if (straight_counter > 0) {
-                            double check_score = 1.0 - double(best_straight_score / query_len);
-                            if (check_score > 0.65) {
-                                q.find_loc = 1;
-                                q.ans = priority_queue<answer>();
-                                q.ans.push(best_straight_ans);
-                                break;
-                            } else if (q.ans.size() < ranked) {
-                                q.ans.push(best_straight_ans);
-                            } else {
-                                if (q.ans.top().score > best_straight_score) {
-                                    q.ans.pop();
+            int last_index_str = 0;
+            int last_index_rev = 0;
+            for (int cc = 1; cc < q.seeds_straight.size(); cc++) {
+                if (ref_dist[cc]-ref_dist[last_index_str]>3000) {
+                    if (q.seeds_straight[cc].size() > 3) {
+                        last_index_str = cc;
+                        long straight_score = 10000000;
+                        pair<long, vector<pair<int, int>>> score_path = solve_graph_straight(q.seeds_straight[cc], q_dist,
+                                                                                             ref_dist, w);
+                        straight_score = score_path.first;
+                        if (abs(prev_index - cc) > 1) {
+                            if (straight_counter > 0) {
+                                double check_score = 1.0 - double(best_straight_score / query_len);
+                                if (check_score > 0.65) {
+                                    q.find_loc = 1;
+                                    q.ans = priority_queue<answer>();
                                     q.ans.push(best_straight_ans);
+                                    break;
+                                } else if (q.ans.size() < ranked) {
+                                    q.ans.push(best_straight_ans);
+                                } else {
+                                    if (q.ans.top().score > best_straight_score) {
+                                        q.ans.pop();
+                                        q.ans.push(best_straight_ans);
+                                    }
                                 }
                             }
-                        }
-                        straight_counter = 1;
-                        best_straight_score = straight_score;
-                        best_straight_ans = answer{straight_score, ref_contig, cc + 1, '+', score_path.second};
-                        prev_index = cc;
-                    } else {
-                        if (straight_score < best_straight_score) {
+                            straight_counter = 1;
                             best_straight_score = straight_score;
                             best_straight_ans = answer{straight_score, ref_contig, cc + 1, '+', score_path.second};
+                            prev_index = cc;
+                        } else {
+                            if (straight_score < best_straight_score) {
+                                best_straight_score = straight_score;
+                                best_straight_ans = answer{straight_score, ref_contig, cc + 1, '+', score_path.second};
+                            }
+                            prev_index = cc;
                         }
-                        prev_index = cc;
-                    }
 
+                    }
                 }
-                if (q.seeds_reverse[cc].size() > 3) {
-                    long reverese_score = 10000000;
-                    pair<long, vector<pair<int, int>>> score_path = solve_graph_reverse(q.seeds_reverse[cc], q_dist,
-                                                                                        ref_dist, w);
-                    reverese_score = score_path.first;
-                    if (abs(prev_index_rev - cc) > 1) {
-                        if (rev_counter > 0) {
-                            double check_score = 1.0 - double(best_rev_score / query_len);
-                            if (check_score > 0.65) {
-                                q.find_loc = 1;
-                                q.ans = priority_queue<answer>();
-                                q.ans.push(best_rev_ans);
-                                break;
-                            } else if (q.ans.size() < ranked) {
-                                q.ans.push(best_rev_ans);
-                            } else {
-                                if (q.ans.top().score > best_rev_score) {
-                                    q.ans.pop();
+                if(ref_dist[cc]-ref_dist[last_index_rev]>3000){
+                    if (q.seeds_reverse[cc].size() > 3) {
+                        last_index_rev = cc;
+                        long reverese_score = 10000000;
+                        pair<long, vector<pair<int, int>>> score_path = solve_graph_reverse(q.seeds_reverse[cc], q_dist,
+                                                                                            ref_dist, w);
+                        reverese_score = score_path.first;
+                        if (abs(prev_index_rev - cc) > 1) {
+                            if (rev_counter > 0) {
+                                double check_score = 1.0 - double(best_rev_score / query_len);
+                                if (check_score > 0.65) {
+                                    q.find_loc = 1;
+                                    q.ans = priority_queue<answer>();
                                     q.ans.push(best_rev_ans);
+                                    break;
+                                } else if (q.ans.size() < ranked) {
+                                    q.ans.push(best_rev_ans);
+                                } else {
+                                    if (q.ans.top().score > best_rev_score) {
+                                        q.ans.pop();
+                                        q.ans.push(best_rev_ans);
+                                    }
                                 }
                             }
-                        }
-                        rev_counter = 1;
-                        best_rev_score = reverese_score;
-                        best_rev_ans = answer{best_rev_score, ref_contig, cc + 1, '-', score_path.second};
-                        prev_index_rev = cc;
-
-                    } else {
-                        if (reverese_score < best_rev_score) {
+                            rev_counter = 1;
                             best_rev_score = reverese_score;
                             best_rev_ans = answer{best_rev_score, ref_contig, cc + 1, '-', score_path.second};
+                            prev_index_rev = cc;
+
+                        } else {
+                            if (reverese_score < best_rev_score) {
+                                best_rev_score = reverese_score;
+                                best_rev_ans = answer{best_rev_score, ref_contig, cc + 1, '-', score_path.second};
+                            }
+                            prev_index_rev = cc;
                         }
-                        prev_index_rev = cc;
                     }
                 }
             }
