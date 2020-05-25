@@ -484,11 +484,9 @@ map<int, vector<seedData>> OMFilter(vector<query> qq, int number, map<int, dis_t
 //                        }
                         if (l_to_seed < band_width) {
                             ref_start_point = c + 1;
-                            while (ref_start_point > 0 && ref_start_point < s &&
+                            while (ref_start_point < s &&
                                    abs(ref_dist[c - 1] - ref_dist[ref_start_point - 1]) <= l_to_seed + band_width) {
-                                if (abs(ref_dist[c - 1] - ref_dist[ref_start_point - 1]) >= l_to_seed - band_width) {
-                                    q->seeds_straight[ref_start_point].push_back(make_pair(query_index, c));
-                                }
+                                q->seeds_straight[ref_start_point].push_back(make_pair(query_index, c));        
                                 ref_start_point++;
                             }
 
@@ -511,12 +509,9 @@ map<int, vector<seedData>> OMFilter(vector<query> qq, int number, map<int, dis_t
 //                            }
                             if (l_to_seed < band_width) {
                                 ref_start_point = c - 1;
-                                while (ref_start_point < s && ref_start_point > 0 &&
+                                while (ref_start_point > 0 &&
                                        abs(ref_dist[ref_start_point - 1] - ref_dist[c - 1]) <= l_to_seed + band_width) {
-                                    if (abs(ref_dist[ref_start_point - 1] - ref_dist[c - 1]) >=
-                                        l_to_seed - band_width) {
-                                        q->seeds_reverse[ref_start_point].push_back(make_pair(query_index + w - 1, c));
-                                    }
+                                    q->seeds_reverse[ref_start_point].push_back(make_pair(query_index + w - 1, c));
                                     ref_start_point--;
                                 }
                             }
