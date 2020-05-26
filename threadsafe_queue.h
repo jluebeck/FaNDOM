@@ -1,3 +1,4 @@
+//AUTHOR: Jens Luebeck, jluebeck@ucsd.edu
 #include <queue>
 #include <mutex>
 

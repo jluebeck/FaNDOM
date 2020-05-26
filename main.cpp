@@ -1,3 +1,5 @@
+//Authors: Jens Luebeck (jluebeck@ucsd.edu), Siavash Raisi (sraeisid@ucsd.edu)
+
 #include <iostream>
 #include <cstdio>
 #include <vector>
@@ -13,6 +15,8 @@
 #include "OMFilter.h"
 
 using namespace std;
+
+string version = "0.1";
 
 //Alignment variables
 const int lookback = 5;
@@ -170,8 +174,8 @@ bool hasEnding (string const& fullString, string const& ending) {
 }
 
 //handle argss
-tuple<string,string,string,string,string,string> parse_args(int argc, char *argv[]) {
-    string ref_cmap_file, queryfile, bedfile, keyfile, sample_name, seed_file;
+tuple<string,string,string,string,string> parse_args(int argc, char *argv[]) {
+    string ref_cmap_file, queryfile, bedfile, keyfile, sample_name;
 
     for (int i = 1; i < argc; ++i) {
         if (string(argv[i]).rfind("-t=", 0) == 0) {
@@ -192,8 +196,8 @@ tuple<string,string,string,string,string,string> parse_args(int argc, char *argv
         } else if (string(argv[i]).rfind("-sname=", 0) == 0) {
             sample_name = string(argv[i]).substr(string(argv[i]).find('=') + 1);
 
-        } else if (string(argv[i]).rfind("-seeds=", 0) == 0) {
-            seed_file = string(argv[i]).substr(string(argv[i]).find('=') + 1);
+//        } else if (string(argv[i]).rfind("-seeds=", 0) == 0) {
+//            seed_file = string(argv[i]).substr(string(argv[i]).find('=') + 1);
 
         } else if (string(argv[i]).rfind("-padding=", 0) == 0) {
             aln_padding = stof(string(argv[i]).substr(string(argv[i]).find('=') + 1));
@@ -219,9 +223,11 @@ tuple<string,string,string,string,string,string> parse_args(int argc, char *argv
         } else if ((string(argv[i]).rfind("-SV=", 0) == 0)) {
             SV_detection = stoi(string(argv[i]).substr(string(argv[i]).find('=') + 1));
 
+        } else if ((string(argv[i]).rfind("-version", 0) == 0)) {
+            cout << "FaNDOM version " << version << "\n";
+            exit(0);
 //        } else if ((string(argv[i]).rfind("-svdir=", 0) == 0)) {
 //            sv_dir = string(argv[i]).substr(string(argv[i]).find('=') + 1);
-
         }
     }
 
@@ -258,7 +264,7 @@ tuple<string,string,string,string,string,string> parse_args(int argc, char *argv
 //        }
 //    }
 
-    return make_tuple(ref_cmap_file,queryfile,bedfile,keyfile,sample_name,seed_file);
+    return make_tuple(ref_cmap_file,queryfile,bedfile,keyfile,sample_name);
 }
 
 /*
@@ -275,8 +281,8 @@ int main (int argc, char *argv[]) {
 
     //-----------------------------
     //get args
-    string ref_cmap_file, queryfile, bedfile, keyfile, sample_name, seed_file;
-    tie(ref_cmap_file,queryfile,bedfile,keyfile, sample_name, seed_file) = parse_args(argc,argv);
+    string ref_cmap_file, queryfile, bedfile, keyfile, sample_name;
+    tie(ref_cmap_file,queryfile,bedfile,keyfile, sample_name) = parse_args(argc,argv);
 //    if (!bedfile.empty()) {
 //        subsect = true;
 //    }
@@ -388,7 +394,7 @@ int main (int argc, char *argv[]) {
     //write output
     //TODO: write this on the fly
     chrono::steady_clock::time_point outWallS = chrono::steady_clock::now();
-    string outname = sample_name + "_aln.txt";
+    string outname = sample_name + ".fda";
     cout << "Writing alignments\n";
     write_alignment(combined_results,ref_cmaps,mol_maps,outname);
     chrono::steady_clock::time_point outWallE = chrono::steady_clock::now();

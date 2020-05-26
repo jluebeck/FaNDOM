@@ -76,8 +76,8 @@ void write_alignment(vector<Alignment> &aln_list, map<int,vector<double>> &cmaps
 
     outfile << "#0\tref_id\tmol_id\taln_direction\tref_start_pos\tref_end_pos\tmol_start_pos\tmol_end_pos\tmol_length\n";
     outfile << "#1\ttotal_score\tmean_score\tis_multimapped\tis_secondary\taln_seed_num\n";
-    outfile << "#2\talignment (ref_pos, mol_pos, mol_lab, score_delta)\n";
-    outfile << "#3\tcigar (delta_ref, delta_mol, difference)\n";
+    outfile << "#2\talignment [aln_index]:(ref_pos, mol_pos, mol_lab, score_delta)\n";
+    outfile << "#3\tcigar [aln_index]:(delta_ref, delta_mol, mol_label_diff, delta_difference)\n";
 
     size_t a_pair_ind = 0;
     for (const auto &aln_struct: aln_list) {

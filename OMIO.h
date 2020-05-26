@@ -1,3 +1,5 @@
+//AUTHOR: Jens Luebeck, jluebeck@ucsd.edu
+
 #ifndef FANDOM_OMIO_H
 #define FANDOM_OMIO_H
 

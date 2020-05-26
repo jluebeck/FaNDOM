@@ -1,3 +1,5 @@
+//AUTHOR: Siavash Raisi, sraeisid@ucsd.edu
+
 #ifndef FANDOM_OMFILTER_H
 #define FANDOM_OMFILTER_H
 

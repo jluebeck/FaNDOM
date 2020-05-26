@@ -1,3 +1,5 @@
+//AUTHOR: Siavash Raisi, sraeisid@ucsd.edu
+
 #ifndef FANDOM_SEEDGRAPH_H
 #define FANDOM_SEEDGRAPH_H
 

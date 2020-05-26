@@ -1,3 +1,5 @@
+//AUTHOR: Jens Luebeck, jluebeck@ucsd.edu
+
 #ifndef FANDOM_FANDOMALIGNER_H
 #define FANDOM_FANDOMALIGNER_H
 

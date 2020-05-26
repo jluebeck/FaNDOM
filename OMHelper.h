@@ -1,3 +1,5 @@
+//AUTHOR: Jens Luebeck, jluebeck@ucsd.edu
+
 #ifndef FANDOM_OMHELPER_H
 #define FANDOM_OMHELPER_H
 
