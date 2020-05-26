@@ -1,3 +1,0 @@
-/home/sraeisid/Merged_FaNDOM/FaNDOM/CMakeFiles/rebuild_cache.dir
-/home/sraeisid/Merged_FaNDOM/FaNDOM/CMakeFiles/edit_cache.dir
-/home/sraeisid/Merged_FaNDOM/FaNDOM/CMakeFiles/FaNDOM.dir

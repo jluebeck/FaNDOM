@@ -1,9 +1,13 @@
 *.cbp
 *.o
+._*
 
 test_files/
 cmake-build-debug/
 cmake-build-default/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
 
 # User-specific stuff:
 .idea/workspace.xml
