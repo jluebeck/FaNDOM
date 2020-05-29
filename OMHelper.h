@@ -9,9 +9,32 @@
 #include <set>
 #include <algorithm>
 
-#include "OMIO.h"
-
 using namespace std;
+
+struct seedData {
+    int ref_id;
+    int mol_id;
+    int ref_0_lab;
+    int seed_num;
+    int ref_aln_lb = 0;
+    int ref_aln_rb = 0;
+    seedData(int R_ID,int M_ID, int R_0_L, int SN) {
+        ref_id = R_ID, mol_id = M_ID, ref_0_lab = R_0_L, seed_num = SN;
+    }
+};
+
+struct Alignment {
+    vector<tuple<int,int,double>> alignment;
+    int ref_id;
+    int mol_id;
+    int is_multimapped = 0;
+    int is_secondary = 0;
+    int seed_num = 0;
+
+    Alignment(vector<tuple<int,int,double>> &new_alignment, int R_ID, int M_ID) {
+        alignment = new_alignment; ref_id = R_ID; mol_id = M_ID;
+    }
+};
 
 vector<pair<int,int>> mergeIntervals(vector<pair<int,int>> ivect);
 

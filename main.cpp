@@ -16,7 +16,7 @@
 
 using namespace std;
 
-string version = "0.1";
+static string version = "0.1";
 
 //Alignment variables
 const int lookback = 5;
@@ -174,8 +174,10 @@ bool hasEnding (string const& fullString, string const& ending) {
 }
 
 //handle argss
-tuple<string,string,string,string,string> parse_args(int argc, char *argv[]) {
-    string ref_cmap_file, queryfile, bedfile, keyfile, sample_name;
+tuple<string,string,string,string,string,string> parse_args(int argc, char *argv[]) {
+    string ref_cmap_file, queryfile, bedfile, keyfile, sample_name, outfmt;
+
+    outfmt = "xmap";
 
     for (int i = 1; i < argc; ++i) {
         if (string(argv[i]).rfind("-t=", 0) == 0) {
@@ -223,6 +225,9 @@ tuple<string,string,string,string,string> parse_args(int argc, char *argv[]) {
         } else if ((string(argv[i]).rfind("-SV=", 0) == 0)) {
             SV_detection = stoi(string(argv[i]).substr(string(argv[i]).find('=') + 1));
 
+        } else if ((string(argv[i]).rfind("-outfmt=", 0) == 0)) {
+            outfmt = string(argv[i]).substr(string(argv[i]).find('=') + 1);
+
         } else if ((string(argv[i]).rfind("-version", 0) == 0)) {
             cout << "FaNDOM version " << version << "\n";
             exit(0);
@@ -232,13 +237,13 @@ tuple<string,string,string,string,string> parse_args(int argc, char *argv[]) {
     }
 
     if (ref_cmap_file.empty()) {
-        cout << "Reference genome .cmap file [-r=] unspecified\n";
+        cerr << "Reference genome .cmap file [-r=] unspecified\n";
         exit(1);
     } else if (queryfile.empty()) {
-        cout << "Query file [-q=] unspecified\n";
+        cerr << "Query file [-q=] unspecified\n";
         exit(1);
     } else if (sample_name.empty()) {
-        cout << "Sample output name [-s=] unspecified\n";
+        cerr << "Sample output name [-s=] unspecified\n";
 //    } else if (seed_file.empty()) {
 //        cout << "Seed file must be specified for now\n";
 //        exit(1);
@@ -249,22 +254,18 @@ tuple<string,string,string,string,string> parse_args(int argc, char *argv[]) {
 
     for (const string &fname: {ref_cmap_file,queryfile}) {
         if (!file_exists(fname)) {
-            cout << fname << " does not exist\n";
+            cerr << fname << " does not exist\n";
             exit(1);
         }
     }
 
-//    if (y3 + y5 == 0) {
-//        cout << "Output directory file [-o=] unspecified\n";
-//        exit(1);
-//    } else if (y5 == 1) {
-//        if (y4 == 0) {
-//            cout << "SV directory file [-svdir=] unspecified\n";
-//            exit(1);
-//        }
-//    }
+    transform(outfmt.begin(), outfmt.end(), outfmt.begin(), ::tolower);
+    if (outfmt != "xmap" && outfmt != "fda") {
+        cerr << "-outfmt must be xmap or fda";
+        exit(1);
+    }
 
-    return make_tuple(ref_cmap_file,queryfile,bedfile,keyfile,sample_name);
+    return make_tuple(ref_cmap_file,queryfile,bedfile,keyfile,sample_name,outfmt);
 }
 
 /*
@@ -281,8 +282,8 @@ int main (int argc, char *argv[]) {
 
     //-----------------------------
     //get args
-    string ref_cmap_file, queryfile, bedfile, keyfile, sample_name;
-    tie(ref_cmap_file,queryfile,bedfile,keyfile, sample_name) = parse_args(argc,argv);
+    string ref_cmap_file, queryfile, bedfile, keyfile, sample_name, outfmt;
+    tie(ref_cmap_file,queryfile,bedfile,keyfile, sample_name, outfmt) = parse_args(argc,argv);
 //    if (!bedfile.empty()) {
 //        subsect = true;
 //    }
@@ -394,9 +395,21 @@ int main (int argc, char *argv[]) {
     //write output
     //TODO: write this on the fly
     chrono::steady_clock::time_point outWallS = chrono::steady_clock::now();
-    string outname = sample_name + ".fda";
+    string outname = sample_name;
     cout << "Writing alignments\n";
-    write_alignment(combined_results,ref_cmaps,mol_maps,outname);
+    if (outfmt == "xmap") {
+        outname+=".xmap";
+        string argstring;
+        for (int i = 0; i < argc; ++i) {
+            argstring += " ";
+            argstring += argv[i];
+        }
+        write_xmap_alignment(combined_results, ref_cmaps, mol_maps, outname, argstring);
+
+    } else {
+        outname+=".fda";
+        write_fda_alignment(combined_results, ref_cmaps, mol_maps, outname);
+    }
     chrono::steady_clock::time_point outWallE = chrono::steady_clock::now();
 
     //DEBUG PRINT:

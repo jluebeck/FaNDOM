@@ -6,12 +6,14 @@
 #include <iostream>
 #include <cstdio>
 #include <fstream>
-
 #include <vector>
 #include <map>
 #include <ctime>
 #include <set>
 #include <sstream>
+#include <unistd.h>
+
+#include "OMHelper.h"
 
 using namespace std;
 
@@ -19,18 +21,6 @@ using namespace std;
 //    ifstream f(fname.c_str());
 //    return f.good();
 //}
-
-struct seedData {
-    int ref_id;
-    int mol_id;
-    int ref_0_lab;
-    int seed_num;
-    int ref_aln_lb = 0;
-    int ref_aln_rb = 0;
-    seedData(int R_ID,int M_ID, int R_0_L, int SN) {
-        ref_id = R_ID, mol_id = M_ID, ref_0_lab = R_0_L, seed_num = SN;
-    }
-};
 
 
 inline bool file_exists (const string &fname) {
@@ -65,5 +55,11 @@ map<string,pair<int,double>> parse_key(const string &fname);
 map<int,vector<double>> parse_bnx(const string &fname);
 
 map<int, vector<seedData>> parse_seeds(const string &fname, map<int, vector<double>> &ref_cmaps);
+
+void write_xmap_alignment(vector<Alignment> &aln_list, map<int,vector<double>> &cmaps_ref, map<int,vector<double>> &mol_map,
+                         const string &outname, const string &argstring);
+
+void write_fda_alignment(vector<Alignment> &aln_list, map<int,vector<double>> &cmaps_ref, map<int,vector<double>> &mol_map,
+                     const string &outname);
 
 #endif //FANDOM_OMHELPER_H
