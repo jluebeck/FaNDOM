@@ -35,6 +35,7 @@ FaNDOM outputs alignments of the OM molecules in FaNDOM's `.fda` file format. `.
 - `-s=` Prefix for output files
 
 ##### Optional arguments (basic)
+- `-multimap` Report multiple alignments per molecule (default: only highest scoring alignment)
 - `-version` Print version and exit
 - `-t=` Number of threads to use (recommend 12+)
 - `-padding=` Additional size (in bp) around seed region to open alignment window (default: 1000)

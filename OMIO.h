@@ -12,6 +12,7 @@
 #include <set>
 #include <sstream>
 #include <unistd.h>
+#include <cmath>
 
 #include "OMHelper.h"
 
@@ -57,9 +58,9 @@ map<int,vector<double>> parse_bnx(const string &fname);
 map<int, vector<seedData>> parse_seeds(const string &fname, map<int, vector<double>> &ref_cmaps);
 
 void write_xmap_alignment(vector<Alignment> &aln_list, map<int,vector<double>> &cmaps_ref, map<int,vector<double>> &mol_map,
-                         const string &outname, const string &argstring);
+                         const string &outname, const string &argstring, bool is_mm);
 
 void write_fda_alignment(vector<Alignment> &aln_list, map<int,vector<double>> &cmaps_ref, map<int,vector<double>> &mol_map,
-                     const string &outname);
+                     const string &outname, bool is_mm);
 
 #endif //FANDOM_OMHELPER_H

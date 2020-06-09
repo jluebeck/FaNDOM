@@ -174,8 +174,9 @@ bool hasEnding (string const& fullString, string const& ending) {
 }
 
 //handle argss
-tuple<string,string,string,string,string,string> parse_args(int argc, char *argv[]) {
+tuple<string,string,string,string,string,string,bool> parse_args(int argc, char *argv[]) {
     string ref_cmap_file, queryfile, bedfile, keyfile, sample_name, outfmt;
+    bool top_output_only = false;
 
     outfmt = "xmap";
 
@@ -233,7 +234,10 @@ tuple<string,string,string,string,string,string> parse_args(int argc, char *argv
             exit(0);
 //        } else if ((string(argv[i]).rfind("-svdir=", 0) == 0)) {
 //            sv_dir = string(argv[i]).substr(string(argv[i]).find('=') + 1);
+        } else if ((string(argv[i]).rfind("-multimap", 0) == 0)) {
+            top_output_only = true;
         }
+        
     }
 
     if (ref_cmap_file.empty()) {
@@ -265,7 +269,7 @@ tuple<string,string,string,string,string,string> parse_args(int argc, char *argv
         exit(1);
     }
 
-    return make_tuple(ref_cmap_file,queryfile,bedfile,keyfile,sample_name,outfmt);
+    return make_tuple(ref_cmap_file,queryfile,bedfile,keyfile,sample_name,outfmt,top_output_only);
 }
 
 /*
@@ -283,7 +287,8 @@ int main (int argc, char *argv[]) {
     //-----------------------------
     //get args
     string ref_cmap_file, queryfile, bedfile, keyfile, sample_name, outfmt;
-    tie(ref_cmap_file,queryfile,bedfile,keyfile, sample_name, outfmt) = parse_args(argc,argv);
+    bool top_output_only;
+    tie(ref_cmap_file,queryfile,bedfile,keyfile, sample_name, outfmt, top_output_only) = parse_args(argc,argv);
 //    if (!bedfile.empty()) {
 //        subsect = true;
 //    }
@@ -404,11 +409,11 @@ int main (int argc, char *argv[]) {
             argstring += " ";
             argstring += argv[i];
         }
-        write_xmap_alignment(combined_results, ref_cmaps, mol_maps, outname, argstring);
+        write_xmap_alignment(combined_results, ref_cmaps, mol_maps, outname, argstring, top_output_only);
 
     } else {
         outname+=".fda";
-        write_fda_alignment(combined_results, ref_cmaps, mol_maps, outname);
+        write_fda_alignment(combined_results, ref_cmaps, mol_maps, outname,top_output_only);
     }
     chrono::steady_clock::time_point outWallE = chrono::steady_clock::now();
 
