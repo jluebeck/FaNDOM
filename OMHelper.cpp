@@ -57,9 +57,6 @@ map<int,vector<seedData>> mol_seeds_to_aln_regions(vector<seedData> &mol_seeds, 
         y.ref_aln_lb = lb_lab;
         y.ref_aln_rb = ub_lab;
         mol_aln_bounds[y.ref_id].emplace_back(y);
-//        if (ref_id == -15 && lb_lab == ub_lab) {
-//            cout << ref_0_lab << " " << ref_0_lab_pos << " " << mol_lab_pos << " " << left_aln_pos << " " << right_aln_pos << "\n";
-//        }
 
     //TODO: SORT, FURTHER MERGING AND FILTERING
 
@@ -133,6 +130,36 @@ map<int,vector<seedData>> mol_seeds_to_aln_regions(vector<seedData> &mol_seeds, 
 
 //-------------------------
 //Filtering & Bookkeeping
+
+//get molecule IDs where a full alignment was not found
+unordered_set<int> get_remap_mol_ids(const vector<Alignment> &aln_list, map<int, vector<double>> &mol_maps,
+        const float remap_prop_cut, const double remap_len_cut) {
+
+    unordered_set<int> seen_mols;
+    unordered_set<int> fail_mols;
+    for (const auto &a: aln_list) {
+        if (! a.is_secondary) {
+            int m_id = a.mol_id;
+            seen_mols.insert(m_id);
+            double molLen = mol_maps[m_id].rbegin()[1];
+            double aln_p1 = mol_maps[m_id][get<1>(a.alignment[0])];
+            double aln_p2 = mol_maps[m_id][get<1>(a.alignment.back())];
+            if ((aln_p2 - aln_p1) / molLen < remap_prop_cut) {
+                if (max(aln_p1, molLen - aln_p2) > remap_len_cut) {
+                    fail_mols.insert(m_id);
+                }
+            }
+        }
+    }
+    for (const auto &m: mol_maps) {
+        if (seen_mols.find(m.first) == seen_mols.end()) {
+            fail_mols.insert(m.first);
+        }
+    }
+
+    return fail_mols;
+}
+
 void filter_mols(map<int,vector<double>> &mol_map, int min_map_lab, int min_map_len) {
     set<int> fail_mols;
     for (const auto &pair: mol_map) {
@@ -183,7 +210,7 @@ map<int,vector<double>> make_reverse_cmap(map<int,vector<double>> &cmap_map) {
     return full_cmap_map;
 }
 
-/////////////This function for calculating length of each contigs in terms of label//////////////////////////////
+//Returns a map of OM ID to length in terms of labels
 map<int, int> calculate_length(const map<int, vector<double>> &contigs) {
     map<int, int> contigs_to_length;
     for (auto &contig : contigs) {

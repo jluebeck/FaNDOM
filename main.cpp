@@ -28,7 +28,9 @@ float aln_padding = 1000;
 int SV_detection = 0;
 int n_threads = 1;
 int min_aln_len = 6;
-bool subsect = false;
+float aln_prop_thresh_to_remap = 0.7;
+double aln_len_thresh_to_remap = 25000.;
+//bool subsect = false;
 map<int,vector<pair<int,int>>> bed_data;
 
 
@@ -397,6 +399,12 @@ int main (int argc, char *argv[]) {
     cout << "Finished molecule alignment. \n" << combined_results.size() << " total alignments\n";
 
     //------------------------------------------------------
+
+    unordered_set<int> mols_to_remap = get_remap_mol_ids(combined_results, mol_maps, aln_prop_thresh_to_remap,
+            aln_len_thresh_to_remap);
+
+    cout << mols_to_remap.size() << " molecules will undergo partial-seeding.\n";
+
     //write output
     //TODO: write this on the fly
     chrono::steady_clock::time_point outWallS = chrono::steady_clock::now();
@@ -413,7 +421,7 @@ int main (int argc, char *argv[]) {
 
     } else {
         outname+=".fda";
-        write_fda_alignment(combined_results, ref_cmaps, mol_maps, outname,top_output_only);
+        write_fda_alignment(combined_results, ref_cmaps, mol_maps, outname, top_output_only);
     }
     chrono::steady_clock::time_point outWallE = chrono::steady_clock::now();
 

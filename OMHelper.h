@@ -8,6 +8,7 @@
 #include <map>
 #include <set>
 #include <algorithm>
+#include <unordered_set>
 
 using namespace std;
 
@@ -42,6 +43,10 @@ map<int,vector<seedData>> mol_seeds_to_aln_regions(vector<seedData> &mol_seeds,
         map<int,vector<double>> &ref_cmaps, vector<double> &mol_posns, double padding);
 
 void filter_mols(map<int,vector<double>> &mol_map, int min_map_lab, int min_map_len);
+
+//get molecule ids needing a partial alignment seeding
+unordered_set<int> get_remap_mol_ids(const vector<Alignment> &aln_list, map<int, vector<double>> &mol_maps,
+                              float remap_prop_cut, double remap_len_cut);
 
 //Makes reverse cmap_map entries and adds them into the map
 map<int,vector<double>> make_reverse_cmap(map<int,vector<double>> &cmap_map);
