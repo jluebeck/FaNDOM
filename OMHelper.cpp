@@ -144,10 +144,8 @@ unordered_set<int> get_remap_mol_ids(const vector<Alignment> &aln_list, map<int,
             double molLen = mol_maps[m_id].rbegin()[1];
             double aln_p1 = mol_maps[m_id][get<1>(a.alignment[0])];
             double aln_p2 = mol_maps[m_id][get<1>(a.alignment.back())];
-            if ((aln_p2 - aln_p1) / molLen < remap_prop_cut) {
-                if (max(aln_p1, molLen - aln_p2) > remap_len_cut) {
+            if ((aln_p2 - aln_p1) / molLen < remap_prop_cut && max(aln_p1, molLen - aln_p2) > remap_len_cut) {
                     fail_mols.insert(m_id);
-                }
             }
         }
     }
