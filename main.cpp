@@ -23,6 +23,7 @@ const int lookback = 5;
 const int min_map_lab = 10;
 const int min_map_len = 25000;
 float aln_padding = 1000;
+bool multimap_mols = false;
 
 //Data filtering
 int SV_detection = 0;
@@ -64,26 +65,21 @@ map<int, vector<Alignment>> run_aln(map<int,vector<double>> &ref_cmaps, map<int,
                 vector<vector<pair<int, int>>> previous((b - a),
                                                         vector<pair<int, int>>(mol_vect.size() - 1, {-1, -1}));
                 dp_aln(S, previous, mol_vect, ref_vect, a, b, lookback);
-                Alignment curr_aln = dp_backtracking(S, previous, a, ref_id, mol_id);
-                curr_aln.seed_num = s.seed_num;
-//                    cout << "f\n";
 
-                //check alignment length to see if usable
-//                    cout << curr_aln.alignment.size() << " asize " << curr_aln.ref_id << " " << curr_aln.mol_id << " " << a << " " << b << " " << mol_vect.back() << "\n";
-                if (curr_aln.alignment.empty()) {
-                    cout << "0 len alignment for " << curr_aln.ref_id << " " << curr_aln.mol_id << " " << a << " " << b << " " << mol_vect.back() << "\n";
-                    continue;
+                pair<int,int> max_pair =  get_max_pair(S);
+                double curr_score = S[max_pair.first][max_pair.second];
+                if (multimap_mols || curr_score > best_score) {
+                    Alignment curr_aln = dp_backtracking(S, previous, max_pair, a, ref_id, mol_id);
+                    curr_aln.seed_num = s.seed_num;
+                    if (curr_aln.alignment.size() < min_aln_len ||
+                        curr_score / curr_aln.alignment.size() < 5000) { //TODO: ADD A BETTER SCORE THRESHOLD
+                        continue;
+                    }
+                    mol_alns.push_back(curr_aln);
                 }
-                double curr_score = get<2>(curr_aln.alignment.back());
-                if (curr_aln.alignment.size() < min_aln_len || curr_score/curr_aln.alignment.size() < 5000) { //TODO: ADD A BETTER SCORE THRESHOLD
-                    continue;
-                }
-//                    cout << "f1\n";
-
                 if (curr_score > best_score) {
                     best_score = curr_score;
                 }
-                mol_alns.push_back(curr_aln);
             }
         }
         //check if secondary alignments and set the status
@@ -176,9 +172,8 @@ bool hasEnding (string const& fullString, string const& ending) {
 }
 
 //handle argss
-tuple<string,string,string,string,string,string,bool> parse_args(int argc, char *argv[]) {
+tuple<string,string,string,string,string,string> parse_args(int argc, char *argv[]) {
     string ref_cmap_file, queryfile, bedfile, keyfile, sample_name, outfmt;
-    bool top_output_only = false;
 
     outfmt = "xmap";
 
@@ -237,7 +232,7 @@ tuple<string,string,string,string,string,string,bool> parse_args(int argc, char 
 //        } else if ((string(argv[i]).rfind("-svdir=", 0) == 0)) {
 //            sv_dir = string(argv[i]).substr(string(argv[i]).find('=') + 1);
         } else if ((string(argv[i]).rfind("-multimap", 0) == 0)) {
-            top_output_only = true;
+            multimap_mols = true;
         }
         
     }
@@ -271,7 +266,7 @@ tuple<string,string,string,string,string,string,bool> parse_args(int argc, char 
         exit(1);
     }
 
-    return make_tuple(ref_cmap_file,queryfile,bedfile,keyfile,sample_name,outfmt,top_output_only);
+    return make_tuple(ref_cmap_file,queryfile,bedfile,keyfile,sample_name,outfmt);
 }
 
 /*
@@ -289,8 +284,7 @@ int main (int argc, char *argv[]) {
     //-----------------------------
     //get args
     string ref_cmap_file, queryfile, bedfile, keyfile, sample_name, outfmt;
-    bool top_output_only;
-    tie(ref_cmap_file,queryfile,bedfile,keyfile, sample_name, outfmt, top_output_only) = parse_args(argc,argv);
+    tie(ref_cmap_file,queryfile,bedfile,keyfile, sample_name, outfmt) = parse_args(argc,argv);
 //    if (!bedfile.empty()) {
 //        subsect = true;
 //    }
@@ -417,11 +411,11 @@ int main (int argc, char *argv[]) {
             argstring += " ";
             argstring += argv[i];
         }
-        write_xmap_alignment(combined_results, ref_cmaps, mol_maps, outname, argstring, top_output_only);
+        write_xmap_alignment(combined_results, ref_cmaps, mol_maps, outname, argstring, multimap_mols);
 
     } else {
         outname+=".fda";
-        write_fda_alignment(combined_results, ref_cmaps, mol_maps, outname, top_output_only);
+        write_fda_alignment(combined_results, ref_cmaps, mol_maps, outname, multimap_mols);
     }
     chrono::steady_clock::time_point outWallE = chrono::steady_clock::now();
 
