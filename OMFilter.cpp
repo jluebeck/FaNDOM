@@ -2,7 +2,7 @@
 
 using namespace std;
 
-int w= 3;
+int w = 3;
 int tolerance = 350;
 int ranked = 300;
 //int a[57000][9000] = {0};   ///Unused?
@@ -216,10 +216,9 @@ void calculate_seeds_score_in_band(vector<query> &qq, int ref_contig, vector<dou
 
 ////////////////////For finding partial alignment score/////////////
 //void calculate_seeds_score_in_band_SV(vector<query> &qq, int ref_contig) {
-void calculate_seeds_score_in_band_SV(vector<query> &qq, int ref_contig) {
-    vector<double> ref_dist = ref_genome_raw[ref_contig];
-    for (int i = 0; i < qq.size(); i++) {
-        query &q = qq[i];
+void calculate_seeds_score_in_band_SV(vector<query> &qq, int ref_contig, vector<double> &ref_dist,
+                                      map<int, vector<double>> &query_genome) {
+    for (auto &q : qq) {
         vector<double> q_dist = query_genome[q.number];
         int prev_index = -1;
         int straight_counter = 0;
@@ -230,7 +229,7 @@ void calculate_seeds_score_in_band_SV(vector<query> &qq, int ref_contig) {
         for (int cc = 0; cc < q.seeds_straight.size(); cc++) {
             if (q.seeds_straight[cc].size() > 1) {
                 vector<pair<int, int>> ali = q.seeds_straight[cc];
-                vector<long> score_from_first = solve_graph_straight_SV(q.seeds_straight[cc], q_dist, ref_dist, 1);
+                vector<long> score_from_first = solve_graph_straight_SV(q.seeds_straight[cc], q_dist, ref_dist, 1,w);
                 bool brk = false;
                 for (int i = 0; i < q.seeds_straight[cc].size(); ++i) {
                     if (brk) {
@@ -280,7 +279,7 @@ void calculate_seeds_score_in_band_SV(vector<query> &qq, int ref_contig) {
             }
             if (q.seeds_reverse[cc].size() > 1) {
                 vector<pair<int, int>> ali = q.seeds_reverse[cc];
-                vector<long> score_to_end = solve_graph_reverse_SV(q.seeds_reverse[cc], q_dist, ref_dist, 1);
+                vector<long> score_to_end = solve_graph_reverse_SV(q.seeds_reverse[cc], q_dist, ref_dist, 1,w);
                 bool brk = false;
                 for (int i = 0; i < q.seeds_reverse[cc].size(); ++i) {
                     if (brk) {
@@ -467,9 +466,9 @@ map<int, vector<seedData>> OMFilter(vector<query> qq, int number, map<int, dis_t
             vector<seedData> seeds;
             while (!q.bp.empty()) {
                 breakpoint b = q.bp.top();
-                seedData newSeed = seedData(b.ref_contig,q.number,b.label_pos,p);
-                newSeed.ref_aln_rb = e1;
-                newSeed.ref_aln_lb = f1;
+                seedData newSeed = seedData(b.ref_contig, q.number, b.label_pos, p);
+                newSeed.ref_aln_rb = b.e1;
+                newSeed.ref_aln_lb = b.f1;
                 p++;
 
             }

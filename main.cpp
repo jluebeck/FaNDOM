@@ -399,6 +399,7 @@ int main (int argc, char *argv[]) {
     //Here again make thread and run partial alignments for remaining molecules
     cout << "Performing partial alignments\n";
     SV_detection=1;
+    multimap_mols = true;
     threadsafe_queue<int> mol_id_queue_partial;
     for (auto &i: mols_to_remap) {
         mol_id_queue_partial.push(i);
@@ -408,8 +409,13 @@ int main (int argc, char *argv[]) {
         futs.push_back(async(launch:: async, filt_and_aln, i, ref(ref_cmaps), ref(mol_maps), ref(ref_DTI),
                              ref(ref_num_to_length), ref(mol_id_queue_partial)));
     }
-
-
+    for (auto &f: futs) {
+        map<int, vector<Alignment>> curr_result = f.get();
+        for (const auto &x: curr_result) {
+            combined_results.reserve(combined_results.size() + distance(x.second.begin(),x.second.end()));
+            combined_results.insert(combined_results.end(),x.second.begin(),x.second.end());
+        }
+    }
 
 
 
