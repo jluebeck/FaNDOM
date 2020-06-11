@@ -49,7 +49,12 @@ struct breakpoint {
     double pos;
     int label_pos;
     float score;
-
+    float long_score;
+    int f1;//refrence
+    int e1;//refrence
+    bool operator<(const breakpoint &rhs) const {
+        return long_score > rhs.long_score;
+    }
 };
 //This struct is  for each query
 struct query {
@@ -61,8 +66,9 @@ struct query {
     v_v_p seeds_reverse;// each refrence label has a label of pain which is seeds in reverse direction. Vector of position in ref to vector of seeds
     priority_queue<answer> ans;// heap for saving top best candidate locations for doing alignment
     int find_loc;// boolean for show if we find great location to stop searching for this query
-    map<int, vector<breakpoint>> bp_from_start;// for each label possible break point from start to this label. Map label to vector of breakpint
-    map<int, vector<breakpoint>> bp_to_end;// for each label possible break point from label to end of query. Map label to vector of breakpint
+//    map<int, vector<breakpoint>> bp_from_start;// for each label possible break point from start to this label. Map label to vector of breakpint
+//    map<int, vector<breakpoint>> bp_to_end;// for each label possible break point from label to end of query. Map label to vector of breakpint
+    priority_queue<breakpoint> bp;
     query(int n, dis_to_index d, int l , int find){
         number = n;
         distance = d;

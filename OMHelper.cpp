@@ -41,23 +41,25 @@ map<int,vector<seedData>> mol_seeds_to_aln_regions(vector<seedData> &mol_seeds, 
     map<int,vector<seedData>> mol_aln_bounds;
     int mol_lab = 0; //Seeds assumed to be aligned to mol pos 0.
     for (auto &y: mol_seeds) {
-        vector<double> curr_ref = ref_cmaps[y.ref_id];
-        double ref_0_lab_pos = curr_ref[y.ref_0_lab];
-        double mol_lab_pos = mol_posns[mol_lab];
-        double left_aln_pos, right_aln_pos;
+        if (y.ref_aln_lb ==0 && y.ref_aln_rb ==0) {
+            vector<double> curr_ref = ref_cmaps[y.ref_id];
+            double ref_0_lab_pos = curr_ref[y.ref_0_lab];
+            double mol_lab_pos = mol_posns[mol_lab];
+            double left_aln_pos, right_aln_pos;
 
-        left_aln_pos = max((ref_0_lab_pos - mol_lab_pos) - padding, curr_ref[0]+1);
-        right_aln_pos = min((ref_0_lab_pos + (mol_posns.back() - mol_lab_pos)) + padding,
-                             curr_ref.end()[-2]);
+            left_aln_pos = max((ref_0_lab_pos - mol_lab_pos) - padding, curr_ref[0] + 1);
+            right_aln_pos = min((ref_0_lab_pos + (mol_posns.back() - mol_lab_pos)) + padding,
+                                curr_ref.end()[-2]);
 
-        //construct left label bound
-        int lb_lab = lower_bound(curr_ref.begin(),curr_ref.end(), left_aln_pos)- curr_ref.begin() - 1;
-        //construct right label bound
-        int ub_lab = upper_bound(curr_ref.begin(),curr_ref.end(), right_aln_pos) - curr_ref.begin();
-        y.ref_aln_lb = lb_lab;
-        y.ref_aln_rb = ub_lab;
+            //construct left label bound
+            int lb_lab = lower_bound(curr_ref.begin(), curr_ref.end(), left_aln_pos) - curr_ref.begin() - 1;
+            //construct right label bound
+            int ub_lab = upper_bound(curr_ref.begin(), curr_ref.end(), right_aln_pos) - curr_ref.begin();
+            y.ref_aln_lb = lb_lab;
+            y.ref_aln_rb = ub_lab;
+
+        }
         mol_aln_bounds[y.ref_id].emplace_back(y);
-
     //TODO: SORT, FURTHER MERGING AND FILTERING
 
     }

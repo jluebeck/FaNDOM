@@ -51,6 +51,7 @@ map<int, vector<Alignment>> run_aln(map<int,vector<double>> &ref_cmaps, map<int,
         vector<double> mol_vect = mols[mol_id];
         //TODO: Siavash, this following function in OMHelper creates an alignment window from the seeds it is given. This step can be optimized
         /// Siavash: How??
+        // check lb and rb are not zero
         map<int, vector<seedData>> curr_mol_seeds = mol_seeds_to_aln_regions(curr_mol_seed_data, ref_cmaps, mol_vect, aln_padding);
         for (auto &x: curr_mol_seeds) {
             int ref_id = x.first;
@@ -100,10 +101,6 @@ map<int, vector<Alignment>> run_aln(map<int,vector<double>> &ref_cmaps, map<int,
 map<int, vector<Alignment>> filt_and_aln(int thread_num, map<int,vector<double>> &ref_cmaps, map<int,vector<double>> &mols,
                                         map<int, dis_to_index> &ref_DTI, map<int, int> &ref_lens,
                                         threadsafe_queue<int> &mol_id_queue) {
-//    string s = output_dir + "_" + to_string(number) + ".txt";
-//    string s2 = sv_dir + "_" + to_string(number) + ".txt";
-//    sout[number].open(s);
-//    svout[number].open(s2);
     int counter = 0;
     vector<query> qq;
     map<int, vector<seedData>> seed_batch;
@@ -398,7 +395,28 @@ int main (int argc, char *argv[]) {
             aln_len_thresh_to_remap);
 
     cout << mols_to_remap.size() << " molecules will undergo partial-seeding.\n";
+    ////////////////////
+    //Here again make thread and run partial alignments for remaining molecules
+    cout << "Performing partial alignments\n";
+    SV_detection=1;
+    threadsafe_queue<int> mol_id_queue_partial;
+    for (auto &i: mols_to_remap) {
+        mol_id_queue_partial.push(i);
+    }
+    for (int i = 0; i < n_threads; i++) {
+//        futs.push_back(async(launch::async, run_aln, ref(ref_cmaps), ref(mol_maps), ref(mol_seed_data), ref(mol_id_queue)));
+        futs.push_back(async(launch:: async, filt_and_aln, i, ref(ref_cmaps), ref(mol_maps), ref(ref_DTI),
+                             ref(ref_num_to_length), ref(mol_id_queue_partial)));
+    }
 
+
+
+
+
+
+
+
+    ////////////////////
     //write output
     //TODO: write this on the fly
     chrono::steady_clock::time_point outWallS = chrono::steady_clock::now();

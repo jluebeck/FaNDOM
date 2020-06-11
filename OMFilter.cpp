@@ -216,194 +216,131 @@ void calculate_seeds_score_in_band(vector<query> &qq, int ref_contig, vector<dou
 
 ////////////////////For finding partial alignment score/////////////
 //void calculate_seeds_score_in_band_SV(vector<query> &qq, int ref_contig) {
-void calculate_seeds_score_in_band_SV(vector<query> &qq, int ref_contig, vector<double> &ref_dist,
-        map<int, vector<double>> &query_genome) {
-//    vector<double> ref_dist = ref_genome_raw[ref_contig];
-    for (auto & q : qq) {
+void calculate_seeds_score_in_band_SV(vector<query> &qq, int ref_contig) {
+    vector<double> ref_dist = ref_genome_raw[ref_contig];
+    for (int i = 0; i < qq.size(); i++) {
+        query &q = qq[i];
         vector<double> q_dist = query_genome[q.number];
-        double SV_minimum_length = max(40000.0, 0.15 * (q_dist[q_dist.size() - 1] - q_dist[0]));
+        int prev_index = -1;
+        int straight_counter = 0;
+        int rev_counter = 0;
+        int prev_index_rev = -1;
+        breakpoint best_straight_bp = breakpoint{ref_contig, '+', 0.0, 0, 0, 0.0, 0, 0};
+        breakpoint best_rev_bp = breakpoint{ref_contig, '-', 0.0, 0, 0, 0.0, 0, 0};
         for (int cc = 0; cc < q.seeds_straight.size(); cc++) {
             if (q.seeds_straight[cc].size() > 1) {
-                vector<long> score_from_first = solve_graph_straight_SV(q.seeds_straight[cc], q_dist, ref_dist, 1, w);
-                vector<float> scores;
+                vector<pair<int, int>> ali = q.seeds_straight[cc];
+                vector<long> score_from_first = solve_graph_straight_SV(q.seeds_straight[cc], q_dist, ref_dist, 1);
+                bool brk = false;
                 for (int i = 0; i < q.seeds_straight[cc].size(); ++i) {
-                    float partial_score = score_from_first[(i + 1) * w] /
-                                          ((q_dist[q.seeds_straight[cc][i].first + w - 1 - 1] - q_dist[0]) * 1.414);
-                    scores.push_back(partial_score);
-                }
-                vector<float> scores2;
-                vector<long> score_to_end = solve_graph_straight_SV(q.seeds_straight[cc], q_dist, ref_dist, 0, w);
-                for (int i = 0; i < q.seeds_straight[cc].size(); ++i) {
-                    float partial_score = score_to_end[i * w + 1] /
-                                          ((q_dist[q_dist.size() - 1] - q_dist[q.seeds_straight[cc][i].first - 1]) *
-                                           1.414);
-                    scores2.push_back(partial_score);
-                }
-                for (int i = 0; i < q.seeds_straight[cc].size(); ++i) {
-                    if (scores[i] <= scores2[i]) {
-                        int f = 0;
-                        float partial_score = scores[i];
-                        for (int j = 0; j < q.seeds_straight[cc].size(); ++j) {
-                            if (scores[j] <= partial_score &&
-                                q.seeds_straight[cc][i].first <= q.seeds_straight[cc][j].first && j != i) {
-                                f = 1;
-                                break;
-                            }
-                        }
-                        if (partial_score < 0.75 &&
-                            (q_dist[q.seeds_straight[cc][i].first + w - 1 - 1] - q_dist[0]) >= SV_minimum_length &&
-                            f == 0) {
-                            breakpoint new_bp = breakpoint{ref_contig, '+',
-                                                           ref_dist[q.seeds_straight[cc][i].second + w - 1 - 1],
-                                                           q.seeds_straight[cc][i].second + w - 1, partial_score};
-                            int bp_index = q.seeds_straight[cc][i].first + w - 1;
-                            int find = 0;
-                            for (int fs_i = q.bp_from_start[bp_index].size() - 1; fs_i >= 0; fs_i--) {
-                                breakpoint last_bp = q.bp_from_start[bp_index][fs_i];
-                                if (last_bp.ref_contig == new_bp.ref_contig && last_bp.dir == new_bp.dir &&
-                                    abs(last_bp.pos - new_bp.pos) < 20000) {
-                                    find = 1;
-                                    if (last_bp.score >= new_bp.score) {
-                                        q.bp_from_start[bp_index][fs_i] = new_bp;
-                                    }
-                                }
-                            }
-                            if (find == 0) {
-                                q.bp_from_start[bp_index].push_back(new_bp);
-                            }
-                            ////begu darim
-                        }
+                    if (brk) {
+                        break;
                     }
-                }
-
-                for (int i = 0; i < q.seeds_straight[cc].size(); ++i) {
-                    if (scores2[i] <= scores[i]) {
-                        int f = 0;
-                        float partial_score = scores2[i];
-                        for (int j = 0; j < q.seeds_straight[cc].size(); ++j) {
-                            if (scores2[j] <= partial_score &&
-                                q.seeds_straight[cc][j].first < q.seeds_straight[cc][i].first && j != i) {
-                                f = 1;
-                                break;
-                            }
-                        }
-                        if (partial_score < 0.75 &&
-                            (q_dist[q_dist.size() - 1] - q_dist[q.seeds_straight[cc][i].first - 1]) >=
-                            SV_minimum_length &&
-                            f == 0) {
-                            breakpoint new_bp = breakpoint{ref_contig, '+',
-                                                           ref_dist[q.seeds_straight[cc][i].second - 1],
-                                                           q.seeds_straight[cc][i].second, partial_score};
-                            int bp_index = q.seeds_straight[cc][i].first;
-                            int find = 0;
-                            for (int fs_i = q.bp_to_end[bp_index].size() - 1; fs_i >= 0; fs_i--) {
-                                breakpoint last_bp = q.bp_to_end[bp_index][fs_i];
-                                if (last_bp.ref_contig == new_bp.ref_contig && last_bp.dir == new_bp.dir &&
-                                    abs(last_bp.pos - new_bp.pos) < 20000) {
-                                    find = 1;
-                                    if (last_bp.score >= new_bp.score) {
-                                        q.bp_to_end[bp_index][fs_i] = new_bp;
+                    for (int j = q.seeds_straight[cc].size() - 1; j > i; --j) {
+                        int f1 = q.seeds_straight[cc][i].first;
+                        int e1 = q.seeds_straight[cc][j].first + w - 1;
+                        if (abs(e1 - f1) > 5) {
+                            int part_len = q_dist[e1 - 1] - q_dist[f1 - 1];
+                            if (part_len > 40000) {
+                                float score =
+                                        1.0 - (score_from_first[(j + 1) * w] - score_from_first[(i + 1) * w - 2]) /
+                                              (part_len * 1.414);
+                                if (score > 0.7) {
+                                    breakpoint b = breakpoint{ref_contig, '+',
+                                                              ref_dist[q.seeds_straight[cc][i].second - 1],
+                                                              q.seeds_straight[cc][i].second, score,
+                                                              float(score * part_len),
+                                                              max(q.seeds_straight[cc][i].second - 2, 0),
+                                                              q.seeds_straight[cc][j].second + 4};
+                                    if (abs(prev_index - cc) > 1) {
+                                        if (straight_counter > 0) {
+                                            if (q.bp.size() < ranked) {
+                                                q.bp.push(best_straight_bp);
+                                            } else if (q.bp.top().long_score < best_straight_bp.long_score) {
+                                                q.bp.pop();
+                                                q.bp.push(best_straight_bp);
+                                            }
+                                        }
+                                        straight_counter = 1;
+                                        best_straight_bp = b;
+                                    } else {
+                                        if (b.long_score > best_straight_bp.long_score) {
+                                            best_straight_bp = b;
+                                        }
                                     }
+                                    prev_index = cc;
+                                    brk = true;
+                                    break;
                                 }
                             }
-                            if (find == 0) {
-                                q.bp_to_end[bp_index].push_back(new_bp);
-                            }
-////begu darim
-
                         }
+
                     }
                 }
             }
             if (q.seeds_reverse[cc].size() > 1) {
-                vector<long> score_to_end = solve_graph_reverse_SV(q.seeds_reverse[cc], q_dist, ref_dist, 1, w);
-                vector<float> scores;
-                for (int i = 0; i < q.seeds_reverse[cc].size(); i++) {
-                    float partial_score = score_to_end[(i + 1) * w] /
-                                          ((q_dist[q_dist.size() - 1] -
-                                            q_dist[q.seeds_reverse[cc][i].first - w + 1 - 1]) * 1.414);
-                    scores.push_back(partial_score);
-                }
-                vector<long> score_from_first = solve_graph_reverse_SV(q.seeds_reverse[cc], q_dist, ref_dist, 0, w);
-                vector<float> scores2;
+                vector<pair<int, int>> ali = q.seeds_reverse[cc];
+                vector<long> score_to_end = solve_graph_reverse_SV(q.seeds_reverse[cc], q_dist, ref_dist, 1);
+                bool brk = false;
                 for (int i = 0; i < q.seeds_reverse[cc].size(); ++i) {
-                    float partial_score = score_from_first[i * w + 1] /
-                                          ((q_dist[q.seeds_reverse[cc][i].first - 1] - q_dist[0]) * 1.414);
-                    scores2.push_back(partial_score);
-                }
-                for (int i = 0; i < q.seeds_reverse[cc].size(); i++) {
-                    if (scores[i] <= scores2[i]) {
-                        float partial_score = scores[i];
-                        int f = 0;
-                        for (int j = 0; j < q.seeds_reverse[cc].size(); j++) {
-                            if (scores[j] <= partial_score &&
-                                q.seeds_reverse[cc][j].first < q.seeds_reverse[cc][i].first &&
-                                j != i) {
-                                f = 1;
-                                break;
-                            }
-                        }
-                        if (partial_score < 0.75 &&
-                            (q_dist[q_dist.size() - 1] - q_dist[q.seeds_reverse[cc][i].first - w + 1 - 1]) >=
-                            SV_minimum_length && f == 0) {
-                            breakpoint new_bp = breakpoint{ref_contig, '-',
-                                                           ref_dist[q.seeds_reverse[cc][i].second + w - 1 - 1],
-                                                           q.seeds_reverse[cc][i].second + w - 1, partial_score};
-                            int bp_index = q.seeds_reverse[cc][i].first - w + 1;
-                            int find = 0;
-                            for (int fs_i = q.bp_to_end[bp_index].size() - 1; fs_i >= 0; fs_i--) {
-                                breakpoint last_bp = q.bp_to_end[bp_index][fs_i];
-                                if (last_bp.ref_contig == new_bp.ref_contig && last_bp.dir == new_bp.dir &&
-                                    abs(last_bp.pos - new_bp.pos) < 20000) {
-                                    find = 1;
-                                    if (last_bp.score >= new_bp.score) {
-                                        q.bp_to_end[bp_index][fs_i] = new_bp;
+                    if (brk) {
+                        break;
+                    }
+                    for (int j = q.seeds_reverse[cc].size() - 1; j > i; --j) {
+                        int e1 = q.seeds_reverse[cc][i].first;
+                        int f1 = q.seeds_reverse[cc][j].first - w + 1;
+                        if (abs(e1 - f1) > 5) {
+                            int part_len = q_dist[e1 - 1] - q_dist[f1 - 1];
+                            if (part_len > 40000) {
+                                float score = 1 - (score_to_end[(j + 1) * w] - score_to_end[(i + 1) * w - 2]) /
+                                                  (part_len * 1.414);
+                                if (score > 0.7) {
+                                    breakpoint b = breakpoint{ref_contig, '-',
+                                                              ref_dist[q.seeds_reverse[cc][i].second - 1],
+                                                              q.seeds_reverse[cc][i].second, score,
+                                                              float(score * part_len),
+                                                              max(q.seeds_reverse[cc][i].second - 2, 0),
+                                                              q.seeds_reverse[cc][j].second + 4};
+                                    if (abs(prev_index_rev - cc) > 1) {
+                                        if (rev_counter > 0) {
+                                            if (q.bp.size() < ranked) {
+                                                q.bp.push(best_rev_bp);
+                                            } else if (q.bp.top().long_score < best_rev_bp.long_score) {
+                                                q.bp.pop();
+                                                q.bp.push(best_rev_bp);
+                                            }
+                                        }
+                                        rev_counter = 1;
+                                        best_rev_bp = b;
+                                    } else {
+                                        if (b.long_score > best_rev_bp.long_score) {
+                                            best_rev_bp = b;
+                                        }
                                     }
+                                    prev_index_rev = cc;
+                                    brk = true;
+                                    break;
                                 }
                             }
-                            if (find == 0) {
-                                q.bp_to_end[bp_index].push_back(new_bp);
-                            }
-                            ///begu darim
                         }
                     }
                 }
-
-                for (int i = 0; i < q.seeds_reverse[cc].size(); ++i) {
-                    if (scores2[i] <= scores[i]) {
-                        float partial_score = scores2[i];
-                        int f = 0;
-                        for (int j = 0; j < q.seeds_reverse[cc].size(); ++j) {
-                            if (scores2[j] <= partial_score &&
-                                q.seeds_reverse[cc][i].first < q.seeds_reverse[cc][j].first && j != i) {
-                                f = 1;
-                                break;
-                            }
-                        }
-
-                        if (partial_score < 0.75 &&
-                            (q_dist[q.seeds_reverse[cc][i].first - 1] - q_dist[0]) >= SV_minimum_length && f == 0) {
-                            breakpoint new_bp = breakpoint{ref_contig, '-', ref_dist[q.seeds_reverse[cc][i].second - 1],
-                                                           q.seeds_reverse[cc][i].second, partial_score};
-                            int bp_index = q.seeds_reverse[cc][i].first;
-                            int find = 0;
-                            for (int fs_i = q.bp_from_start[bp_index].size() - 1; fs_i >= 0; fs_i--) {
-                                breakpoint last_bp = q.bp_from_start[bp_index][fs_i];
-                                if (last_bp.ref_contig == new_bp.ref_contig && last_bp.dir == new_bp.dir &&
-                                    abs(last_bp.pos - new_bp.pos) < 20000) {
-                                    find = 1;
-                                    if (last_bp.score >= new_bp.score) {
-                                        q.bp_from_start[bp_index][fs_i] = new_bp;
-                                    }
-                                }
-                            }
-                            if (find == 0) {
-                                q.bp_from_start[bp_index].push_back(new_bp);
-                            }
-                            ///begu darim
-                        }
-                    }
-                }
+            }
+        }
+        if (q.bp.size() < ranked && best_straight_bp.long_score != 0.0) {
+            q.bp.push(best_straight_bp);
+        } else if (q.bp.size() > 0) {
+            if (q.bp.top().long_score < best_straight_bp.long_score && best_straight_bp.long_score != 0.0) {
+                q.bp.pop();
+                q.bp.push(best_straight_bp);
+            }
+        }
+        if (q.bp.size() < ranked && best_rev_bp.long_score != 0.0) {
+            q.bp.push(best_rev_bp);
+        } else if (q.bp.size() > 0) {
+            if (q.bp.top().long_score < best_rev_bp.long_score && best_rev_bp.long_score != 0.0) {
+                q.bp.pop();
+                q.bp.push(best_rev_bp);
             }
         }
     }
@@ -446,14 +383,9 @@ map<int, vector<seedData>> OMFilter(vector<query> qq, int number, map<int, dis_t
             i.seeds_reverse = v_v_p(ref_lens[ref_id] + 50);
         }
         dis_to_index LN = ref_iterator.second;
-//        chrono::steady_clock::time_point b1 = chrono::steady_clock::now();
         int **a = merge_list(LM, LN);
-//        chrono::steady_clock::time_point b2 = chrono::steady_clock::now();
-//        double b3 = chrono::duration_cast<chrono::milliseconds>(b2 - b1).count() / 1000.;
-        // printf("making matrix: %.3f\n", b3);
         vector<double> ref_dist = ref_cmaps[ref_id];
         int l = ref_lens[ref_id];
-//        chrono::steady_clock::time_point b4 = chrono::steady_clock::now();
         for (int c = 0; c < l; c++) {
             for (int e = 0; e < counter + 30; e++) {
                 if (a[c][e] >= threshold) {
@@ -486,7 +418,7 @@ map<int, vector<seedData>> OMFilter(vector<query> qq, int number, map<int, dis_t
                             ref_start_point = c + 1;
                             while (ref_start_point < s &&
                                    abs(ref_dist[c - 1] - ref_dist[ref_start_point - 1]) <= l_to_seed + band_width) {
-                                q->seeds_straight[ref_start_point].push_back(make_pair(query_index, c));        
+                                q->seeds_straight[ref_start_point].push_back(make_pair(query_index, c));
                                 ref_start_point++;
                             }
 
@@ -522,280 +454,104 @@ map<int, vector<seedData>> OMFilter(vector<query> qq, int number, map<int, dis_t
             }
         }
         destroyTwoDimenArrayOnHeapUsingFree(a, 55000, 8500);
-//        chrono::steady_clock::time_point b5 = chrono::steady_clock::now();
-//        double b6 = chrono::duration_cast<chrono::milliseconds>(b5 - b4).count() / 1000.;
-        // printf("making band: %.3f\n", b6);
-        //Inja thread konim
-//        if (SV_detection == 1) {
-//
-//            calculate_seeds_score_in_band_SV(qq, ref_id, ref_cmaps[ref_id], query_cmaps);
-//            int ali = 1;
-//        } else {
+        if (SV_detection == 1) {
+            calculate_seeds_score_in_band_SV(qq, ref_id, ref_cmaps[ref_id], query_cmaps);
+        } else {
         calculate_seeds_score_in_band(qq, ref_id, ref_cmaps[ref_id], query_cmaps);
-//        }
-//        chrono::steady_clock::time_point b7 = chrono::steady_clock::now();
-//        double b8 = chrono::duration_cast<chrono::milliseconds>(b7 - b5).count() / 1000.;
-        // printf("Doing band alignment: %.3f\n", b8);
+        }
     }
     // print result;
-//    if (SV_detection == 1) {
-//        for (auto & q : qq) {
-//            vector<double> q_dist = query_cmaps[q.number];
-//            map<int, vector<breakpoint>>::reverse_iterator it;
-//            float first_score = 1;
-//            for (it = q.bp_from_start.rbegin(); it != q.bp_from_start.rend(); it++) {
-//                if (it != q.bp_from_start.rbegin()) {
-//                    float min_in_index = 1;
-//                    vector<breakpoint>::iterator v_t = it->second.begin();
-//                    while (v_t != it->second.end()) {
-//                        if (v_t->score >= first_score) {
-//                            v_t = it->second.erase(v_t);
-//                        } else {
-//                            if (v_t->score < min_in_index) {
-//                                min_in_index = v_t->score;
-//                            }
-//                            ++v_t;
-//                        }
-//                    }
-//                    if (min_in_index < first_score) {
-//                        first_score = min_in_index;
-//                    }
-//                } else {
-//                    for (auto & e : it->second) {
-//                        if (e.score < first_score) {
-//                            first_score = e.score;
-//                        }
-//                    }
-//                }
-//            }
-//            first_score = 1.0;
-//            map<int, vector<breakpoint>>::iterator it2;
-//            for (it2 = q.bp_to_end.begin(); it2 != q.bp_to_end.end(); it2++) {
-//                if (it2 != q.bp_to_end.begin()) {
-//                    float min_in_index = 1;
-//                    vector<breakpoint>::iterator v_t = it2->second.begin();
-//                    while (v_t != it2->second.end()) {
-//                        if (v_t->score >= first_score) {
-//                            v_t = it2->second.erase(v_t);
-//                        } else {
-//                            if (v_t->score < min_in_index) {
-//                                min_in_index = v_t->score;
-//                            }
-//                            ++v_t;
-//                        }
-//                    }
-//                    if (min_in_index < first_score) {
-//                        first_score = min_in_index;
-//                    }
-//                } else {
-//                    for (auto & e : it2->second) {
-//                        if (e.score < first_score) {
-//                            first_score = e.score;
-//                        }
-//                    }
-//                }
-//            }
-//            for (auto &pair_start:q.bp_from_start) {
-//                for (auto &pair_end:q.bp_to_end) {
-//                    if (pair_end.first - pair_start.first == 1 || (pair_end.first > pair_start.first &&
-//                                                                   q_dist[pair_end.first - 1] -
-//                                                                   q_dist[pair_start.first - 1] <
-//                                                                   30000) || (pair_end.first < pair_start.first &&
-//                                                                              q_dist[pair_start.first - 1] -
-//                                                                              q_dist[pair_end.first - 1] <
-//                                                                              20000)) {// ya xeili nazdik be ham hastan
-//                        for (auto &start:pair_start.second) {
-//                            for (auto &end : pair_end.second) {
-//                                if ((start.ref_contig != end.ref_contig ||
-//                                     abs(long(start.pos) - long(end.pos)) > 30000) && end.score + start.score < 1.2) {
-//                                    if (!((start.ref_contig == 6 && end.ref_contig == 15) ||
-//                                          (start.ref_contig == 15 && end.ref_contig == 6)) &&
-//                                        !((start.ref_contig == 24 && end.ref_contig == 25) ||
-//                                          (start.ref_contig == 25 && end.ref_contig == 24))) {
-//                                            svout[number] << q.number << "\t" << start.ref_contig << "\t" << start.dir
-//                                                      << "\t"
-//                                                      << long(start.pos) << "\t" << start.score << "\t"
-//                                                      << pair_start.first << "\t" << end.ref_contig << "\t" << end.dir
-//                                                      << "\t"
-//                                                      << long(end.pos) << "\t" << end.score << "\t" << pair_end.first
-//                                                      << "\n";
-//                                        // if (pair_end.first - pair_start.first > 1) {
-//                                        //     int diff = pair_end.first - pair_start.first - 1;
-//                                        //     if (start.dir == '+') {
-//                                        //         svout[number] << q.number << "\t" << start.ref_contig << "\t"
-//                                        //                       << start.dir << "\t"
-//                                        //                       << long(ref_genome_raw[start.ref_contig][max(0,start.label_pos +
-//                                        //                                                                diff - 1)])
-//                                        //                       << "\t"
-//                                        //                       << start.score << "\t" << pair_start.first + diff << "\t"
-//                                        //                       << end.ref_contig << "\t" << end.dir << "\t"
-//                                        //                       << long(end.pos) << "\t" << end.score << "\t"
-//                                        //                       << pair_end.first << "\n";
-//                                        //     } else {
-//                                        //         svout[number] << q.number << "\t" << start.ref_contig << "\t"
-//                                        //                       << start.dir << "\t"
-//                                        //                       << long(ref_genome_raw[start.ref_contig][max(0,start.label_pos -
-//                                        //                                                                diff - 1)])
-//                                        //                       << "\t"
-//                                        //                       << start.score << "\t" << pair_start.first + diff << "\t"
-//                                        //                       << end.ref_contig << "\t" << end.dir << "\t"
-//                                        //                       << long(end.pos) << "\t" << end.score << "\t"
-//                                        //                       << pair_end.first << "\n";
-//
-//                                        //     }
-//                                        //     if (end.dir == '+') {
-//                                        //         svout[number] << q.number << "\t" << start.ref_contig << "\t"
-//                                        //                       << start.dir
-//                                        //                       << "\t" << long(start.pos) << "\t" << start.score << "\t"
-//                                        //                       << pair_start.first << "\t" << end.ref_contig << "\t"
-//                                        //                       << end.dir << "\t"
-//                                        //                       << long(ref_genome_raw[end.ref_contig][max(0,end.label_pos -
-//                                        //                                                              diff - 1)]) << "\t"
-//                                        //                       << end.score
-//                                        //                       << "\t" << pair_end.first - diff << "\n";
-//
-//                                        //     } else {
-//                                        //         svout[number] << q.number << "\t" << start.ref_contig << "\t"
-//                                        //                       << start.dir
-//                                        //                       << "\t" << long(start.pos) << "\t" << start.score << "\t"
-//                                        //                       << pair_start.first << "\t" << end.ref_contig << "\t"
-//                                        //                       << end.dir << "\t"
-//                                        //                       << long(ref_genome_raw[end.ref_contig][max(0,end.label_pos +
-//                                        //                                                              diff - 1)]) << "\t"
-//                                        //                       << end.score
-//                                        //                       << "\t" << pair_end.first - diff << "\n";
-//
-//                                        //     }
-//                                        // }
-//                                    }
-//                                }
-//                            }
-//                        }
-//
-//                    } else if (pair_end.first > pair_start.first) {
-//                        break;
-//                    }
-//                }
-//            }
-//        }
+    if (SV_detection == 1) {
+        for (auto & q : qq){
+            int p = 1 ;
+            vector<seedData> seeds;
+            while (!q.bp.empty()) {
+                breakpoint b = q.bp.top();
+                seedData newSeed = seedData(b.ref_contig,q.number,b.label_pos,p);
+                newSeed.ref_aln_rb = e1;
+                newSeed.ref_aln_lb = f1;
+                p++;
 
-//    } else {
-    for (auto & q : qq) {
-        vector<double> q_dist = query_cmaps[q.number];
-        double len_q = q_dist.back() * 1.414;
-        double mean = 0.0;
-        vector<seedData> seeds;
-        vector<answer> v;
-
-//        if (q.ans.empty()) {
-//            cout << q.number << " empty ans\n";
-//        }
-
-        while (!q.ans.empty()) {
-            v.push_back(q.ans.top());
-            mean = mean + (1 - (q.ans.top().score / len_q));
-            q.ans.pop();
+            }
+            molSeedMap[q.number] = seeds;
         }
-        int p = v.size() - 1;
-        if (p == 0) {
-            if (v[p].dir=='+'){
-                seedData newSeed = seedData(v[p].ref_contig, q.number,v[p].pos-1,p+1 );
-                seeds.push_back(newSeed);
+    } else {
+        for (auto & q : qq) {
+            vector<double> q_dist = query_cmaps[q.number];
+            double len_q = q_dist.back() * 1.414;
+            double mean = 0.0;
+            vector<seedData> seeds;
+            vector<answer> v;
+            while (!q.ans.empty()) {
+                v.push_back(q.ans.top());
+                mean = mean + (1 - (q.ans.top().score / len_q));
+                q.ans.pop();
             }
-            else{
-                seedData newSeed = seedData(v[p].ref_contig * - 1, q.number, ref_lens[v[p].ref_contig]-v[p].pos + 1,p + 1);
-                seeds.push_back(newSeed);
-            }
-
-            // sout[number] << q.number << '\t' << v[p].ref_contig << '\t' << v[p].pos << '\t' << v[p].dir << '\t'
-            //              << v[p].score << "\t";
-            // for (auto &x:v[p].pairs) {
-            //     sout[number] << "(" << x.first << "," << x.second << ")|";
-            // }
-            // sout[number] << endl;
-        } else if (p > 0) {
-            mean = mean / v.size();
-            if ((1 - (v[p].score / len_q)) > 2.2 * mean) {
-                for (int z = p; z > max(p - 10, 0); z--) {
-                    if (v[z].dir=='+'){
-                        seedData newSeed = seedData(v[z].ref_contig, q.number,v[z].pos-1,p-z+1 );
-                        seeds.push_back(newSeed);
-                    }
-                    else{
-                        seedData newSeed = seedData(v[z].ref_contig * - 1, q.number, ref_lens[v[z].ref_contig]-v[z].pos + 1,p -z + 1);
-                        seeds.push_back(newSeed);
-                    }
-                    // sout[number] << q.number << '\t' << v[z].ref_contig << '\t' << v[z].pos << '\t' << v[z].dir
-                    //              << '\t'
-                    //              << v[z].score << "\t";
-                    // for (auto &x:v[z].pairs) {
-                    //     sout[number] << "(" << x.first << "," << x.second << ")|";
-                    // }
-                    // sout[number] << endl;
+            int p = v.size() - 1;
+            if (p == 0) {
+                if (v[p].dir=='+'){
+                    seedData newSeed = seedData(v[p].ref_contig, q.number,v[p].pos-1,p+1 );
+                    seeds.push_back(newSeed);
                 }
-            } else if ((1 - (v[p].score / len_q)) > 1.7 * mean) {
-                for (int z = p; z > max(p - 50, 0); z--) {
-                    if (v[z].dir=='+'){
-                        seedData newSeed = seedData(v[z].ref_contig, q.number,v[z].pos-1,p-z+1 );
-                        seeds.push_back(newSeed);
-                    }
-                    else{
-                        seedData newSeed = seedData(v[z].ref_contig * - 1, q.number, ref_lens[v[z].ref_contig]-v[z].pos + 1,p -z + 1);
-                        seeds.push_back(newSeed);
-                    }
-                    // sout[number] << q.number << '\t' << v[z].ref_contig << '\t' << v[z].pos << '\t' << v[z].dir
-                    //              << '\t'
-                    //              << v[z].score << "\t";
-                    // for (auto &x:v[z].pairs) {
-                    //     sout[number] << "(" << x.first << "," << x.second << ")|";
-                    // }
-                    // sout[number] << endl;
+                else{
+                    seedData newSeed = seedData(v[p].ref_contig * - 1, q.number, ref_lens[v[p].ref_contig]-v[p].pos + 1,p + 1);
+                    seeds.push_back(newSeed);
                 }
-            } else if (1 - (v[p].score / len_q) > 1.5 * mean) {
-                for (int z = p; z > max(p - 100, 0); z--) {
-                    if (v[z].dir=='+'){
-                        seedData newSeed = seedData(v[z].ref_contig, q.number,v[z].pos-1,p-z+1 );
-                        seeds.push_back(newSeed);
+            } else if (p > 0) {
+                mean = mean / v.size();
+                if ((1 - (v[p].score / len_q)) > 2.2 * mean) {
+                    for (int z = p; z > max(p - 10, 0); z--) {
+                        if (v[z].dir=='+'){
+                            seedData newSeed = seedData(v[z].ref_contig, q.number,v[z].pos-1,p-z+1 );
+                            seeds.push_back(newSeed);
+                        }
+                        else{
+                            seedData newSeed = seedData(v[z].ref_contig * - 1, q.number, ref_lens[v[z].ref_contig]-v[z].pos + 1,p -z + 1);
+                            seeds.push_back(newSeed);
+                        }
                     }
-                    else{
-                        seedData newSeed = seedData(v[z].ref_contig * - 1, q.number, ref_lens[v[z].ref_contig]-v[z].pos + 1,p -z + 1);
-                        seeds.push_back(newSeed);
+                } else if ((1 - (v[p].score / len_q)) > 1.7 * mean) {
+                    for (int z = p; z > max(p - 50, 0); z--) {
+                        if (v[z].dir=='+'){
+                            seedData newSeed = seedData(v[z].ref_contig, q.number,v[z].pos-1,p-z+1 );
+                            seeds.push_back(newSeed);
+                        }
+                        else{
+                            seedData newSeed = seedData(v[z].ref_contig * - 1, q.number, ref_lens[v[z].ref_contig]-v[z].pos + 1,p -z + 1);
+                            seeds.push_back(newSeed);
+                        }
                     }
-                    // sout[number] << q.number << '\t' << v[z].ref_contig << '\t' << v[z].pos << '\t' << v[z].dir
-                    //              << '\t'
-                    //              << v[z].score << "\t";
-                    // for (auto &x:v[z].pairs) {
-                    //     sout[number] << "(" << x.first << "," << x.second << ")|";
-                    // }
-                    // sout[number] << endl;
-                }
-            } else {
-                int s_counter = 0;
-                while (p >= 0) {
-                    s_counter++;
-                    if (v[p].dir=='+'){
-                        seedData newSeed = seedData(v[p].ref_contig, q.number, v[p].pos-1, s_counter);
-                        seeds.push_back(newSeed);
+                } else if (1 - (v[p].score / len_q) > 1.5 * mean) {
+                    for (int z = p; z > max(p - 100, 0); z--) {
+                        if (v[z].dir=='+'){
+                            seedData newSeed = seedData(v[z].ref_contig, q.number,v[z].pos-1,p-z+1 );
+                            seeds.push_back(newSeed);
+                        }
+                        else{
+                            seedData newSeed = seedData(v[z].ref_contig * - 1, q.number, ref_lens[v[z].ref_contig]-v[z].pos + 1,p -z + 1);
+                            seeds.push_back(newSeed);
+                        }
                     }
-                    else{
-                        seedData newSeed = seedData(v[p].ref_contig * - 1, q.number, ref_lens[v[p].ref_contig]-v[p].pos + 1,s_counter);
-                        seeds.push_back(newSeed);
+                } else {
+                    int s_counter = 0;
+                    while (p >= 0) {
+                        s_counter++;
+                        if (v[p].dir=='+'){
+                            seedData newSeed = seedData(v[p].ref_contig, q.number, v[p].pos-1, s_counter);
+                            seeds.push_back(newSeed);
+                        }
+                        else{
+                            seedData newSeed = seedData(v[p].ref_contig * - 1, q.number, ref_lens[v[p].ref_contig]-v[p].pos + 1,s_counter);
+                            seeds.push_back(newSeed);
+                        }
+                        p--;
                     }
-
-                    // sout[number] << q.number << '\t' << v[p].ref_contig << '\t' << v[p].pos << '\t' << v[p].dir
-                    //              << '\t'
-                    //              << v[p].score << "\t";
-                    // for (auto &x:v[p].pairs) {
-                    //     sout[number] << "(" << x.first << "," << x.second << ")|";
-                    // }
-                    // sout[number] << endl;
-                    p--;
                 }
             }
+            //Cal aligning function
+            molSeedMap[q.number] = seeds;
+    //        cout << q.number << " m_id_OMF " << seeds.size() << " seeds\n";
         }
-        //Cal aligning function
-        molSeedMap[q.number] = seeds;
-//        cout << q.number << " m_id_OMF " << seeds.size() << " seeds\n";
     }
     return molSeedMap;
 }
