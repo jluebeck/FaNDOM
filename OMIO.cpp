@@ -261,7 +261,7 @@ map<int, vector<seedData>> parse_seeds(const string &fname, map<int, vector<doub
 }
 
 void write_xmap_alignment(vector<Alignment> &aln_list, map<int,vector<double>> &cmaps_ref, map<int,vector<double>> &mol_map,
-                          const string &outname, const string &argstring) {
+                          const string &outname, const string &argstring, const bool is_mm) {
 
     ofstream outfile;
     outfile.open(outname);
@@ -279,6 +279,9 @@ void write_xmap_alignment(vector<Alignment> &aln_list, map<int,vector<double>> &
     //write alignments
     size_t a_pair_ind = 1;
     for (const auto &aln_struct: aln_list) {
+        if ((!is_mm) && aln_struct.is_secondary) {
+            continue;
+        }
         int raw_ref_id = aln_struct.ref_id;
         int ref_id = abs(raw_ref_id);
         int mol_id = aln_struct.mol_id;
@@ -378,7 +381,7 @@ void write_xmap_alignment(vector<Alignment> &aln_list, map<int,vector<double>> &
 
 //TODO: REFACTOR
 void write_fda_alignment(vector<Alignment> &aln_list, map<int,vector<double>> &cmaps_ref, map<int,vector<double>> &mol_map,
-                     const string &outname) {
+                     const string &outname, const bool is_mm) {
 
     ofstream outfile;
     outfile.open(outname);
@@ -390,6 +393,9 @@ void write_fda_alignment(vector<Alignment> &aln_list, map<int,vector<double>> &c
 
     size_t a_pair_ind = 0;
     for (const auto &aln_struct: aln_list) {
+        if ((!is_mm) && aln_struct.is_secondary) {
+            continue;
+        }
         int raw_ref_id = aln_struct.ref_id;
         int ref_id = abs(raw_ref_id);
         int mol_id = aln_struct.mol_id;

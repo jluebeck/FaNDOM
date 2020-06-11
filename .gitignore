@@ -8,6 +8,7 @@ cmake-build-default/
 CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
+log/
 
 # User-specific stuff:
 .idea/workspace.xml

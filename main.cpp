@@ -23,12 +23,15 @@ const int lookback = 5;
 const int min_map_lab = 10;
 const int min_map_len = 25000;
 float aln_padding = 1000;
+bool multimap_mols = false;
 
 //Data filtering
 int SV_detection = 0;
 int n_threads = 1;
 int min_aln_len = 6;
-bool subsect = false;
+float aln_prop_thresh_to_remap = 0.7;
+double aln_len_thresh_to_remap = 25000.;
+//bool subsect = false;
 map<int,vector<pair<int,int>>> bed_data;
 
 
@@ -62,26 +65,21 @@ map<int, vector<Alignment>> run_aln(map<int,vector<double>> &ref_cmaps, map<int,
                 vector<vector<pair<int, int>>> previous((b - a),
                                                         vector<pair<int, int>>(mol_vect.size() - 1, {-1, -1}));
                 dp_aln(S, previous, mol_vect, ref_vect, a, b, lookback);
-                Alignment curr_aln = dp_backtracking(S, previous, a, ref_id, mol_id);
-                curr_aln.seed_num = s.seed_num;
-//                    cout << "f\n";
 
-                //check alignment length to see if usable
-//                    cout << curr_aln.alignment.size() << " asize " << curr_aln.ref_id << " " << curr_aln.mol_id << " " << a << " " << b << " " << mol_vect.back() << "\n";
-                if (curr_aln.alignment.empty()) {
-                    cout << "0 len alignment for " << curr_aln.ref_id << " " << curr_aln.mol_id << " " << a << " " << b << " " << mol_vect.back() << "\n";
-                    continue;
+                pair<int,int> max_pair =  get_max_pair(S);
+                double curr_score = S[max_pair.first][max_pair.second];
+                if (multimap_mols || curr_score > best_score) {
+                    Alignment curr_aln = dp_backtracking(S, previous, max_pair, a, ref_id, mol_id);
+                    curr_aln.seed_num = s.seed_num;
+                    if (curr_aln.alignment.size() < min_aln_len ||
+                        curr_score / curr_aln.alignment.size() < 5000) { //TODO: ADD A BETTER SCORE THRESHOLD
+                        continue;
+                    }
+                    mol_alns.push_back(curr_aln);
                 }
-                double curr_score = get<2>(curr_aln.alignment.back());
-                if (curr_aln.alignment.size() < min_aln_len || curr_score/curr_aln.alignment.size() < 5000) { //TODO: ADD A BETTER SCORE THRESHOLD
-                    continue;
-                }
-//                    cout << "f1\n";
-
                 if (curr_score > best_score) {
                     best_score = curr_score;
                 }
-                mol_alns.push_back(curr_aln);
             }
         }
         //check if secondary alignments and set the status
@@ -233,7 +231,10 @@ tuple<string,string,string,string,string,string> parse_args(int argc, char *argv
             exit(0);
 //        } else if ((string(argv[i]).rfind("-svdir=", 0) == 0)) {
 //            sv_dir = string(argv[i]).substr(string(argv[i]).find('=') + 1);
+        } else if ((string(argv[i]).rfind("-multimap", 0) == 0)) {
+            multimap_mols = true;
         }
+        
     }
 
     if (ref_cmap_file.empty()) {
@@ -392,6 +393,12 @@ int main (int argc, char *argv[]) {
     cout << "Finished molecule alignment. \n" << combined_results.size() << " total alignments\n";
 
     //------------------------------------------------------
+
+    unordered_set<int> mols_to_remap = get_remap_mol_ids(combined_results, mol_maps, aln_prop_thresh_to_remap,
+            aln_len_thresh_to_remap);
+
+    cout << mols_to_remap.size() << " molecules will undergo partial-seeding.\n";
+
     //write output
     //TODO: write this on the fly
     chrono::steady_clock::time_point outWallS = chrono::steady_clock::now();
@@ -404,11 +411,11 @@ int main (int argc, char *argv[]) {
             argstring += " ";
             argstring += argv[i];
         }
-        write_xmap_alignment(combined_results, ref_cmaps, mol_maps, outname, argstring);
+        write_xmap_alignment(combined_results, ref_cmaps, mol_maps, outname, argstring, multimap_mols);
 
     } else {
         outname+=".fda";
-        write_fda_alignment(combined_results, ref_cmaps, mol_maps, outname);
+        write_fda_alignment(combined_results, ref_cmaps, mol_maps, outname, multimap_mols);
     }
     chrono::steady_clock::time_point outWallE = chrono::steady_clock::now();
 

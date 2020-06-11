@@ -22,6 +22,10 @@ void dp_aln(vector<vector<double>> &S, vector<vector<pair<int,int>>> &previous, 
             vector<double> &ref_vect, int a, int b, int lookback);
 
 //
-Alignment dp_backtracking(vector<vector<double>> &S, vector<vector<pair<int,int>>> &previous, int a, int ref_id, int mol_id);
+pair<int,int> get_max_pair(const vector<vector<double>> &S);
+
+//
+Alignment dp_backtracking(vector<vector<double>> &S, vector<vector<pair<int,int>>> &previous, pair<int,int> max_pair,
+        int a, int ref_id, int mol_id);
 
 #endif //FANDOM_FANDOMALIGNER_H
