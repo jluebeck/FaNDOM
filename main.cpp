@@ -181,6 +181,7 @@ tuple<string,string,string,string,string,string> parse_args(int argc, char *argv
         } else if (string(argv[i]).rfind("-r=", 0) == 0) {
             ref_cmap_file = string(argv[i]).substr(string(argv[i]).find('=') + 1);
 
+
         } else if (string(argv[i]).rfind("-q=", 0) == 0) {
             queryfile = string(argv[i]).substr(string(argv[i]).find('=') + 1);
 
@@ -282,6 +283,8 @@ int main (int argc, char *argv[]) {
     //get args
     string ref_cmap_file, queryfile, bedfile, keyfile, sample_name, outfmt;
     tie(ref_cmap_file,queryfile,bedfile,keyfile, sample_name, outfmt) = parse_args(argc,argv);
+
+
 //    if (!bedfile.empty()) {
 //        subsect = true;
 //    }
@@ -368,8 +371,13 @@ int main (int argc, char *argv[]) {
     //launch alignments
     chrono::steady_clock::time_point alnWallS = chrono::steady_clock::now();
     cout << "Performing alignments\n";
+<<<<<<< HEAD
     vector<future< map<int, vector<Alignment>>>> futs;
     vector<promise< map<int, vector<Alignment>>>> promises(n_threads);
+=======
+//    vector<future< map<int, vector<Alignment>>>> futs;
+//    vector<promise< map<int, vector<Alignment>>>> promises(n_threads);
+>>>>>>> 12205ee70bde3b17989f3f2a8719bc0127e9577d
 //    for (int i = 0; i < n_threads; i++) {
 ////        futs.push_back(async(launch::async, run_aln, ref(ref_cmaps), ref(mol_maps), ref(mol_seed_data), ref(mol_id_queue)));
 //        futs.push_back(async(launch:: async, filt_and_aln, i, ref(ref_cmaps), ref(mol_maps), ref(ref_DTI),
@@ -386,8 +394,13 @@ int main (int argc, char *argv[]) {
 //            combined_results.insert(combined_results.end(),x.second.begin(),x.second.end());
 //        }
 //    }
+<<<<<<< HEAD
 //    chrono::steady_clock::time_point alnWallE = chrono::steady_clock::now();
 //    cout << "Finished molecule alignment. \n" << combined_results.size() << " total alignments\n";
+=======
+    chrono::steady_clock::time_point alnWallE = chrono::steady_clock::now();
+    cout << "Finished molecule alignment. \n" << combined_results.size() << " total alignments\n";
+>>>>>>> 12205ee70bde3b17989f3f2a8719bc0127e9577d
 
     //------------------------------------------------------
 
