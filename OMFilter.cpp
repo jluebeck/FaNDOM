@@ -464,13 +464,22 @@ map<int, vector<seedData>> OMFilter(vector<query> qq, int number, map<int, dis_t
         for (auto & q : qq){
             int p = 1 ;
             vector<seedData> seeds;
+            cout << "Number OF partial\t"<<q.bp.size()<<endl;
             while (!q.bp.empty()) {
                 breakpoint b = q.bp.top();
-                seedData newSeed = seedData(b.ref_contig, q.number, b.label_pos, p);
-                newSeed.ref_aln_rb = b.e1;
-                newSeed.ref_aln_lb = b.f1;
+                if (b.dir == '+'){
+                    seedData newSeed = seedData(b.ref_contig, q.number, b.label_pos, p);
+                    newSeed.ref_aln_rb = b.e1;
+                    newSeed.ref_aln_lb = b.f1;
+                    seeds.push_back(newSeed);
+                }
+                else{
+                    seedData newSeed = seedData(b.ref_contig * -1 , q.number, ref_lens[b.ref_contig] - b.label_pos, p);
+                    newSeed.ref_aln_rb = ref_lens[b.ref_contig] -b.e1;
+                    newSeed.ref_aln_lb = ref_lens[b.ref_contig] - b.f1;
+                    seeds.push_back(newSeed);
+                }
                 p++;
-
             }
             molSeedMap[q.number] = seeds;
         }

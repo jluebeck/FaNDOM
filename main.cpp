@@ -73,7 +73,7 @@ map<int, vector<Alignment>> run_aln(map<int,vector<double>> &ref_cmaps, map<int,
                     Alignment curr_aln = dp_backtracking(S, previous, max_pair, a, ref_id, mol_id);
                     curr_aln.seed_num = s.seed_num;
                     if (curr_aln.alignment.size() < min_aln_len ||
-                        curr_score / curr_aln.alignment.size() < 10000) { //TODO: ADD A BETTER SCORE THRESHOLD
+                        curr_score / curr_aln.alignment.size() < 7500) { //TODO: ADD A BETTER SCORE THRESHOLD
                         continue;
                     }
                     mol_alns.push_back(curr_aln);
