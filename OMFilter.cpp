@@ -249,8 +249,8 @@ void calculate_seeds_score_in_band_SV(vector<query> &qq, int ref_contig, vector<
                                                               ref_dist[q.seeds_straight[cc][i].second - 1],
                                                               q.seeds_straight[cc][i].second, score,
                                                               float(score * part_len),
-                                                              max(q.seeds_straight[cc][i].second - 2, 0),
-                                                              q.seeds_straight[cc][j].second + 4};
+                                                              max(q.seeds_straight[cc][i].second - 5, 0),
+                                                              q.seeds_straight[cc][j].second + 7};
                                     if (abs(prev_index - cc) > 1) {
                                         if (straight_counter > 0) {
                                             if (q.bp.size() < ranked) {
@@ -298,8 +298,8 @@ void calculate_seeds_score_in_band_SV(vector<query> &qq, int ref_contig, vector<
                                                               ref_dist[q.seeds_reverse[cc][i].second - 1],
                                                               q.seeds_reverse[cc][i].second, score,
                                                               float(score * part_len),
-                                                              max(q.seeds_reverse[cc][i].second - 2, 0),
-                                                              q.seeds_reverse[cc][j].second + 4};
+                                                              max(q.seeds_reverse[cc][i].second - 5, 0),
+                                                              q.seeds_reverse[cc][j].second + 7};
                                     if (abs(prev_index_rev - cc) > 1) {
                                         if (rev_counter > 0) {
                                             if (q.bp.size() < ranked) {
@@ -464,7 +464,7 @@ map<int, vector<seedData>> OMFilter(vector<query> qq, int number, map<int, dis_t
         for (auto & q : qq){
             int p = 1 ;
             vector<seedData> seeds;
-            cout << "Number OF partial\t"<<q.bp.size()<<endl;
+//            cout << "Number OF partial\t"<<q.bp.size()<<endl;
             while (!q.bp.empty()) {
                 breakpoint b = q.bp.top();
                 q.bp.pop();
