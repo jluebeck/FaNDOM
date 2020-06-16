@@ -24,9 +24,10 @@ const int min_map_lab = 10;
 const int min_map_len = 25000;
 float aln_padding = 1000;
 bool multimap_mols = false;
-
+int score_limit = 5000;
 //Data filtering
 int SV_detection = 0;
+int partial_alignment = 1;
 int n_threads = 1;
 int min_aln_len = 6;
 float aln_prop_thresh_to_remap = 0.7;
@@ -73,7 +74,7 @@ map<int, vector<Alignment>> run_aln(map<int,vector<double>> &ref_cmaps, map<int,
                     Alignment curr_aln = dp_backtracking(S, previous, max_pair, a, ref_id, mol_id);
                     curr_aln.seed_num = s.seed_num;
                     if (curr_aln.alignment.size() < min_aln_len ||
-                        curr_score / curr_aln.alignment.size() < 7500) { //TODO: ADD A BETTER SCORE THRESHOLD
+                        curr_score / curr_aln.alignment.size() < score_limit) { //TODO: ADD A BETTER SCORE THRESHOLD
                         continue;
                     }
                     mol_alns.push_back(curr_aln);
@@ -394,33 +395,35 @@ int main (int argc, char *argv[]) {
     cout << "Finished molecule alignment. \n" << combined_results.size() << " total alignments\n";
 
     //------------------------------------------------------
+    if(partial_alignment==1){
+        unordered_set<int> mols_to_remap = get_remap_mol_ids(combined_results, mol_maps, aln_prop_thresh_to_remap,
+                                                             aln_len_thresh_to_remap);
 
-    unordered_set<int> mols_to_remap = get_remap_mol_ids(combined_results, mol_maps, aln_prop_thresh_to_remap,
-            aln_len_thresh_to_remap);
-
-    cout << mols_to_remap.size() << " molecules will undergo partial-seeding.\n";
-    ////////////////////
-    //Here again make thread and run partial alignments for remaining molecules
-    if (mols_to_remap.size() > 0) {
-        cout << "Performing partial alignments\n";
-        threadsafe_queue<int> mol_id_queue_partial;
-        for (auto &i: mols_to_remap) {
-            mol_id_queue_partial.push(i);
-        }
-        SV_detection = 1;
-        multimap_mols = true;
+        cout << mols_to_remap.size() << " molecules will undergo partial-seeding.\n";
+        ////////////////////
+        score_limit = 4500;
+        //Here again make thread and run partial alignments for remaining molecules
+        if (mols_to_remap.size() > 0) {
+            cout << "Performing partial alignments\n";
+            threadsafe_queue<int> mol_id_queue_partial;
+            for (auto &i: mols_to_remap) {
+                mol_id_queue_partial.push(i);
+            }
+            SV_detection = 1;
+            multimap_mols = true;
 //        cout<<"SALAM\t"<<futs.size()<<endl;
-        vector<future< map<int, vector<Alignment>>>> futs_partial;
-        vector<promise< map<int, vector<Alignment>>>> promises_partial(n_threads);
-        for (int i = 0; i < n_threads; i++) {
-            futs_partial.push_back(async(launch::async, filt_and_aln, i, ref(ref_cmaps), ref(mol_maps), ref(ref_DTI),
-                                 ref(ref_num_to_length), ref(mol_id_queue_partial)));
-        }
-        for (auto &f: futs_partial) {
-            map<int, vector<Alignment>> curr_result = f.get();
-            for (const auto &x: curr_result) {
-                combined_results.reserve(combined_results.size() + distance(x.second.begin(), x.second.end()));
-                combined_results.insert(combined_results.end(), x.second.begin(), x.second.end());
+            vector<future< map<int, vector<Alignment>>>> futs_partial;
+            vector<promise< map<int, vector<Alignment>>>> promises_partial(n_threads);
+            for (int i = 0; i < n_threads; i++) {
+                futs_partial.push_back(async(launch::async, filt_and_aln, i, ref(ref_cmaps), ref(mol_maps), ref(ref_DTI),
+                                             ref(ref_num_to_length), ref(mol_id_queue_partial)));
+            }
+            for (auto &f: futs_partial) {
+                map<int, vector<Alignment>> curr_result = f.get();
+                for (const auto &x: curr_result) {
+                    combined_results.reserve(combined_results.size() + distance(x.second.begin(), x.second.end()));
+                    combined_results.insert(combined_results.end(), x.second.begin(), x.second.end());
+                }
             }
         }
     }

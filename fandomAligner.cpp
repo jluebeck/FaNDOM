@@ -4,7 +4,7 @@ using namespace std;
 
 //Alignment
 double basic_score(double d_r, double d_m, int u_m, int u_r) {
-    double delta = pow(abs(d_r - d_m),1.1);
+    double delta = pow(abs(d_r - d_m),1.2);
     double fl = 5000*(u_r + u_m);
     return 10000 - (fl + delta);
 }
