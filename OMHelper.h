@@ -30,6 +30,7 @@ struct Alignment {
     int mol_id;
     int is_multimapped = 0;
     int is_secondary = 0;
+    int is_partial = 0;
     int seed_num = 0;
 
     Alignment(vector<tuple<int,int,double>> &new_alignment, int R_ID, int M_ID) {

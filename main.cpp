@@ -73,6 +73,9 @@ map<int, vector<Alignment>> run_aln(map<int,vector<double>> &ref_cmaps, map<int,
                 if (multimap_mols || curr_score > best_score) {
                     Alignment curr_aln = dp_backtracking(S, previous, max_pair, a, ref_id, mol_id);
                     curr_aln.seed_num = s.seed_num;
+                    if (SV_detection) {
+                        curr_aln.is_partial = 1;
+                    }
                     if (curr_aln.alignment.size() < min_aln_len ||
                         curr_score / curr_aln.alignment.size() < score_limit) { //TODO: ADD A BETTER SCORE THRESHOLD
                         continue;
