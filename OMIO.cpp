@@ -279,7 +279,7 @@ void write_xmap_alignment(vector<Alignment> &aln_list, map<int,vector<double>> &
     //write alignments
     size_t a_pair_ind = 1;
     for (const auto &aln_struct: aln_list) {
-        if ((!is_mm) && aln_struct.is_secondary) {
+        if (!is_mm && aln_struct.is_secondary && !aln_struct.is_partial) {
             continue;
         }
         int raw_ref_id = aln_struct.ref_id;
