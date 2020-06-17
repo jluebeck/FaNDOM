@@ -401,7 +401,9 @@ int main (int argc, char *argv[]) {
 
         cout << mols_to_remap.size() << " molecules will undergo partial-seeding.\n";
         ////////////////////
-        score_limit = 4500;
+        score_limit =1000;
+        re_scale_par = 1.5;
+        penalty_par = 7500;
         //Here again make thread and run partial alignments for remaining molecules
         if (mols_to_remap.size() > 0) {
             cout << "Performing partial alignments\n";

@@ -18,6 +18,7 @@ using namespace std;
 extern int w;
 extern int tolerance;
 extern int ranked;
+extern int ranked_partial;
 extern int threshold;
 extern int band_width;
 
@@ -52,10 +53,13 @@ struct breakpoint {
     float long_score;
     int f1;//refrence
     int e1;//refrence
+    int query_start;
+    int query_end;
     bool operator<(const breakpoint &rhs) const {
         return long_score > rhs.long_score;
     }
 };
+bool compareBP(breakpoint a , breakpoint b );
 //This struct is  for each query
 struct query {
     int number; // query id
@@ -90,14 +94,14 @@ int **merge_list(dis_to_index LM, dis_to_index LN);
 
 //void calculate_seeds_score_in_band(vector<query> &qq, int ref_contig);
 void calculate_seeds_score_in_band(vector<query> &qq, int ref_contig, vector<double> &ref_dist,
-                                   map<int, vector<double>> &query_genome);
+        map<int, vector<double>> &query_genome);
 
 //void calculate_seeds_score_in_band_SV(vector<query> &qq, int ref_contig) {
 void calculate_seeds_score_in_band_SV(vector<query> &qq, int ref_contig, vector<double> &ref_dist,
-                                      map<int, vector<double>> &query_genome);
+        map<int, vector<double>> &query_genome);
 
 map<int, vector<seedData>> OMFilter(vector<query> qq, int number, map<int, dis_to_index> &ref_list,
-        map<int, int> &ref_lens, map<int,vector<double>> &ref_cmaps, map<int,vector<double>> &query_cmaps,
-        int SV_detection);
+map<int, int> &ref_lens, map<int,vector<double>> &ref_cmaps, map<int,vector<double>> &query_cmaps,
+int SV_detection);
 
 #endif //FANDOM_OMFILTER_H
