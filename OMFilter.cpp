@@ -255,7 +255,7 @@ breakpoint b = breakpoint{ref_contig, '+',
                           q.seeds_straight[cc][i].second, score,
                           float(score * part_len),
                           max(q.seeds_straight[cc][i].second - 33, 0),
-                          q.seeds_straight[cc][j].second + 31, f1, e1};
+                          min(int(ref_dist.size())-1,q.seeds_straight[cc][j].second + 31), f1, e1};
 if (abs(prev_index - cc) > 1) {
 if (straight_counter > 0) {
 if (q.bp.size() < ranked_partial) {
@@ -304,7 +304,7 @@ breakpoint b = breakpoint{ref_contig, '-',
                           q.seeds_reverse[cc][i].second, score,
                           float(score * part_len),
                           max(q.seeds_reverse[cc][i].second - 33, 0),
-                          q.seeds_reverse[cc][j].second + 31, f1, e1};
+                          min(int(ref_dist.size())-1,q.seeds_reverse[cc][j].second + 31), f1, e1};
 if (abs(prev_index_rev - cc) > 1) {
 if (rev_counter > 0) {
 if (q.bp.size() < ranked_partial) {
