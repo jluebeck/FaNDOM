@@ -30,7 +30,7 @@ int SV_detection = 0;
 int partial_alignment = 1;
 int n_threads = 1;
 int min_aln_len = 6;
-float aln_prop_thresh_to_remap = 0.7;
+float aln_prop_thresh_to_remap = 0.8;
 double aln_len_thresh_to_remap = 25000.;
 //bool subsect = false;
 map<int,vector<pair<int,int>>> bed_data;
@@ -70,7 +70,7 @@ map<int, vector<Alignment>> run_aln(map<int,vector<double>> &ref_cmaps, map<int,
 
                 pair<int,int> max_pair =  get_max_pair(S);
                 double curr_score = S[max_pair.first][max_pair.second];
-                if (multimap_mols || curr_score > best_score) {
+                if (multimap_mols || curr_score > best_score || SV_detection) {
                     Alignment curr_aln = dp_backtracking(S, previous, max_pair, a, ref_id, mol_id);
                     curr_aln.seed_num = s.seed_num;
                     if (SV_detection) {
@@ -396,7 +396,7 @@ int main (int argc, char *argv[]) {
 
     chrono::steady_clock::time_point alnWallE = chrono::steady_clock::now();
     cout << "Finished molecule alignment. \n" << combined_results.size() << " total alignments\n";
-
+    vector<Alignment> combined_results_partial;
     //------------------------------------------------------
     if(partial_alignment==1){
         unordered_set<int> mols_to_remap = get_remap_mol_ids(combined_results, mol_maps, aln_prop_thresh_to_remap,
@@ -405,7 +405,7 @@ int main (int argc, char *argv[]) {
         cout << mols_to_remap.size() << " molecules will undergo partial-seeding.\n";
         ////////////////////
         score_limit =1000;
-        re_scale_par = 1.5;
+        re_scale_par = 1.4;
         penalty_par = 7500;
         //Here again make thread and run partial alignments for remaining molecules
         if (mols_to_remap.size() > 0) {
@@ -413,9 +413,10 @@ int main (int argc, char *argv[]) {
             threadsafe_queue<int> mol_id_queue_partial;
             for (auto &i: mols_to_remap) {
                 mol_id_queue_partial.push(i);
+//                cout<<i<<endl;
             }
             SV_detection = 1;
-            multimap_mols = true;
+//            multimap_mols = true;
 //        cout<<"SALAM\t"<<futs.size()<<endl;
             vector<future< map<int, vector<Alignment>>>> futs_partial;
             vector<promise< map<int, vector<Alignment>>>> promises_partial(n_threads);
@@ -423,11 +424,12 @@ int main (int argc, char *argv[]) {
                 futs_partial.push_back(async(launch::async, filt_and_aln, i, ref(ref_cmaps), ref(mol_maps), ref(ref_DTI),
                                              ref(ref_num_to_length), ref(mol_id_queue_partial)));
             }
+
             for (auto &f: futs_partial) {
                 map<int, vector<Alignment>> curr_result = f.get();
                 for (const auto &x: curr_result) {
-                    combined_results.reserve(combined_results.size() + distance(x.second.begin(), x.second.end()));
-                    combined_results.insert(combined_results.end(), x.second.begin(), x.second.end());
+                    combined_results_partial.reserve(combined_results_partial.size() + distance(x.second.begin(), x.second.end()));
+                    combined_results_partial.insert(combined_results_partial.end(), x.second.begin(), x.second.end());
                 }
             }
         }
@@ -440,13 +442,16 @@ int main (int argc, char *argv[]) {
     string outname = sample_name;
     cout << "Writing alignments\n";
     if (outfmt == "xmap") {
-        outname+=".xmap";
+        string fulname = "";
+        fulname= outname+ ".xmap";
         string argstring;
         for (int i = 0; i < argc; ++i) {
             argstring += " ";
             argstring += argv[i];
         }
-        write_xmap_alignment(combined_results, ref_cmaps, mol_maps, outname, argstring, multimap_mols);
+        write_xmap_alignment(combined_results, ref_cmaps, mol_maps, fulname, argstring, multimap_mols);
+        string partial_name = outname + "_partial.xmap";
+        write_xmap_alignment(combined_results_partial, ref_cmaps, mol_maps, partial_name, argstring, multimap_mols);
 
     } else {
         outname+=".fda";

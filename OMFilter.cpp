@@ -106,7 +106,7 @@ return a;
 void calculate_seeds_score_in_band(vector<query> &qq, int ref_contig, vector<double> &ref_dist,
         map<int, vector<double>> &query_genome) {
 //    vector<double> ref_dist = ref_genome_raw[ref_contig];
-for (auto & q : qq) {
+for (auto &q : qq) {
 if (q.find_loc == 0) {
 vector<double> q_dist = query_genome[q.number];
 double query_len = (q_dist.back() - q_dist[0]) * 1.414;
@@ -356,15 +356,16 @@ q.bp.push(best_rev_bp);
 //number is same as query_id
 //ref_lens is ref_num_to_length
 
-map<int, vector<seedData>> OMFilter(vector<query> qq, int number, map<int, dis_to_index> &ref_list, map<int, int> &ref_lens,
-        map<int,vector<double>> &ref_cmaps, map<int,vector<double>> &query_cmaps, const int SV_detection) {
+map<int, vector<seedData>>
+        OMFilter(vector<query> qq, int number, map<int, dis_to_index> &ref_list, map<int, int> &ref_lens,
+        map<int, vector<double>> &ref_cmaps, map<int, vector<double>> &query_cmaps, const int SV_detection) {
 
 vector<int> index_to_query = vector<int>(8501);
 map<int, vector<seedData>> molSeedMap;
 dis_to_index LM;
 int counter = 0;
-for (auto & q : qq) {
-for (auto & j : q.distance) {
+for (auto &q : qq) {
+for (auto &j : q.distance) {
 for (pair<int, int> &p : j.second) {
 p = make_pair(p.first + counter, p.second + counter);
 }
@@ -467,7 +468,7 @@ calculate_seeds_score_in_band(qq, ref_id, ref_cmaps[ref_id], query_cmaps);
 // print result;
 if (SV_detection == 1) {
 int paird_count = 0;
-for (auto & q : qq) {
+for (auto &q : qq) {
 int p = 1;
 vector<seedData> seeds;
 while (!q.bp.empty()) {
@@ -482,10 +483,9 @@ seedData newSeed = seedData(b.ref_contig, q.number, b.label_pos, p);
 newSeed.ref_aln_rb = b.e1;
 newSeed.ref_aln_lb = b.f1;
 seeds.push_back(newSeed);
-}
-else{
-seedData newSeed = seedData(b.ref_contig * -1 , q.number, ref_lens[b.ref_contig] - b.label_pos, p);
-newSeed.ref_aln_lb = ref_lens[b.ref_contig] -b.e1;
+} else {
+seedData newSeed = seedData(b.ref_contig * -1, q.number, ref_lens[b.ref_contig] - b.label_pos, p);
+newSeed.ref_aln_lb = ref_lens[b.ref_contig] - b.e1;
 newSeed.ref_aln_rb = ref_lens[b.ref_contig] - b.f1;
 
 seeds.push_back(newSeed);
