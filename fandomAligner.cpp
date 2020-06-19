@@ -1,7 +1,7 @@
 #include "fandomAligner.h"
 
 using namespace std;
-float re_scale_par=1.3;
+float re_scale_par=1.2;
 int penalty_par=5000;
 //Alignment
 double basic_score(double d_r, double d_m, int u_m, int u_r) {
