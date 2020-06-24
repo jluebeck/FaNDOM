@@ -27,7 +27,7 @@ bool multimap_mols = false;
 int score_limit = 5000;
 //Data filtering
 int SV_detection = 0;
-int partial_alignment = 1;
+int partial_alignment = 0;
 int n_threads = 1;
 int min_aln_len = 6;
 float aln_prop_thresh_to_remap = 0.8;
@@ -137,6 +137,7 @@ map<int, vector<Alignment>> filt_and_aln(int thread_num, map<int,vector<double>>
             qq.push_back(q);
             counter = counter + q.length + w;
 //            }
+//            cout<<counter<<endl;
         }
         if (counter > 5000) {
 
@@ -224,6 +225,7 @@ tuple<string,string,string,string,string,string> parse_args(int argc, char *argv
 
         } else if ((string(argv[i]).rfind("-SV=", 0) == 0)) {
             SV_detection = stoi(string(argv[i]).substr(string(argv[i]).find('=') + 1));
+            partial_alignment = stoi(string(argv[i]).substr(string(argv[i]).find('=') + 1));
 
         } else if ((string(argv[i]).rfind("-outfmt=", 0) == 0)) {
             outfmt = string(argv[i]).substr(string(argv[i]).find('=') + 1);

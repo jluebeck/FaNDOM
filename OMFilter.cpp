@@ -243,9 +243,9 @@ break;
 for (int j = q.seeds_straight[cc].size() - 1; j > i; --j) {
 int f1 = q.seeds_straight[cc][i].first;
 int e1 = q.seeds_straight[cc][j].first + w - 1;
-if (abs(e1 - f1) > 5) {
+if (abs(e1 - f1) > 3) {
 int part_len = q_dist[e1 - 1] - q_dist[f1 - 1];
-if (part_len > 40000) {
+if (part_len > 20000) {
 float score =
         1.0 - (score_from_first[(j + 1) * w] - score_from_first[(i + 1) * w - 2]) /
               (part_len * 1.414);
@@ -293,9 +293,9 @@ break;
 for (int j = q.seeds_reverse[cc].size() - 1; j > i; --j) {
 int e1 = q.seeds_reverse[cc][i].first;
 int f1 = q.seeds_reverse[cc][j].first - w + 1;
-if (abs(e1 - f1) > 5) {
+if (abs(e1 - f1) > 3) {
 int part_len = q_dist[e1 - 1] - q_dist[f1 - 1];
-if (part_len > 40000) {
+if (part_len > 20000) {
 float score = 1 - (score_to_end[(j + 1) * w] - score_to_end[(i + 1) * w - 2]) /
                   (part_len * 1.414);
 if (score > 0.4) {
