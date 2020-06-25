@@ -1,6 +1,7 @@
 //Authors: Jens Luebeck (jluebeck@ucsd.edu), Siavash Raisi (sraeisid@ucsd.edu)
 
 #include <iostream>
+#include <fstream>
 #include <cstdio>
 #include <vector>
 #include <map>
@@ -26,7 +27,7 @@ float aln_padding = 1000;
 bool multimap_mols = false;
 int score_limit = 5000;
 //Data filtering
-int SV_detection = 0;
+int Partial_aligning = 0;
 int n_threads = 1;
 int min_aln_len = 6;
 int partial_alignment = 0;
@@ -34,7 +35,7 @@ float aln_prop_thresh_to_remap = 0.8;
 double aln_len_thresh_to_remap = 25000.;
 //bool subsect = false;
 map<int,vector<pair<int,int>>> bed_data;
-
+ofstream myfile;
 
 //------------------------------------------------------------------------------------------
 //Run Fandom alignment on a batch of seeds
@@ -120,6 +121,11 @@ map<int, vector<Alignment>> filt_and_aln(int thread_num, map<int,vector<double>>
         if (counter > 5000) {
             seed_batch = OMFilter(qq, thread_num, ref_DTI, ref_lens, ref_cmaps, mols, partial_alignment);
             curr = run_aln(ref_cmaps, mols, seed_batch);
+            //////Log
+            for (auto key : curr){
+                myfile<< key.first<<"\n";
+            }
+            //////
             result.insert(curr.begin(), curr.end());
             counter = 0;
             qq.clear();
@@ -129,6 +135,11 @@ map<int, vector<Alignment>> filt_and_aln(int thread_num, map<int,vector<double>>
     if (! qq.empty()) {
         seed_batch = OMFilter(qq, thread_num, ref_DTI, ref_lens, ref_cmaps, mols, partial_alignment);
         curr = run_aln(ref_cmaps, mols, seed_batch);
+        //////Log
+        for (auto key : curr){
+            cout<< key.first<<endl;
+        }
+        ////////
         result.insert(curr.begin(), curr.end());
     }
     return result;
@@ -167,8 +178,8 @@ tuple<string,string,string,string,string,string> parse_args(int argc, char *argv
             ranked = stoi(string(argv[i]).substr(string(argv[i]).find('=') + 1));
         } else if ((string(argv[i]).rfind("-threshold=", 0) == 0)) {
             threshold = stoi(string(argv[i]).substr(string(argv[i]).find('=') + 1));
-        } else if ((string(argv[i]).rfind("-SV=", 0) == 0)) {
-            SV_detection = stoi(string(argv[i]).substr(string(argv[i]).find('=') + 1));
+        } else if ((string(argv[i]).rfind("-PA=", 0) == 0)) {
+            Partial_aligning = stoi(string(argv[i]).substr(string(argv[i]).find('=') + 1));
         } else if ((string(argv[i]).rfind("-outfmt=", 0) == 0)) {
             outfmt = string(argv[i]).substr(string(argv[i]).find('=') + 1);
         } else if ((string(argv[i]).rfind("-version", 0) == 0)) {
@@ -217,7 +228,10 @@ int main (int argc, char *argv[]) {
     //get args
     string ref_cmap_file, queryfile, bedfile, keyfile, sample_name, outfmt;
     tie(ref_cmap_file,queryfile,bedfile,keyfile, sample_name, outfmt) = parse_args(argc,argv);
+    string log_dir = sample_name + "_log";
 
+    myfile.open(log_dir);
+    myfile<<"KIR"<<endl;
     cout << "reference genome cmap file: " << ref_cmap_file << "\n";
     cout << "query file: " << queryfile << "\n";
     cout << "\nNumber of threads for filtering & alignment: " << n_threads << "\n";
@@ -290,11 +304,12 @@ int main (int argc, char *argv[]) {
     cout << "Finished molecule alignment. \n" << combined_results.size() << " total alignments\n";
     vector<Alignment> combined_results_partial;
     //------------------------------------------------------
-    if(SV_detection==1){
+    if(Partial_aligning==1){
         partial_alignment = 1;
         unordered_set<int> mols_to_remap = get_remap_mol_ids(combined_results, mol_maps, aln_prop_thresh_to_remap,
                                                              aln_len_thresh_to_remap);
         cout << mols_to_remap.size() << " molecules will undergo partial-seeding.\n";
+        myfile << mols_to_remap.size() << " molecules will undergo partial-seeding.\n";
         ////////////////////
         score_limit =1000;
         re_scale_par = 1.4;
@@ -302,6 +317,7 @@ int main (int argc, char *argv[]) {
         //Here again make thread and run partial alignments for remaining molecules
         if (mols_to_remap.size() > 0) {
             cout << "Performing partial alignments\n";
+            myfile<< "Performing partial alignments\n";
             threadsafe_queue<int> mol_id_queue_partial;
             for (auto &i: mols_to_remap) {
                 mol_id_queue_partial.push(i);
@@ -336,7 +352,7 @@ int main (int argc, char *argv[]) {
             argstring += argv[i];
         }
         write_xmap_alignment(combined_results, ref_cmaps, mol_maps, fulname, argstring, multimap_mols);
-        if (SV_detection ==1 ) {
+        if (Partial_aligning ==1 ) {
             string partial_name = outname + "_partial.xmap";
             write_xmap_alignment(combined_results_partial, ref_cmaps, mol_maps, partial_name, argstring, multimap_mols);
         }
@@ -344,7 +360,7 @@ int main (int argc, char *argv[]) {
         string fulname = "";
         fulname= outname+ ".fda";
         write_fda_alignment(combined_results, ref_cmaps, mol_maps, fulname, multimap_mols);
-        if (SV_detection ==1 ) {
+        if (Partial_aligning ==1 ) {
             string partial_name = outname + "_partial.fda";
             write_fda_alignment(combined_results_partial, ref_cmaps, mol_maps, partial_name, multimap_mols);
         }

@@ -427,37 +427,41 @@ OMFilter(vector<query> qq, int number, map<int, dis_to_index> &ref_list, map<int
                         int ref_start_point = c;
                         vector<double> q_dist = query_cmaps[q_number];
                         int l_to_seed = q_dist[query_index - 1] - q_dist[0];
-                        while (ref_start_point > 0 &&
-                               ref_dist[c - 1] - ref_dist[ref_start_point - 1] <= l_to_seed + band_width) {
-                            if (ref_dist[c - 1] - ref_dist[ref_start_point - 1] >= l_to_seed - band_width) {
-                                q->seeds_straight[ref_start_point].push_back(make_pair(query_index, c));
+                        if(abs(abs(q_dist[query_index] - q_dist[query_index-1]) - abs(ref_dist[c]-ref_dist[c-1])) < tolerance ){
+                            while (ref_start_point > 0 &&
+                                   ref_dist[c - 1] - ref_dist[ref_start_point - 1] <= l_to_seed + band_width) {
+                                if (ref_dist[c - 1] - ref_dist[ref_start_point - 1] >= l_to_seed - band_width) {
+                                    q->seeds_straight[ref_start_point].push_back(make_pair(query_index, c));
+                                }
+                                ref_start_point--;
                             }
-                            ref_start_point--;
-                        }
-                        if (l_to_seed < band_width) {
-                            ref_start_point = c + 1;
-                            while (ref_start_point < s &&
-                                   abs(ref_dist[c - 1] - ref_dist[ref_start_point - 1]) <= l_to_seed + band_width) {
-                                q->seeds_straight[ref_start_point].push_back(make_pair(query_index, c));
-                                ref_start_point++;
+                            if (l_to_seed < band_width) {
+                                ref_start_point = c + 1;
+                                while (ref_start_point < s &&
+                                       abs(ref_dist[c - 1] - ref_dist[ref_start_point - 1]) <= l_to_seed + band_width) {
+                                    q->seeds_straight[ref_start_point].push_back(make_pair(query_index, c));
+                                    ref_start_point++;
+                                }
                             }
                         }
                         l_to_seed = q_dist[query_index + w - 1 - 1] - q_dist[0];
                         ref_start_point = c;
-                        if (ref_start_point > 0 && ref_start_point < s) {
-                            while (ref_start_point < s &&
-                                   ref_dist[ref_start_point - 1] - ref_dist[c - 1] <= l_to_seed + band_width) {
-                                if (ref_dist[ref_start_point - 1] - ref_dist[c - 1] >= l_to_seed - band_width) {
-                                    q->seeds_reverse[ref_start_point].push_back(make_pair(query_index + w - 1, c));
+                        if(abs(abs(q_dist[query_index + 1] - q_dist[query_index]) - abs(ref_dist[c]-ref_dist[c-1])) < tolerance ){
+                            if (ref_start_point > 0 && ref_start_point < s) {
+                                while (ref_start_point < s &&
+                                       ref_dist[ref_start_point - 1] - ref_dist[c - 1] <= l_to_seed + band_width) {
+                                    if (ref_dist[ref_start_point - 1] - ref_dist[c - 1] >= l_to_seed - band_width) {
+                                        q->seeds_reverse[ref_start_point].push_back(make_pair(query_index + w - 1, c));
+                                    }
+                                    ref_start_point++;
                                 }
-                                ref_start_point++;
-                            }
-                            if (l_to_seed < band_width) {
-                                ref_start_point = c - 1;
-                                while (ref_start_point > 0 &&
-                                       abs(ref_dist[ref_start_point - 1] - ref_dist[c - 1]) <= l_to_seed + band_width) {
-                                    q->seeds_reverse[ref_start_point].push_back(make_pair(query_index + w - 1, c));
-                                    ref_start_point--;
+                                if (l_to_seed < band_width) {
+                                    ref_start_point = c - 1;
+                                    while (ref_start_point > 0 &&
+                                           abs(ref_dist[ref_start_point - 1] - ref_dist[c - 1]) <= l_to_seed + band_width) {
+                                        q->seeds_reverse[ref_start_point].push_back(make_pair(query_index + w - 1, c));
+                                        ref_start_point--;
+                                    }
                                 }
                             }
                         }
