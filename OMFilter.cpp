@@ -125,10 +125,10 @@ void calculate_seeds_score_in_band(vector<query> &qq, int ref_contig, vector<dou
                     if (q.seeds_straight[cc].size() > 3) {
                         last_index_str = cc;
                         long straight_score = 10000000;
-                        pair<long, vector<pair<int, int>>> score_path = solve_graph_straight(q.seeds_straight[cc],
+                        vector<long> score_path = solve_graph_straight(q.seeds_straight[cc],
                                                                                              q_dist,
                                                                                              ref_dist, w);
-                        straight_score = score_path.first;
+                        straight_score = score_path[score_path.size()-1];
                         if (abs(prev_index - cc) > 1) {
                             if (straight_counter > 0) {
                                 double check_score = 1.0 - double(best_straight_score / query_len);
@@ -150,7 +150,7 @@ void calculate_seeds_score_in_band(vector<query> &qq, int ref_contig, vector<dou
                             best_straight_score = straight_score;
                             best_straight_ans = answer
                                     {
-                                            straight_score, ref_contig, cc + 1, '+', score_path.second
+                                            straight_score, ref_contig, cc + 1, '+'
                                     };
                             prev_index = cc;
                         } else {
@@ -158,7 +158,7 @@ void calculate_seeds_score_in_band(vector<query> &qq, int ref_contig, vector<dou
                                 best_straight_score = straight_score;
                                 best_straight_ans = answer
                                         {
-                                                straight_score, ref_contig, cc + 1, '+', score_path.second
+                                                straight_score, ref_contig, cc + 1, '+'
                                         };
                             }
                             prev_index = cc;
@@ -169,9 +169,9 @@ void calculate_seeds_score_in_band(vector<query> &qq, int ref_contig, vector<dou
                     if (q.seeds_reverse[cc].size() > 3) {
                         last_index_rev = cc;
                         long reverese_score = 10000000;
-                        pair<long, vector<pair<int, int>>> score_path = solve_graph_reverse(q.seeds_reverse[cc], q_dist,
+                        vector<long> score_path = solve_graph_reverse(q.seeds_reverse[cc], q_dist,
                                                                                             ref_dist, w);
-                        reverese_score = score_path.first;
+                        reverese_score = score_path[score_path.size()-1];
                         if (abs(prev_index_rev - cc) > 1) {
                             if (rev_counter > 0) {
                                 double check_score = 1.0 - double(best_rev_score / query_len);
@@ -193,7 +193,7 @@ void calculate_seeds_score_in_band(vector<query> &qq, int ref_contig, vector<dou
                             best_rev_score = reverese_score;
                             best_rev_ans = answer
                                     {
-                                            best_rev_score, ref_contig, cc + 1, '-', score_path.second
+                                            best_rev_score, ref_contig, cc + 1, '-'
                                     };
                             prev_index_rev = cc;
                         } else {
@@ -201,7 +201,7 @@ void calculate_seeds_score_in_band(vector<query> &qq, int ref_contig, vector<dou
                                 best_rev_score = reverese_score;
                                 best_rev_ans = answer
                                         {
-                                                best_rev_score, ref_contig, cc + 1, '-', score_path.second
+                                                best_rev_score, ref_contig, cc + 1, '-'
                                         };
                             }
                             prev_index_rev = cc;
@@ -251,7 +251,7 @@ void calculate_seeds_score_in_band_SV(vector<query> &qq, int ref_contig, vector<
         for (int cc = 0; cc < q.seeds_straight.size(); cc++) {
             if (q.seeds_straight[cc].size() > 1) {
                 vector<pair<int, int>> ali = q.seeds_straight[cc];
-                vector<long> score_from_first = solve_graph_straight_SV(q.seeds_straight[cc], q_dist, ref_dist, 1, w);
+                vector<long> score_from_first = solve_graph_straight(q.seeds_straight[cc], q_dist, ref_dist, w);
                 bool brk = false;
                 for (int i = 0; i < q.seeds_straight[cc].size(); ++i) {
                     if (brk) {
@@ -304,7 +304,7 @@ void calculate_seeds_score_in_band_SV(vector<query> &qq, int ref_contig, vector<
             }
             if (q.seeds_reverse[cc].size() > 1) {
                 vector<pair<int, int>> ali = q.seeds_reverse[cc];
-                vector<long> score_to_end = solve_graph_reverse_SV(q.seeds_reverse[cc], q_dist, ref_dist, 1, w);
+                vector<long> score_to_end = solve_graph_reverse(q.seeds_reverse[cc], q_dist, ref_dist, w);
                 bool brk = false;
                 for (int i = 0; i < q.seeds_reverse[cc].size(); ++i) {
                     if (brk) {

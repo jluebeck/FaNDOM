@@ -38,25 +38,25 @@ public:
     // function to add an edge to graph
     void addEdge(int u, int v, long weight);
     // Finds shortest paths from given source vertex
-    pair<long, vector<int>> shortestPath(int s);
-    vector<long> shortestPath_SV(int s);
+    vector<long> shortestPath(int s);
+//    vector<long> shortestPath_SV(int s);
 };
 
 //////// FUNCTION DEFS
 
-pair<long, vector<pair<int, int>>>
+vector<long>
 solve_graph_straight(vector<pair<int, int>> vertices, vector<double> &q_dist, vector<double> &ref_dist, int w);
 
-pair<long, vector<pair<int, int>>>
+vector<long>
 solve_graph_reverse(vector<pair<int, int>> vertices, vector<double> &q_dist, vector<double> &ref_dist, int w);
 
-vector<long>
-solve_graph_straight_SV(vector<pair<int, int>> vertices, vector<double> &q_dist, vector<double> &ref_dist, int dir,
-        int w);
-
-vector<long>
-solve_graph_reverse_SV(vector<pair<int, int>> vertices, vector<double> &q_dist, vector<double> &ref_dist, int dir,
-        int w);
+//vector<long>
+//solve_graph_straight_SV(vector<pair<int, int>> vertices, vector<double> &q_dist, vector<double> &ref_dist, int dir,
+//        int w);
+//
+//vector<long>
+//solve_graph_reverse_SV(vector<pair<int, int>> vertices, vector<double> &q_dist, vector<double> &ref_dist, int dir,
+//        int w);
 
 
 

@@ -36,7 +36,7 @@ struct answer {
     int ref_contig;
     int pos;
     char dir;
-    vector<pair<int, int>> pairs;
+//    vector<pair<int, int>> pairs;
 
     bool operator<(const answer &rhs) const {
         return score < rhs.score;
