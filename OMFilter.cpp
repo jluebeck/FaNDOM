@@ -5,7 +5,6 @@ int w = 3;
 int tolerance = 350;
 int ranked = 300;
 int ranked_partial = 300;
-//int a[57000][9000] = {0};  	///Unused?
 int threshold = 3;
 int band_width = 6000;
 
@@ -101,7 +100,6 @@ int **merge_list(dis_to_index LM, dis_to_index LN) {
 //void calculate_seeds_score_in_band(vector<query> &qq, int ref_contig) {
 void calculate_seeds_score_in_band(vector<query> &qq, int ref_contig, vector<double> &ref_dist,
                                    map<int, vector<double>> &query_genome) {
-    //    vector<double> ref_dist = ref_genome_raw[ref_contig];
     for (auto &q: qq) {
         if (q.find_loc == 0) {
             vector<double> q_dist = query_genome[q.number];
@@ -429,19 +427,13 @@ OMFilter(vector<query> qq, int number, map<int, dis_to_index> &ref_list, map<int
                         int ref_start_point = c;
                         vector<double> q_dist = query_cmaps[q_number];
                         int l_to_seed = q_dist[query_index - 1] - q_dist[0];
-                        ////////////////////////////////////////////////////////
-                        ////////////////////////////////// bug Ref start point shoould be changed
-                        //                        int push = 0;
                         while (ref_start_point > 0 &&
                                ref_dist[c - 1] - ref_dist[ref_start_point - 1] <= l_to_seed + band_width) {
                             if (ref_dist[c - 1] - ref_dist[ref_start_point - 1] >= l_to_seed - band_width) {
                                 q->seeds_straight[ref_start_point].push_back(make_pair(query_index, c));
-                                //                                push = 1;
                             }
                             ref_start_point--;
                         }
-                        //                        if(push==0){ 				//                            q->seeds_straight[ref_start_point].push_back(make_pair(query_index, c));
-                        //                        }
                         if (l_to_seed < band_width) {
                             ref_start_point = c + 1;
                             while (ref_start_point < s &&
@@ -450,21 +442,16 @@ OMFilter(vector<query> qq, int number, map<int, dis_to_index> &ref_list, map<int
                                 ref_start_point++;
                             }
                         }
-
                         l_to_seed = q_dist[query_index + w - 1 - 1] - q_dist[0];
                         ref_start_point = c;
-                        //                        push = 0;
                         if (ref_start_point > 0 && ref_start_point < s) {
                             while (ref_start_point < s &&
                                    ref_dist[ref_start_point - 1] - ref_dist[c - 1] <= l_to_seed + band_width) {
                                 if (ref_dist[ref_start_point - 1] - ref_dist[c - 1] >= l_to_seed - band_width) {
                                     q->seeds_reverse[ref_start_point].push_back(make_pair(query_index + w - 1, c));
-                                    //                                    push = 1;
                                 }
                                 ref_start_point++;
                             }
-                            //                            if (push ==0){ 					//                                q->seeds_reverse[ref_start_point].push_back(make_pair(query_index + w - 1, c));
-                            //                            }
                             if (l_to_seed < band_width) {
                                 ref_start_point = c - 1;
                                 while (ref_start_point > 0 &&
@@ -485,7 +472,6 @@ OMFilter(vector<query> qq, int number, map<int, dis_to_index> &ref_list, map<int
             calculate_seeds_score_in_band(qq, ref_id, ref_cmaps[ref_id], query_cmaps);
         }
     }
-    // print result;
     if (SV_detection == 1) {
         int paird_count = 0;
         for (auto &q: qq) {
@@ -494,10 +480,6 @@ OMFilter(vector<query> qq, int number, map<int, dis_to_index> &ref_list, map<int
             while (!q.bp.empty()) {
                 breakpoint b = q.bp.top();
                 q.bp.pop();
-                //                int a = q.bp.top().ref_contig;
-                //                int lab_a = q.bp.top().label_pos;
-                //                cout<<a<<endl;
-                //                cout<<lab_a<<endl;
                 if (b.dir == '+') {
                     seedData newSeed = seedData(b.ref_contig, q.number, b.label_pos, p);
                     newSeed.ref_aln_rb = b.e1;

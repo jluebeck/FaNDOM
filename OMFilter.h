@@ -36,8 +36,6 @@ struct answer {
     int ref_contig;
     int pos;
     char dir;
-//    vector<pair<int, int>> pairs;
-
     bool operator<(const answer &rhs) const {
         return score < rhs.score;
     }
@@ -70,8 +68,6 @@ struct query {
     v_v_p seeds_reverse;// each refrence label has a label of pain which is seeds in reverse direction. Vector of position in ref to vector of seeds
     priority_queue<answer> ans;// heap for saving top best candidate locations for doing alignment
     int find_loc;// boolean for show if we find great location to stop searching for this query
-//    map<int, vector<breakpoint>> bp_from_start;// for each label possible break point from start to this label. Map label to vector of breakpint
-//    map<int, vector<breakpoint>> bp_to_end;// for each label possible break point from label to end of query. Map label to vector of breakpint
     priority_queue<breakpoint> bp;
     query(int n, dis_to_index d, int l , int find){
         number = n;
@@ -92,11 +88,10 @@ void destroyTwoDimenArrayOnHeapUsingFree(int **ptr, int row, int col);
 
 int **merge_list(dis_to_index LM, dis_to_index LN);
 
-//void calculate_seeds_score_in_band(vector<query> &qq, int ref_contig);
+
 void calculate_seeds_score_in_band(vector<query> &qq, int ref_contig, vector<double> &ref_dist,
         map<int, vector<double>> &query_genome);
 
-//void calculate_seeds_score_in_band_SV(vector<query> &qq, int ref_contig) {
 void calculate_seeds_score_in_band_SV(vector<query> &qq, int ref_contig, vector<double> &ref_dist,
         map<int, vector<double>> &query_genome);
 

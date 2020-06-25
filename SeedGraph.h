@@ -50,14 +50,5 @@ solve_graph_straight(vector<pair<int, int>> vertices, vector<double> &q_dist, ve
 vector<long>
 solve_graph_reverse(vector<pair<int, int>> vertices, vector<double> &q_dist, vector<double> &ref_dist, int w);
 
-//vector<long>
-//solve_graph_straight_SV(vector<pair<int, int>> vertices, vector<double> &q_dist, vector<double> &ref_dist, int dir,
-//        int w);
-//
-//vector<long>
-//solve_graph_reverse_SV(vector<pair<int, int>> vertices, vector<double> &q_dist, vector<double> &ref_dist, int dir,
-//        int w);
-
-
 
 #endif //FANDOM_SEEDGRAPH_H
