@@ -55,16 +55,29 @@ args = parser.parse_args()
 
 if args.query.endswith('.bnx'):
     query = parse_bnx(args.query,True)
-
-if args.query.endswith('.cmap'):
+elif args.query.endswith('.cmap'):
     query = parse_cmap(args.query,True)
+else:
+    print('Query file is not in cmap or bnx format')
+    return
+if args.fandom.endswith('/'):
+    fandom = args.fandom
+else:
+    fandom = args.fandom+'/'
 
+if !args.ref.endswith('.cmap'):
+    print('Reference should be in cmap format')
+    return
+if args.output.endswith('/'):
+    output = args.output[:-1]
+else:
+    output = args.output
 selected = [list(query.keys())[i] for i in random.sample(range(0, len(query)), sampleSize)]
 import os
 scaledSample = {}
 result = {}
 for i in range(0, 11):
-    with open(args.output+'/a.cmap','w') as f :
+    with open(output+'/a.cmap','w') as f :
         for k in selected:
             scaledSample[k] = query[k].copy()
             if args.query.endswith('.bnx'):
@@ -80,21 +93,21 @@ for i in range(0, 11):
                 else:
                     f.write(k + '\t'+str(length)+'\t'+str(number_label)+'\t'+str(index)+'\t1\t'+str(scaledSample[k][index])+'\t0.0\t1.0\t1.0\t17.0000\t0.0000\n')
 
-    os.system(args.fandom+'./FaNDOM'+' -t='+args.thread+' -r='+args.ref+' -q='+args.output+'/a.cmap -sname='+args.output+'/test '+ '-outfmt=xmap')
+    os.system(fandom+'./FaNDOM'+' -t='+args.thread+' -r='+args.ref+' -q='+output+'/a.cmap -sname='+output+'/test '+ '-outfmt=xmap')
     sum_score = 0
-    with open(args.output+'/test.xmap','r') as f:
+    with open(output+'/test.xmap','r') as f:
         for line in f:
             if not line.startswith('#'):
                 line = line.split('\t')
                 sum_score += float(line[8])
     result[i] = sum_score
 print(result)
-
+os.system('rm '+output+'/a.cmap')
 max_index = int(max(result,key=result.get))
 
 print('Max score with rescale factor: ', max_index)
 if args.query.endswith('.bnx'):
-    with open(args.output+'/rescaled.bnx','w') as f:
+    with open(output+'/rescaled.bnx','w') as f:
         with open(args.query,'r') as g:
             for line in g:
                 if line.startswith('0\t'):
@@ -109,7 +122,7 @@ if args.query.endswith('.bnx'):
                 f.write(line)
 
 if args.query.endswith('.cmap'):
-    with open(args.output + '/rescaled.cmap', 'w') as f:
+    with open(output + '/rescaled.cmap', 'w') as f:
         with open(args.query, 'r') as g:
             for line in g:
                 if not line.startswith('#'):
