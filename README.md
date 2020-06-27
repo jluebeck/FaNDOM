@@ -68,11 +68,12 @@ The `cigar` field specifies a list of tuples (tagged by the number in the alignm
 
 ### `autorescale.py` script
 This script used for finding the best rescale factor for molecules. We highly recommend to use this script if you are using raw molecules.
--  `-q=` Path to molecules file. It can be bnx or cmap file.
--  `-r=` Path to reference file. It should be in cmap format.
--  `-f=` Path to foldar that contains executable file of FaNDOM.
--  `-t=` Number of threads.
--  `-o=` Path to a directory for saving the rescaled molecules file.
+-  `-q` Path to molecules file. It can be bnx or cmap file.
+-  `-r` Path to reference file. It should be in cmap format.
+-  `-f` Path to foldar that contains executable file of FaNDOM.
+-  `-t` Number of threads.
+-  `-o` Path to a directory for saving the rescaled molecules file.
+-  `-s` Down sample size. Default value is 500.
 As an example:
 ```
 python3.5 autorescale.py -q /data/molecule/a.bnx -r /data/ref/hg19_DLE.cmap -f /data/FaNDOM/ -t 10 -o /data/molecule/rescale
