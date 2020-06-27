@@ -73,5 +73,7 @@ This script used for finding the best rescale factor for molecules. We highly re
 -  `-f=` Path to foldar that contains executable file of FaNDOM.
 -  `-t=` Number of threads.
 -  `-o=` Path to a directory for saving the rescaled molecules file.
-As an example: python3.5 autorescale.py -q /data/molecule/a.bnx -r /data/ref/hg19_DLE.cmap -f /data/FaNDOM/ -t 10 -o /data/molecule/rescale
-
+As an example:
+```
+python3.5 autorescale.py -q /data/molecule/a.bnx -r /data/ref/hg19_DLE.cmap -f /data/FaNDOM/ -t 10 -o /data/molecule/rescale
+```
