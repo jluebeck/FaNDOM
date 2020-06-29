@@ -41,7 +41,6 @@ FaNDOM outputs alignments of the OM molecules in FaNDOM's `.fda` file format. `.
 - `-padding=` Additional size (in bp) around seed region to open alignment window (default: 1000)
 
 ##### Optional arguments (advanced)
--  `-w=` Word size of seed (default: 3)
 - `-tolerance=` Seeding label position error tolerance (default: 350)
 - `-rank=` Seed ranks to consider (default: 300)
 - `-threshold=` Seed chain mininum length (default: 3)
@@ -77,4 +76,14 @@ This script used for finding the best rescale factor for molecules. We highly re
 As an example:
 ```
 python3.5 autorescale.py -q /data/molecule/a.bnx -r /data/ref/hg19_DLE.cmap -f /data/FaNDOM/ -t 10 -o /data/molecule/rescale
+```
+### `preprocess.py` script
+For a case you want to align very large assembled contigs which can have more than 500 labels on one contigs, at first you need to run preprocess.py on your query to separate large contigs to smaller pices and then run Fandom on it.
+-  `-q` Path to assembled contig file. It should be in cmap format.
+-  `-m` Maximum size for new separated molecules in terms of number of labels. Default value is 100.
+-  `-o` Path to a directory for savind processed queries and also save a dictionary for converting Fandom alignment to actual molecules.
+
+As an example:
+```
+python preprocess.py -q H460_DLE1_EXP_REFINEFINAL1.cmap -o /Output/processed2 -m 200
 ```
