@@ -20,6 +20,7 @@ with open(args.fandom,'r') as f :
                 line2 = line.strip().split('\t')
                 if int(line2[0]) in d.keys():
                     c = d[int(line2[0])][1]
+		    shift = d[int(line2[0])][2]
                     line2[0] = d[int(line2[0])][0]
                     alignment = line2[-1]
                     alignment = alignment.split(')')[:-1]
@@ -28,8 +29,8 @@ with open(args.fandom,'r') as f :
                         b = i.split(',')
                         new_align =new_align +  b[0]+','+str(int(b[1])+c)+')'
                     line2[-1] = new_align
-                    line2[3] = str(round(float(line2[3]) + d[int(line2[0])][2],1))
-                    line2[4] = str(round(float(line2[4]) + d[int(line2[0])][2],1))
+                    line2[3] = str(round(float(line2[3]) + shift,1))
+                    line2[4] = str(round(float(line2[4]) + shift,1))
                 g.write('\t'.join(line2))
                 g.write('\n')
 
