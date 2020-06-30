@@ -92,3 +92,7 @@ This script used for remap aligments to first molecule file. For doing that you 
 -  `-f` Path to Fandom alignmrnt output.
 -  `-d` Path to pre_process.py dictionary.
 -  `-o` Output directory for translated alignments.
+As an example:
+```
+python post_process.py -f Fandom_output.xmap -d processed_dic -o fandom_post_process
+```
