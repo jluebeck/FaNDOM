@@ -87,3 +87,8 @@ As an example:
 ```
 python preprocess.py -q H460_DLE1_EXP_REFINEFINAL1.cmap -o /Output/processed2 -m 200
 ```
+### `post_process.py` script
+This script used for remap aligments to first molecule file. For doing that you need a file ending with 'dic' that preprocess.py script made.
+-  `-f` Path to Fandom alignmrnt output.
+-  `-d` Path to pre_process.py dictionary.
+-  `-o` Output directory for translated alignments.
