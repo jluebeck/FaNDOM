@@ -18,10 +18,10 @@ with open(args.fandom,'r') as f :
                 g.write(line)
             else:
                 line2 = line.strip().split('\t')
-                if int(line2[0]) in d.keys():
-                    c = d[int(line2[0])][1]
-		    shift = d[int(line2[0])][2]
-                    line2[0] = d[int(line2[0])][0]
+                if int(line2[1]) in d.keys():
+                    c = d[int(line2[1])][1]
+		    shift = d[int(line2[1])][2]
+                    line2[1] = d[int(line2[1])][0]
                     alignment = line2[-1]
                     alignment = alignment.split(')')[:-1]
                     new_align = ''

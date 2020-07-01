@@ -59,7 +59,11 @@ with open(args.query, 'r') as f:
                     mol_len = str(round(float(long_lines[i + all_len %max_len].split('\t')[5]) - float(last_mol_len),1))
                 else:
                     mol_len = str(round(float(long_lines[i+max_len].split('\t')[5]) - float(last_mol_len),1))
-
+                if not(all_len % max_len ==0 and counter_split > number_of_split):
+                    g.write('\t'.join(line2))
+                    g.write('\n')        
+                    line2[4] = '0'
+                    line2[3] = str(int(line2[3])+1)
 
             if line2[4] == '0':
                 line2[5] = line2[1]
