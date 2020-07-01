@@ -96,3 +96,12 @@ As an example:
 ```
 python post_process.py -f Fandom_output.xmap -d processed_dic -o fandom_post_process
 ```
+### `SV_detect.py` script
+This script used for detecting potential integration points.
+-  `-a` Path to alignment output.
+-  `-m` Minimum number molecules to support a integration point.
+-  `-o` Output directory for list of integration points.
+As an example:
+```
+python SV_detect.py -a alignment.xmap -m 1 -o SV.txt
+```
