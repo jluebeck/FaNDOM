@@ -87,3 +87,21 @@ As an example:
 ```
 python preprocess.py -q H460_DLE1_EXP_REFINEFINAL1.cmap -o /Output/processed2 -m 200
 ```
+### `post_process.py` script
+This script used for remap aligments to first molecule file. For doing that you need a file ending with 'dic' that preprocess.py script made.
+-  `-f` Path to Fandom alignmrnt output.
+-  `-d` Path to pre_process.py dictionary.
+-  `-o` Output directory for translated alignments.
+As an example:
+```
+python post_process.py -f Fandom_output.xmap -d processed_dic -o fandom_post_process
+```
+### `SV_detect.py` script
+This script used for detecting potential integration points.
+-  `-a` Path to alignment output.
+-  `-m` Minimum number molecules to support a integration point.
+-  `-o` Output directory for list of integration points.
+As an example:
+```
+python SV_detect.py -a alignment.xmap -m 1 -o SV.txt
+```
