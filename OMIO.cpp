@@ -260,12 +260,7 @@ map<int, vector<seedData>> parse_seeds(const string &fname, map<int, vector<doub
     return mol_seed_data;
 }
 
-void write_xmap_alignment(vector<Alignment> &aln_list, map<int,vector<double>> &cmaps_ref, map<int,vector<double>> &mol_map,
-                          const string &outname, const string &argstring, const bool is_mm) {
-
-    ofstream outfile;
-    outfile.open(outname);
-
+void write_xmap_header(ofstream &outfile, const string &argstring) {
     //write header
     char hostname[1024];
     hostname[1023] = '\0';
@@ -275,9 +270,20 @@ void write_xmap_alignment(vector<Alignment> &aln_list, map<int,vector<double>> &
     outfile << "# Label Channels:\t1\n";
     outfile << "#h\tXmapEntryID\tQryContigID\tRefContigID\tQryStartPos\tQryEndPos\tRefStartPos\tRefEndPos\tOrientation\tConfidence\tHitEnum\tQryLen\tRefLen\tLabelChannel\tAlignment\n";
     outfile << "#f\tint\tint\tint\tfloat\tfloat\tfloat\tfloat\tstring\tfloat\tstring\tfloat\tfloat\tint\tstring\n";
+}
+
+void write_fda_header(ofstream &outfile) {
+    outfile << "#0\tref_id\tmol_id\taln_direction\tref_start_pos\tref_end_pos\tmol_start_pos\tmol_end_pos\tmol_length\n";
+    outfile << "#1\ttotal_score\tmean_score\tis_multimapped\tis_secondary\taln_seed_num\n";
+    outfile << "#2\talignment [aln_index]:(ref_pos, mol_pos, mol_lab, score_delta)\n";
+    outfile << "#3\tcigar [aln_index]:(delta_ref, delta_mol, mol_label_diff, delta_difference)\n";
+}
+
+void write_xmap_alignment(ofstream &outfile, vector<Alignment> &aln_list, map<int,vector<double>> &cmaps_ref,
+        map<int,vector<double>> &mol_map, const bool is_mm, size_t a_pair_ind) {
 
     //write alignments
-    size_t a_pair_ind = 1;
+//    size_t a_pair_ind = 1;
     for (auto &aln_struct: aln_list) {
         if (!is_mm && aln_struct.is_secondary && !aln_struct.is_partial) {
             continue;
@@ -374,24 +380,18 @@ void write_xmap_alignment(vector<Alignment> &aln_list, map<int,vector<double>> &
         outfile << outline;
 
     }
-    outfile << flush;
-    outfile.close();
-
+//    outfile << flush;
+//    outfile.close();
 }
 
 //TODO: REFACTOR
-void write_fda_alignment(vector<Alignment> &aln_list, map<int,vector<double>> &cmaps_ref, map<int,vector<double>> &mol_map,
-                     const string &outname, const bool is_mm) {
+void write_fda_alignment(ofstream &outfile, vector<Alignment> &aln_list, map<int,vector<double>> &cmaps_ref,
+        map<int,vector<double>> &mol_map, const bool is_mm, size_t a_pair_ind) {
 
-    ofstream outfile;
-    outfile.open(outname);
+//    ofstream outfile;
+//    outfile.open(outname);
 
-    outfile << "#0\tref_id\tmol_id\taln_direction\tref_start_pos\tref_end_pos\tmol_start_pos\tmol_end_pos\tmol_length\n";
-    outfile << "#1\ttotal_score\tmean_score\tis_multimapped\tis_secondary\taln_seed_num\n";
-    outfile << "#2\talignment [aln_index]:(ref_pos, mol_pos, mol_lab, score_delta)\n";
-    outfile << "#3\tcigar [aln_index]:(delta_ref, delta_mol, mol_label_diff, delta_difference)\n";
-
-    size_t a_pair_ind = 0;
+//    size_t a_pair_ind = 0;
     for (const auto &aln_struct: aln_list) {
         if (!is_mm && aln_struct.is_secondary && !aln_struct.is_partial) {
             continue;
@@ -482,8 +482,8 @@ void write_fda_alignment(vector<Alignment> &aln_list, map<int,vector<double>> &c
         outfile << outstring2 << "\n" << outstring3 << "\n";
         a_pair_ind++;
     }
-    outfile << flush;
-    outfile.close();
+//    outfile << flush;
+//    outfile.close();
 }
 
 

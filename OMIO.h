@@ -57,10 +57,14 @@ map<int,vector<double>> parse_bnx(const string &fname);
 
 map<int, vector<seedData>> parse_seeds(const string &fname, map<int, vector<double>> &ref_cmaps);
 
-void write_xmap_alignment(vector<Alignment> &aln_list, map<int,vector<double>> &cmaps_ref, map<int,vector<double>> &mol_map,
-                         const string &outname, const string &argstring, bool is_mm);
+void write_xmap_header(ofstream &outfile, const string &argstring);
 
-void write_fda_alignment(vector<Alignment> &aln_list, map<int,vector<double>> &cmaps_ref, map<int,vector<double>> &mol_map,
-                     const string &outname, bool is_mm);
+void write_fda_header(ofstream &outfile);
+
+void write_xmap_alignment(ofstream &outfile, vector<Alignment> &aln_list, map<int,vector<double>> &cmaps_ref,
+        map<int,vector<double>> &mol_map, bool is_mm, size_t a_pair_ind);
+
+void write_fda_alignment(ofstream &outfile, vector<Alignment> &aln_list, map<int,vector<double>> &cmaps_ref,
+        map<int,vector<double>> &mol_map, bool is_mm, size_t a_pair_ind);
 
 #endif //FANDOM_OMHELPER_H

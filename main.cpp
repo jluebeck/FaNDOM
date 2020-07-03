@@ -89,9 +89,8 @@ map<int, vector<Alignment>> run_aln(map<int,vector<double>> &ref_cmaps, map<int,
                         curr_score / curr_aln.alignment.size() < score_limit) {
                         continue;
                     }
-                    for (int temp = 0; temp < 5000; temp++) {
-                        mol_alns.push_back(curr_aln);
-                    }
+                    mol_alns.push_back(curr_aln);
+
                 }
                 if (curr_score > best_score) {
                     best_score = curr_score;
@@ -321,6 +320,29 @@ int main (int argc, char *argv[]) {
         argstring += " ";
         argstring += argv[i];
     }
+
+    ofstream full_outfile;
+    ofstream partial_outfile;
+    if (outfmt == "xmap") {
+        outname += ".xmap";
+        partialname += ".xmap";
+        full_outfile.open(outname);
+        write_xmap_header(full_outfile, argstring);
+        if (partial_alignment) {
+            partial_outfile.open(partialname);
+            write_xmap_header(partial_outfile, argstring);
+        }
+
+    } else {
+        outname+=".fda";
+        partialname+=".fda";
+        full_outfile.open(outname);
+        write_fda_header(full_outfile);
+        if (partial_alignment) {
+            partial_outfile.open(partialname);
+            write_fda_header(partial_outfile);
+        }
+    }
     chrono::steady_clock::time_point ppWallE = chrono::steady_clock::now();
 
     //------------------------------------------------------
@@ -334,25 +356,37 @@ int main (int argc, char *argv[]) {
                ref(ref_num_to_length), ref(mol_id_queue), false));
    }
     //-------------------------------------------------------
-    //gather results
+    //gather results FULL
     vector<Alignment> combined_results;
-    int total_alns = 0;
-   for (auto &f: futs) {
+    vector<Alignment> current_result;
+    size_t total_alns = 0;
+    for (auto &f: futs) {
        map<int, vector<Alignment>> curr_result = f.get();
        for (const auto &x: curr_result) {
-           total_alns+=x.second.size();
+           current_result = x.second;
            combined_results.reserve(combined_results.size() + distance(x.second.begin(),x.second.end()));
            combined_results.insert(combined_results.end(),x.second.begin(),x.second.end());
+           //write it
+           if (outfmt == "xmap") {
+               write_xmap_alignment(full_outfile, current_result, ref_cmaps, mol_maps, multimap_mols, total_alns+1);
+           } else {
+               write_fda_alignment(full_outfile, current_result, ref_cmaps, mol_maps, multimap_mols, total_alns+1);
+           }
+           total_alns+=x.second.size();
        }
-       //clean up the fut
-       curr_result.clear();
-   }
+    }
+
+    full_outfile << flush;
+    full_outfile.close();
     cout << "Finished non-partial molecule alignment. \n" << total_alns << " total alignments\n";
-    vector<Alignment> combined_results_partial;
+
     //------------------------------------------------------
+    //gath results PARTIAL
+//    vector<Alignment> combined_results_partial;
     if(partial_alignment){
         unordered_set<int> mols_to_remap = get_remap_mol_ids(combined_results, mol_maps, aln_prop_thresh_to_remap,
                                                              aln_len_thresh_to_remap);
+
         cout << mols_to_remap.size() << " molecules will undergo partial-seeding.\n";
         logfile << mols_to_remap.size() << " molecules will undergo partial-seeding.\n";
         ////////////////////
@@ -373,49 +407,48 @@ int main (int argc, char *argv[]) {
                 futs_partial.push_back(async(launch::async, filt_and_aln, i, ref(ref_cmaps), ref(mol_maps), ref(ref_DTI),
                                              ref(ref_num_to_length), ref(mol_id_queue_partial), true));
             }
+            total_alns = 0;
             for (auto &f: futs_partial) {
                 map<int, vector<Alignment>> curr_result = f.get();
                 for (const auto &x: curr_result) {
-                    combined_results_partial.reserve(combined_results_partial.size() + distance(x.second.begin(), x.second.end()));
-                    combined_results_partial.insert(combined_results_partial.end(), x.second.begin(), x.second.end());
+                    //write it
+                    current_result = x.second;
+                    if (outfmt == "xmap") {
+                        write_xmap_alignment(partial_outfile, current_result, ref_cmaps, mol_maps, multimap_mols, total_alns+1);
+                    } else {
+                        write_fda_alignment(partial_outfile, current_result, ref_cmaps, mol_maps, multimap_mols, total_alns+1);
+                    }
+                    total_alns+=x.second.size();
                 }
-                //clean up the fut
-                curr_result.clear();
+
             }
+            cout << "Finished partial molecule alignment. \n" << total_alns << " total alignments\n";
         }
     }
     chrono::steady_clock::time_point alnWallE = chrono::steady_clock::now();
 
     ////////////////////
     //write output
-    //TODO: write this on the fly
-    chrono::steady_clock::time_point outWallS = chrono::steady_clock::now();
+//    chrono::steady_clock::time_point outWallS = chrono::steady_clock::now();
+//    cout << "Writing fulls\n";
+//    write_xmap_alignment(combined_results, ref_cmaps, mol_maps, outname, argstring, multimap_mols);
+//    combined_results.clear();
+//    cout << "Writing partials\n";
+//    if (partial_alignment) {
+//        write_xmap_alignment(combined_results_partial, ref_cmaps, mol_maps, partialname, argstring, multimap_mols);
+//    }
+//    } else {
+//    write_fda_alignment(combined_results, ref_cmaps, mol_maps, outname, multimap_mols);
+//    if (partial_alignment) {
+//        write_fda_alignment(combined_results_partial, ref_cmaps, mol_maps, partialname, multimap_mols);
+//    }
 
-    if (outfmt == "xmap") {
-        outname+=".xmap";
-        partialname+=".xmap";
-
-        cout << "Writing fulls\n";
-        write_xmap_alignment(combined_results, ref_cmaps, mol_maps, outname, argstring, multimap_mols);
-        combined_results.clear();
-        cout << "Writing partials\n";
-        if (partial_alignment) {
-            write_xmap_alignment(combined_results_partial, ref_cmaps, mol_maps, partialname, argstring, multimap_mols);
-        }
-    } else {
-        outname+=".fda";
-        partialname+=".fda";
-        write_fda_alignment(combined_results, ref_cmaps, mol_maps, outname, multimap_mols);
-        if (partial_alignment) {
-            write_fda_alignment(combined_results_partial, ref_cmaps, mol_maps, partialname, multimap_mols);
-        }
-    }
-    chrono::steady_clock::time_point outWallE = chrono::steady_clock::now();
+//    chrono::steady_clock::time_point outWallE = chrono::steady_clock::now();
 
     double readWall = chrono::duration_cast<chrono::milliseconds>(readWallE - readWallS).count()/1000.;
     double ppWall = chrono::duration_cast<chrono::milliseconds>(ppWallE - ppWallS).count()/1000.;
     double alnWall = chrono::duration_cast<chrono::milliseconds>(alnWallE - alnWallS).count()/1000.;
-    double outWall = chrono::duration_cast<chrono::milliseconds>(outWallE - outWallS).count()/1000.;
+//    double outWall = chrono::duration_cast<chrono::milliseconds>(outWallE - outWallS).count()/1000.;
 
     clock_t end = clock();
     chrono::steady_clock::time_point endWall = chrono::steady_clock::now();
@@ -427,7 +460,7 @@ int main (int argc, char *argv[]) {
     printf("Reading data: %.3f\n",readWall);
     printf("Preprocessing data: %.3f\n",ppWall);
     printf("Generating seeds and alignments: %.3f\n",alnWall);
-    printf("Writing alignments: %.3f\n", outWall);
+//    printf("Writing alignments: %.3f\n", outWall);
     cout << endl;
 
     return 0;
