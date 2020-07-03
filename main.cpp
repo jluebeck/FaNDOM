@@ -84,13 +84,14 @@ map<int, vector<Alignment>> run_aln(map<int,vector<double>> &ref_cmaps, map<int,
                             continue;
                         }
                         curr_aln.is_partial = 1;
-
                     }
                     if (curr_aln.alignment.size() < min_aln_len ||
                         curr_score / curr_aln.alignment.size() < score_limit) {
                         continue;
                     }
-                    mol_alns.push_back(curr_aln);
+                    for (int temp = 0; temp < 5000; temp++) {
+                        mol_alns.push_back(curr_aln);
+                    }
                 }
                 if (curr_score > best_score) {
                     best_score = curr_score;
@@ -102,7 +103,7 @@ map<int, vector<Alignment>> run_aln(map<int,vector<double>> &ref_cmaps, map<int,
         int is_multimapped = (int) (mol_alns.size() > 1);
         for (auto &curr_aln: mol_alns) {
             curr_aln.is_multimapped = is_multimapped;
-            if (get<2>(curr_aln.alignment.back()) < best_score) {
+            if (get<2>(curr_aln.alignment.back()) < lround(best_score)) {
                 curr_aln.is_secondary = 1;
             }
         }
@@ -311,6 +312,15 @@ int main (int argc, char *argv[]) {
         mol_id_queue.push(mol_id);
     }
 
+    //set outfile names
+    string outname = sample_name;
+    cout << "Writing alignments\n";
+    string partialname = outname + "_partial";
+    string argstring;
+    for (int i = 0; i < argc; ++i) {
+        argstring += " ";
+        argstring += argv[i];
+    }
     chrono::steady_clock::time_point ppWallE = chrono::steady_clock::now();
 
     //------------------------------------------------------
@@ -326,15 +336,18 @@ int main (int argc, char *argv[]) {
     //-------------------------------------------------------
     //gather results
     vector<Alignment> combined_results;
+    int total_alns = 0;
    for (auto &f: futs) {
        map<int, vector<Alignment>> curr_result = f.get();
        for (const auto &x: curr_result) {
+           total_alns+=x.second.size();
            combined_results.reserve(combined_results.size() + distance(x.second.begin(),x.second.end()));
            combined_results.insert(combined_results.end(),x.second.begin(),x.second.end());
        }
+       //clean up the fut
+       curr_result.clear();
    }
-    chrono::steady_clock::time_point alnWallE = chrono::steady_clock::now();
-    cout << "Finished molecule alignment. \n" << combined_results.size() << " total alignments\n";
+    cout << "Finished non-partial molecule alignment. \n" << total_alns << " total alignments\n";
     vector<Alignment> combined_results_partial;
     //------------------------------------------------------
     if(partial_alignment){
@@ -344,7 +357,7 @@ int main (int argc, char *argv[]) {
         logfile << mols_to_remap.size() << " molecules will undergo partial-seeding.\n";
         ////////////////////
         score_limit = 1000;
-        re_scale_par = 1.4;
+        dist_scale_par = 1.4;
         penalty_par = 7500;
         //Here again make thread and run partial alignments for remaining molecules
         if (!mols_to_remap.empty()) {
@@ -366,36 +379,35 @@ int main (int argc, char *argv[]) {
                     combined_results_partial.reserve(combined_results_partial.size() + distance(x.second.begin(), x.second.end()));
                     combined_results_partial.insert(combined_results_partial.end(), x.second.begin(), x.second.end());
                 }
+                //clean up the fut
+                curr_result.clear();
             }
         }
     }
+    chrono::steady_clock::time_point alnWallE = chrono::steady_clock::now();
+
     ////////////////////
     //write output
     //TODO: write this on the fly
     chrono::steady_clock::time_point outWallS = chrono::steady_clock::now();
-    string outname = sample_name;
-    cout << "Writing alignments\n";
-    string partialname = outname + "_partial";
+
     if (outfmt == "xmap") {
         outname+=".xmap";
         partialname+=".xmap";
-        string argstring;
-        for (int i = 0; i < argc; ++i) {
-            argstring += " ";
-            argstring += argv[i];
-        }
+
+        cout << "Writing fulls\n";
         write_xmap_alignment(combined_results, ref_cmaps, mol_maps, outname, argstring, multimap_mols);
+        combined_results.clear();
+        cout << "Writing partials\n";
         if (partial_alignment) {
-            string partial_name = outname + "_partial.xmap";
-            write_xmap_alignment(combined_results_partial, ref_cmaps, mol_maps, partial_name, argstring, multimap_mols);
+            write_xmap_alignment(combined_results_partial, ref_cmaps, mol_maps, partialname, argstring, multimap_mols);
         }
     } else {
         outname+=".fda";
         partialname+=".fda";
         write_fda_alignment(combined_results, ref_cmaps, mol_maps, outname, multimap_mols);
         if (partial_alignment) {
-            string partial_name = outname + "_partial.fda";
-            write_fda_alignment(combined_results_partial, ref_cmaps, mol_maps, partial_name, multimap_mols);
+            write_fda_alignment(combined_results_partial, ref_cmaps, mol_maps, partialname, multimap_mols);
         }
     }
     chrono::steady_clock::time_point outWallE = chrono::steady_clock::now();

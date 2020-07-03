@@ -51,8 +51,8 @@ public:
 //vector<long>
 //solve_graph_reverse(vector<pair<int, int>> vertices, vector<double> &q_dist, vector<double> &ref_dist, int w);
 
-vector<long> solve_graph(vector<pair<int, int>> vertices, vector<double> &q_dist, vector<double> &ref_dist,
-                         const int w, const int dir);
+vector<long> solve_graph(vector<pair<int, int>> vertices, vector<double> &q_dist, vector<double> &ref_dist, int w,
+        int dir);
 
 
 #endif //FANDOM_SEEDGRAPH_H

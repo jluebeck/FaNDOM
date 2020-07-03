@@ -13,7 +13,7 @@
 #include "OMHelper.h"
 
 using namespace std;
-extern float re_scale_par;
+extern float dist_scale_par;
 extern int penalty_par;
 //
 double basic_score(double d_r, double d_m, int u_m, int u_r);

@@ -136,7 +136,7 @@ bool partial_confidence_check(const Alignment &a, map<int,vector<double>> &ref_c
     int ref_id = a.ref_id;
     double aln_p1 = ref_cmaps[ref_id][get<0>(a.alignment[0])];
     double aln_p2 = ref_cmaps[ref_id][get<0>(a.alignment.back())];
-    return (aln_p2 - aln_p1) < 30000 || a.alignment.size() < 8;
+    return (aln_p2 - aln_p1) > 30000 && a.alignment.size() > 7;
 }
 
 
@@ -178,7 +178,7 @@ void filter_mols(map<int,vector<double>> &mol_map, int min_map_lab, int min_map_
         } else {
             for (int i = 0; i < posns.size() - 1; i++) { //Assume size on end
                 double dist_diff = posns[i + 1] - posns[i];
-                if (dist_diff > 250000) { //TODO: PARAMETERIZE
+                if (dist_diff > 250000) { //skip molecule if it has a gap of 250000 bp or more
                     fail_mols.insert(key);
                     break;
                 }

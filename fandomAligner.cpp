@@ -1,11 +1,11 @@
 #include "fandomAligner.h"
 
 using namespace std;
-float re_scale_par=1.2;
+float dist_scale_par=1.2;
 int penalty_par=5000;
 //Alignment
 double basic_score(double d_r, double d_m, int u_m, int u_r) {
-    double delta = pow(abs(d_r - d_m),re_scale_par);
+    double delta = pow(abs(d_r - d_m), dist_scale_par);
     double fl = penalty_par*(u_r + u_m);
     return 10000 - (fl + delta);
 }
@@ -54,22 +54,21 @@ pair<int,int> get_max_pair(const vector<vector<double>> &S) {
 
 Alignment dp_backtracking(vector<vector<double>> &S, vector<vector<pair<int,int>>> &previous, pair<int,int> max_pair,
                           int a, int ref_id, int mol_id) {
+    pair<int,int> null_tup = {-1,-1};
+    //    pair<int,int> max_tup = get_max_pair(S);
 
-pair<int,int> null_tup = {-1,-1};
-//    pair<int,int> max_tup = get_max_pair(S);
+    //backtracking
+    vector<tuple<int,int,long>> aln;
+    pair<int,int> curr_tup = max_pair;
+    while (curr_tup != null_tup) {
+        int j_ind = curr_tup.first;
+        int q_ind = curr_tup.second;
+        double score = S[j_ind][q_ind];
+        aln.emplace_back(j_ind+a,q_ind,lround(score));
+        curr_tup = previous[j_ind][q_ind];
+    }
+    reverse(aln.begin(),aln.end());
 
-//backtracking
-vector<tuple<int,int,double>> aln;
-pair<int,int> curr_tup = max_pair;
-while (curr_tup != null_tup) {
-    int j_ind = curr_tup.first;
-    int q_ind = curr_tup.second;
-    double score = S[j_ind][q_ind];
-    aln.emplace_back(j_ind+a,q_ind,score);
-    curr_tup = previous[j_ind][q_ind];
-}
-reverse(aln.begin(),aln.end());
-
-Alignment align_struct(aln,ref_id,mol_id);
-return align_struct;
+    Alignment align_struct(aln,ref_id,mol_id);
+    return align_struct;
 }

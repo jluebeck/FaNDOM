@@ -278,7 +278,7 @@ void write_xmap_alignment(vector<Alignment> &aln_list, map<int,vector<double>> &
 
     //write alignments
     size_t a_pair_ind = 1;
-    for (const auto &aln_struct: aln_list) {
+    for (auto &aln_struct: aln_list) {
         if (!is_mm && aln_struct.is_secondary && !aln_struct.is_partial) {
             continue;
         }
@@ -287,7 +287,7 @@ void write_xmap_alignment(vector<Alignment> &aln_list, map<int,vector<double>> &
         int mol_id = aln_struct.mol_id;
         vector<double> ref_posns = cmaps_ref[ref_id];
         vector<double> mol_posns = mol_map[mol_id];
-        vector<tuple<int,int,double>> alignment = aln_struct.alignment;
+        vector<tuple<int,int,long>> alignment = aln_struct.alignment;
         float mol_start_pos = mol_posns[get<1>(alignment[0])];
         float mol_end_pos = mol_posns[get<1>(alignment.back())];
         string outline = to_string(a_pair_ind) + "\t" + to_string(mol_id) + "\t" + to_string(ref_id) + "\t";
@@ -297,7 +297,7 @@ void write_xmap_alignment(vector<Alignment> &aln_list, map<int,vector<double>> &
         float ref_start_pos;
         float ref_end_pos;
         int ref_start_label;
-        double score = get<2>(alignment.back());
+        long score = get<2>(alignment.back());
         char direction;
         if (raw_ref_id < 0) {
             direction = '-';
@@ -401,7 +401,7 @@ void write_fda_alignment(vector<Alignment> &aln_list, map<int,vector<double>> &c
         int mol_id = aln_struct.mol_id;
         vector<double> ref_posns = cmaps_ref[ref_id];
         vector<double> mol_posns = mol_map[mol_id];
-        vector<tuple<int,int,double>> alignment = aln_struct.alignment;
+        vector<tuple<int,int,long>> alignment = aln_struct.alignment;
 
         outfile << "0\t" << ref_id << "\t" << mol_id << "\t";
         //compute ref start and end posns
@@ -409,8 +409,8 @@ void write_fda_alignment(vector<Alignment> &aln_list, map<int,vector<double>> &c
 //        float ref_end_pos = cmaps_ref[raw_ref_id][get<0>(alignment.back())];
         float ref_start_pos;
         float ref_end_pos;
-        double score = get<2>(alignment.back());
-        double mean_score = score/(alignment.size()-1);
+        long score = get<2>(alignment.back());
+        double mean_score = double(score)/(alignment.size()-1);
         char direction;
         if (raw_ref_id < 0) {
             direction = '-';
@@ -443,7 +443,7 @@ void write_fda_alignment(vector<Alignment> &aln_list, map<int,vector<double>> &c
 
         string outstring2 = "2";
         string outstring3 = "3";
-        float prev_score = 0.0;
+        long prev_score = 0;
         float prev_ref_pos = ref_start_pos;
         float prev_mol_pos = mol_start_pos;
         int prev_mol_lab = get<1>(alignment[0]);
@@ -451,8 +451,8 @@ void write_fda_alignment(vector<Alignment> &aln_list, map<int,vector<double>> &c
         for (const auto &aln_tup: alignment) {
             int ref_lab = get<0>(aln_tup);
             int mol_lab = get<1>(aln_tup);
-            float curr_score = get<2>(aln_tup);
-            float score_delta = curr_score - prev_score;
+            long curr_score = get<2>(aln_tup);
+            long score_delta = curr_score - prev_score;
             if (raw_ref_id < 0) {
                 //translate the reverse label number
                 int n_labs = cmaps_ref[raw_ref_id].size();

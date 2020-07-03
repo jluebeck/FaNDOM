@@ -25,7 +25,7 @@ struct seedData {
 };
 
 struct Alignment {
-    vector<tuple<int,int,double>> alignment;
+    vector<tuple<int,int,long>> alignment;
     int ref_id;
     int mol_id;
     int is_multimapped = 0;
@@ -33,7 +33,7 @@ struct Alignment {
     int is_partial = 0;
     int seed_num = 0;
 
-    Alignment(vector<tuple<int,int,double>> &new_alignment, int R_ID, int M_ID) {
+    Alignment(vector<tuple<int,int,long>> &new_alignment, int R_ID, int M_ID) {
         alignment = new_alignment; ref_id = R_ID; mol_id = M_ID;
     }
 };
