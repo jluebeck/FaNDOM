@@ -4,7 +4,7 @@ using namespace std;
 //using namespace std;
 
 //--------------------------------------------------------
-//Seeding  stuff
+//Seeding helpers
 //Work with seeds and opening alignment windows
 
 //function to merge intervals
@@ -41,7 +41,7 @@ map<int,vector<seedData>> mol_seeds_to_aln_regions(vector<seedData> &mol_seeds, 
     map<int,vector<seedData>> mol_aln_bounds;
     int mol_lab = 0; //Seeds assumed to be aligned to mol pos 0.
     for (auto &y: mol_seeds) {
-        if (y.ref_aln_lb ==0 && y.ref_aln_rb ==0) {
+        if (y.ref_aln_lb == 0 && y.ref_aln_rb == 0) {
             vector<double> curr_ref = ref_cmaps[y.ref_id];
             double ref_0_lab_pos = curr_ref[y.ref_0_lab];
             double mol_lab_pos = mol_posns[mol_lab];
@@ -132,6 +132,13 @@ map<int,vector<seedData>> mol_seeds_to_aln_regions(vector<seedData> &mol_seeds, 
 
 //-------------------------
 //Filtering & Bookkeeping
+bool partial_confidence_check(const Alignment &a, map<int,vector<double>> &ref_cmaps) {
+    int ref_id = a.ref_id;
+    double aln_p1 = ref_cmaps[ref_id][get<0>(a.alignment[0])];
+    double aln_p2 = ref_cmaps[ref_id][get<0>(a.alignment.back())];
+    return (aln_p2 - aln_p1) < 30000 || a.alignment.size() < 8;
+}
+
 
 //get molecule IDs where a full alignment was not found
 unordered_set<int> get_remap_mol_ids(const vector<Alignment> &aln_list, map<int, vector<double>> &mol_maps,

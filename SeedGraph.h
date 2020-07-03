@@ -23,9 +23,10 @@ public:
         v = _v;
         weight = _w;
     }
-    int getV() { return v; }
-    long getWeight() { return weight; }
+    int getV() const { return v; }
+    long getWeight() const { return weight; }
 };
+
 class Graph {
     int V;    // No. of vertices'
     // Pointer to an array containing adjacency lists
@@ -33,7 +34,7 @@ class Graph {
     // A function used by shortestPath
     void topologicalSortUtil(int v, bool visited[], stack<int> &Stack);
 public:
-    Graph(int V);   // Constructor
+    explicit Graph(int V);   // Constructor
     ~Graph();   // destructor
     // function to add an edge to graph
     void addEdge(int u, int v, long weight);
@@ -44,11 +45,14 @@ public:
 
 //////// FUNCTION DEFS
 
-vector<long>
-solve_graph_straight(vector<pair<int, int>> vertices, vector<double> &q_dist, vector<double> &ref_dist, int w);
+//vector<long>
+//solve_graph_straight(vector<pair<int, int>> vertices, vector<double> &q_dist, vector<double> &ref_dist, int w);
+//
+//vector<long>
+//solve_graph_reverse(vector<pair<int, int>> vertices, vector<double> &q_dist, vector<double> &ref_dist, int w);
 
-vector<long>
-solve_graph_reverse(vector<pair<int, int>> vertices, vector<double> &q_dist, vector<double> &ref_dist, int w);
+vector<long> solve_graph(vector<pair<int, int>> vertices, vector<double> &q_dist, vector<double> &ref_dist,
+                         const int w, const int dir);
 
 
 #endif //FANDOM_SEEDGRAPH_H

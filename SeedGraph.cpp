@@ -65,9 +65,102 @@ vector<long> Graph::shortestPath(int s) {//just return the score and path
     return dist;
 }
 
-///////////calculate shortest patch in straight DAG////////////
-vector<long>
-solve_graph_straight(vector<pair<int, int>> vertices, vector<double> &q_dist, vector<double> &ref_dist, const int w) {
+/////////////calculate shortest patch in straight DAG////////////
+//vector<long>
+//solve_graph_straight(vector<pair<int, int>> vertices, vector<double> &q_dist, vector<double> &ref_dist, const int w) {
+//    Graph *g;
+//    int size_vertices = vertices.size();
+//    g = new Graph(2 + w * size_vertices);
+//    int source = 0;
+//    int end = 2 + w * size_vertices - 1;
+//    for (int ard = 0; ard < size_vertices; ard++) {
+//        g[0].addEdge((ard + 1) * w - 1, (ard + 1) * w, 0);
+//        g[0].addEdge((ard + 1) * w - 2, (ard + 1) * w - 1, 0);
+//    }
+//    for (int ard = 0; ard < size_vertices; ard++) {
+//        for (int srd = 0; srd < size_vertices; srd++) {
+//            if (srd != ard) {
+//                int payan_avali = vertices[ard].first + w - 1;
+//                int avale_dovomi = vertices[srd].first;
+//                int payan_avali_ref = vertices[ard].second + w - 1;
+//                int avale_dovomi_ref = vertices[srd].second;
+//                if (payan_avali <= avale_dovomi && payan_avali_ref <= avale_dovomi_ref) {
+//                    long dif_ref = long(ref_dist[avale_dovomi_ref - 1] - ref_dist[payan_avali_ref - 1]);
+//                    long query_dif = long(q_dist[avale_dovomi - 1] - q_dist[payan_avali - 1]);
+//                    long weight_edge = long(sqrt(dif_ref * dif_ref + query_dif * query_dif));
+//                    g[0].addEdge((ard + 1) * w, (srd + 1) * w - 2, weight_edge);
+//                }
+//                if (payan_avali - 1 == avale_dovomi && payan_avali_ref - 1 <= avale_dovomi_ref) {
+//                    long dif_ref = long(ref_dist[avale_dovomi_ref - 1] - ref_dist[payan_avali_ref - 2]);
+//                    g[0].addEdge((ard + 1) * w - 1, (srd + 1) * w - 2,long(sqrt(dif_ref * dif_ref)));
+//                }
+//
+//            }
+//        }
+//        long query_length = q_dist[vertices[ard].first - 1] - q_dist[0];
+//        long ref_length = 0;
+//        g[0].addEdge(source, (ard + 1) * w - 2,
+//                     long(sqrt(2 * query_length * query_length + ref_length * ref_length)));
+//        query_length = q_dist[q_dist.size() - 1] - q_dist[vertices[ard].first + w - 1 - 1];
+//        ref_length = 0;
+//        g[0].addEdge((ard + 1) * w, end,
+//                     long(sqrt(2 * query_length * query_length + ref_length * ref_length)));
+//    }
+//    vector<long> score = g[0].shortestPath(source);
+//    delete g;
+//    return score;
+//}
+//
+/////////////calculate shortest patch in reverse DAG////////////
+//vector<long>
+//solve_graph_reverse(vector<pair<int, int>> vertices, vector<double> &q_dist, vector<double> &ref_dist, const int w) {
+//    Graph *g;
+//    int size_vertices = vertices.size();
+//    g = new Graph(2 + w * size_vertices);
+//    int source = 0;
+//    int end = 2 + w * size_vertices - 1;
+//    for (int ard = 0; ard < size_vertices; ard++) {
+//        g[0].addEdge((ard + 1) * w - 1, (ard + 1) * w, 0);
+//        g[0].addEdge((ard + 1) * w - 2, (ard + 1) * w - 1, 0);
+//    }
+//    for (int ard = 0; ard < size_vertices; ard++) {
+//        for (int srd = 0; srd < size_vertices; srd++) {
+//            if (srd != ard) {
+//                int payan_avali = vertices[ard].first - w + 1;
+//                int avale_dovomi = vertices[srd].first;
+//                int payan_avali_ref = vertices[ard].second + w - 1;
+//                int avale_dovomi_ref = vertices[srd].second;
+//                if (payan_avali >= avale_dovomi && payan_avali_ref <= avale_dovomi_ref) {
+//                    long dif_ref = long(ref_dist[avale_dovomi_ref - 1] - ref_dist[payan_avali_ref - 1]);
+//                    long query_dif = long(q_dist[avale_dovomi - 1] - q_dist[payan_avali - 1]);
+//                    long weight_edge = long(sqrt(dif_ref * dif_ref + query_dif * query_dif));
+//                    g[0].addEdge((ard + 1) * w, (srd + 1) * w - 2, weight_edge);
+//                }
+//                if (payan_avali + 1 == avale_dovomi && payan_avali_ref - 1 <= avale_dovomi_ref) {
+//                    long dif_ref = long(ref_dist[avale_dovomi_ref - 1] - ref_dist[payan_avali_ref - 2]);
+//                    long weight_edge = long(sqrt(dif_ref * dif_ref));
+//                    g[0].addEdge((ard + 1) * w - 1, (srd + 1) * w - 2, weight_edge);
+//                }
+//            }
+//        }
+//        long query_length = q_dist[vertices[ard].first - 1] - q_dist[q_dist.size() - 1];
+//        long ref_length = 0;
+//        g[0].addEdge(source, (ard + 1) * w - 2,long(sqrt(2 * query_length * query_length + ref_length * ref_length)));
+//        query_length = q_dist[vertices[ard].first - 1 - w + 1] - q_dist[0];
+//        ref_length = 0;
+//        g[0].addEdge((ard + 1) * w, end,
+//                     long(sqrt(2 * query_length * query_length + ref_length * ref_length)));
+//    }
+//    vector<long> score = g[0].shortestPath(source);
+//    delete g;
+//    return score;
+//}
+
+
+/////////////calculate shortest patch in straight DAG////////////
+vector<long> solve_graph(vector<pair<int, int>> vertices, vector<double> &q_dist, vector<double> &ref_dist,
+        const int w, const int dir) {
+
     Graph *g;
     int size_vertices = vertices.size();
     g = new Graph(2 + w * size_vertices);
@@ -80,86 +173,36 @@ solve_graph_straight(vector<pair<int, int>> vertices, vector<double> &q_dist, ve
     for (int ard = 0; ard < size_vertices; ard++) {
         for (int srd = 0; srd < size_vertices; srd++) {
             if (srd != ard) {
-                int payan_avali = vertices[ard].first + w - 1;
+                int payan_avali = vertices[ard].first + dir*(w - 1);
                 int avale_dovomi = vertices[srd].first;
                 int payan_avali_ref = vertices[ard].second + w - 1;
                 int avale_dovomi_ref = vertices[srd].second;
-                if (payan_avali <= avale_dovomi && payan_avali_ref <= avale_dovomi_ref) {
-                    long dif_ref =
-                            long(
-                                    ref_dist[avale_dovomi_ref - 1] - ref_dist[payan_avali_ref - 1]);
-                    long query_dif = long(
-                            q_dist[avale_dovomi - 1] - q_dist[payan_avali - 1]);
+                if (dir*payan_avali <= dir*avale_dovomi && payan_avali_ref <= avale_dovomi_ref) {
+                    long dif_ref = long(ref_dist[avale_dovomi_ref - 1] - ref_dist[payan_avali_ref - 1]);
+                    long query_dif = long(q_dist[avale_dovomi - 1] - q_dist[payan_avali - 1]);
                     long weight_edge = long(sqrt(dif_ref * dif_ref + query_dif * query_dif));
                     g[0].addEdge((ard + 1) * w, (srd + 1) * w - 2, weight_edge);
                 }
-                if (payan_avali - 1 == avale_dovomi && payan_avali_ref - 1 <= avale_dovomi_ref) {
-                    long dif_ref = long(
-                            ref_dist[avale_dovomi_ref - 1] - ref_dist[payan_avali_ref - 2]);
-                    g[0].addEdge((ard + 1) * w - 1, (srd + 1) * w - 2,
-                                 long(sqrt(dif_ref * dif_ref)));
-                }
-
-            }
-        }
-        long query_length = q_dist[vertices[ard].first - 1] - q_dist[0];
-        long ref_length = 0;
-        g[0].addEdge(source, (ard + 1) * w - 2,
-                     long(sqrt(2 * query_length * query_length + ref_length * ref_length)));
-        query_length =
-                q_dist[q_dist.size() - 1] - q_dist[vertices[ard].first + w - 1 - 1];
-        ref_length = 0;
-        g[0].addEdge((ard + 1) * w, end,
-                     long(sqrt(2 * query_length * query_length + ref_length * ref_length)));
-    }
-    vector<long> score = g[0].shortestPath(source);
-    delete g;
-    return score;
-}
-
-///////////calculate shortest patch in reverse DAG////////////
-vector<long>
-solve_graph_reverse(vector<pair<int, int>> vertices, vector<double> &q_dist, vector<double> &ref_dist, const int w) {
-    Graph *g;
-    int size_vertices = vertices.size();
-    g = new Graph(2 + w * size_vertices);
-    int source = 0;
-    int end = 2 + w * size_vertices - 1;
-    for (int ard = 0; ard < size_vertices; ard++) {
-        g[0].addEdge((ard + 1) * w - 1, (ard + 1) * w, 0);
-        g[0].addEdge((ard + 1) * w - 2, (ard + 1) * w - 1, 0);
-    }
-    for (int ard = 0; ard < size_vertices; ard++) {
-        for (int srd = 0; srd < size_vertices; srd++) {
-            if (srd != ard) {
-                int payan_avali = vertices[ard].first - w + 1;
-                int avale_dovomi = vertices[srd].first;
-                int payan_avali_ref = vertices[ard].second + w - 1;
-                int avale_dovomi_ref = vertices[srd].second;
-                if (payan_avali >= avale_dovomi && payan_avali_ref <= avale_dovomi_ref) {
-                    long dif_ref =
-                            long(
-                                    ref_dist[avale_dovomi_ref - 1] - ref_dist[payan_avali_ref - 1]);
-                    long query_dif = long(
-                            q_dist[avale_dovomi - 1] - q_dist[payan_avali - 1]);
-                    long weight_edge = long(sqrt(dif_ref * dif_ref + query_dif * query_dif));
-                    g[0].addEdge((ard + 1) * w, (srd + 1) * w - 2, weight_edge);
-                }
-                if (payan_avali + 1 == avale_dovomi && payan_avali_ref - 1 <= avale_dovomi_ref) {
+                if (payan_avali - dir == avale_dovomi && payan_avali_ref - 1 <= avale_dovomi_ref) {
                     long dif_ref = long(ref_dist[avale_dovomi_ref - 1] - ref_dist[payan_avali_ref - 2]);
-                    long weight_edge = long(sqrt(dif_ref * dif_ref));
-                    g[0].addEdge((ard + 1) * w - 1, (srd + 1) * w - 2, weight_edge);
+                    g[0].addEdge((ard + 1) * w - 1, (srd + 1) * w - 2, abs(dif_ref));
                 }
             }
         }
-        long query_length = q_dist[vertices[ard].first - 1] - q_dist[q_dist.size() - 1];
         long ref_length = 0;
-        g[0].addEdge(source, (ard + 1) * w - 2,
-                     long(sqrt(2 * query_length * query_length + ref_length * ref_length)));
-        query_length = q_dist[vertices[ard].first - 1 - w + 1] - q_dist[0];
-        ref_length = 0;
-        g[0].addEdge((ard + 1) * w, end,
-                     long(sqrt(2 * query_length * query_length + ref_length * ref_length)));
+        long query_length = q_dist[vertices[ard].first - 1];
+        long query_distance;
+        if (dir > 0) {
+            query_length -= q_dist[0];
+            query_distance = q_dist[q_dist.size() - 1] - q_dist[vertices[ard].first + w - 2]; //(+w - 1 -1 )
+
+        } else {
+            query_length -= q_dist[q_dist.size() - 1];
+            query_distance = q_dist[vertices[ard].first - w] - q_dist[0]; //(-1 - w + 1)
+        }
+        g[0].addEdge(source, (ard + 1) * w - 2,long(sqrt(2 * pow(query_length,2))));
+        g[0].addEdge(source, (ard + 1) * w - 2,long(sqrt(2 * pow(query_distance, 2))));
+
     }
     vector<long> score = g[0].shortestPath(source);
     delete g;
