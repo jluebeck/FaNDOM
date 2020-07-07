@@ -272,8 +272,8 @@ void calculate_seeds_score_in_band_SV(vector<query> &qq, int ref_contig, vector<
                                                     ref_dist[q.seeds_straight[cc][i].second - 1],
                                                     q.seeds_straight[cc][i].second, score,
                                                     float(score * part_len),
-                                                    max(q.seeds_straight[cc][i].second - 33, 0),
-                                                    min(int(ref_dist.size()) - 1, q.seeds_straight[cc][j].second + 31),
+                                                    max(q.seeds_straight[cc][i].second - int(f1*1.5), 0),
+                                                    min(int(ref_dist.size()) - 1, q.seeds_straight[cc][j].second + int((q_dist.size()-e1)*1.5)),
                                                     f1, e1
                                             };
                                     if (abs(prev_index - cc) > 1) {
@@ -326,8 +326,8 @@ void calculate_seeds_score_in_band_SV(vector<query> &qq, int ref_contig, vector<
                                                     ref_dist[q.seeds_reverse[cc][i].second - 1],
                                                     q.seeds_reverse[cc][i].second, score,
                                                     float(score * part_len),
-                                                    max(q.seeds_reverse[cc][i].second - 33, 0),
-                                                    min(int(ref_dist.size()) - 1, q.seeds_reverse[cc][j].second + 31),
+                                                    max(q.seeds_reverse[cc][i].second - int((q_dist.size()-e1) * 1.5), 0),
+                                                    min(int(ref_dist.size()) - 1, q.seeds_reverse[cc][j].second + int(f1*1.5)),
                                                     f1, e1
                                             };
                                     if (abs(prev_index_rev - cc) > 1) {
