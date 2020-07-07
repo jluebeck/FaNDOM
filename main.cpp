@@ -267,7 +267,7 @@ int main (int argc, char *argv[]) {
     string log_dir = sample_name + "_log";
 
     logfile.open(log_dir);
-    logfile<<"KIR"<<endl;
+    logfile<<"First Line"<<endl;
     cout << "reference genome cmap file: " << ref_cmap_file << "\n";
     cout << "query file: " << queryfile << "\n";
     cout << "\nNumber of threads for filtering & alignment: " << n_threads << "\n";
