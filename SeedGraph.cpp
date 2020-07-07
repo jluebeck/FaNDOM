@@ -185,11 +185,10 @@ vector<long> solve_graph(vector<pair<int, int>> vertices, vector<double> &q_dist
                 }
                 if (payan_avali - dir == avale_dovomi && payan_avali_ref - 1 <= avale_dovomi_ref) {
                     long dif_ref = long(ref_dist[avale_dovomi_ref - 1] - ref_dist[payan_avali_ref - 2]);
-                    g[0].addEdge((ard + 1) * w - 1, (srd + 1) * w - 2, abs(dif_ref));
+                    g[0].addEdge((ard + 1) * w - 1, (srd + 1) * w - 2, long(abs(dif_ref)));
                 }
             }
         }
-        long ref_length = 0;
         long query_length = q_dist[vertices[ard].first - 1];
         long query_distance;
         if (dir > 0) {
@@ -200,9 +199,9 @@ vector<long> solve_graph(vector<pair<int, int>> vertices, vector<double> &q_dist
             query_length -= q_dist[q_dist.size() - 1];
             query_distance = q_dist[vertices[ard].first - w] - q_dist[0]; //(-1 - w + 1)
         }
-        g[0].addEdge(source, (ard + 1) * w - 2,long(sqrt(2 * pow(query_length,2))));
-        g[0].addEdge(source, (ard + 1) * w - 2,long(sqrt(2 * pow(query_distance, 2))));
 
+        g[0].addEdge(source, (ard + 1) * w - 2,long(sqrt(2 * pow(query_length,2))));
+        g[0].addEdge((ard + 1) * w, end,long(sqrt(2 * pow(query_distance, 2))));
     }
     vector<long> score = g[0].shortestPath(source);
     delete g;

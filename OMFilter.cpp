@@ -123,9 +123,7 @@ void calculate_seeds_score_in_band(vector<query> &qq, int ref_contig, vector<dou
                     if (q.seeds_straight[cc].size() > 3) {
                         last_index_str = cc;
                         long straight_score = 10000000;
-//                        vector<long> score_path = solve_graph_straight(q.seeds_straight[cc],
-//                                                                                             q_dist,
-//                                                                                             ref_dist, w);
+//                        vector<long> score_path = solve_graph_straight(q.seeds_straight[cc],q_dist,ref_dist, w);
                         vector<long> score_path = solve_graph(q.seeds_straight[cc], q_dist, ref_dist, w, 1);
                         straight_score = score_path[score_path.size()-1];
                         if (abs(prev_index - cc) > 1) {
@@ -168,8 +166,7 @@ void calculate_seeds_score_in_band(vector<query> &qq, int ref_contig, vector<dou
                     if (q.seeds_reverse[cc].size() > 3) {
                         last_index_rev = cc;
                         long reverse_score = 10000000;
-//                        vector<long> score_path = solve_graph_reverse(q.seeds_reverse[cc], q_dist,
-//                                                                                            ref_dist, w);
+//                        vector<long> score_path = solve_graph_reverse(q.seeds_reverse[cc], q_dist, ref_dist, w);
                         vector<long> score_path = solve_graph(q.seeds_reverse[cc], q_dist, ref_dist, w, -1);
                         reverse_score = score_path[score_path.size()-1];
                         if (abs(prev_index_rev - cc) > 1) {
@@ -252,6 +249,8 @@ void calculate_seeds_score_in_band_SV(vector<query> &qq, int ref_contig, vector<
             if (q.seeds_straight[cc].size() > 1) {
                 vector<pair<int, int>> ali = q.seeds_straight[cc];
                 vector<long> score_from_first = solve_graph(q.seeds_straight[cc], q_dist, ref_dist, w, 1);
+//                vector<long> score_from_first = solve_graph_straight(q.seeds_straight[cc], q_dist, ref_dist, w);
+
                 bool brk = false;
                 for (int i = 0; i < q.seeds_straight[cc].size(); ++i) {
                     if (brk) {
@@ -305,6 +304,8 @@ void calculate_seeds_score_in_band_SV(vector<query> &qq, int ref_contig, vector<
             if (q.seeds_reverse[cc].size() > 1) {
                 vector<pair<int, int>> ali = q.seeds_reverse[cc];
                 vector<long> score_to_end = solve_graph(q.seeds_reverse[cc], q_dist, ref_dist, w, -1);
+//                vector<long> score_to_end = solve_graph_reverse(q.seeds_reverse[cc], q_dist, ref_dist, w);
+
                 bool brk = false;
                 for (int i = 0; i < q.seeds_reverse[cc].size(); ++i) {
                     if (brk) {

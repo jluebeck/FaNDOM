@@ -3,6 +3,7 @@
 using namespace std;
 float dist_scale_par=1.2;
 int penalty_par=5000;
+
 //Alignment
 double basic_score(double d_r, double d_m, int u_m, int u_r) {
     double delta = pow(abs(d_r - d_m), dist_scale_par);

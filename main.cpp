@@ -100,10 +100,13 @@ map<int, vector<Alignment>> run_aln(map<int,vector<double>> &ref_cmaps, map<int,
 
         //go over alignments and check if the alignments are secondary alignments and set the status
         int is_multimapped = (int) (mol_alns.size() > 1);
+        cout << mol_id << " " << lround(best_score) << "\n";
         for (auto &curr_aln: mol_alns) {
             curr_aln.is_multimapped = is_multimapped;
             if (get<2>(curr_aln.alignment.back()) < lround(best_score)) {
                 curr_aln.is_secondary = 1;
+            } else {
+                cout << " hit " << get<2>(curr_aln.alignment.back()) << "\n";
             }
         }
         results[mol_id] = mol_alns;
@@ -142,7 +145,7 @@ map<int, vector<Alignment>> filt_and_aln(int thread_num, map<int,vector<double>>
             curr = run_aln(ref_cmaps, mols, seed_batch, partial_mode);
             //////Log
             for (auto &key : curr){
-                logfile<< key.first<<"\n";
+                logfile<< "used in full sort " << key.first<<"\n";
             }
             //////
             result.insert(curr.begin(), curr.end());
@@ -156,7 +159,7 @@ map<int, vector<Alignment>> filt_and_aln(int thread_num, map<int,vector<double>>
         curr = run_aln(ref_cmaps, mols, seed_batch, partial_mode);
         //////Log
         for (auto &key : curr){
-            cout<< key.first<<endl;
+            cout<< "used in cleanup sort " << key.first<<endl;
         }
         ////////
         result.insert(curr.begin(), curr.end());
@@ -381,7 +384,7 @@ int main (int argc, char *argv[]) {
     cout << "Finished non-partial molecule alignment. \n" << total_alns << " total alignments\n";
 
     //------------------------------------------------------
-    //gath results PARTIAL
+    //gather results PARTIAL
 //    vector<Alignment> combined_results_partial;
     if(partial_alignment){
         unordered_set<int> mols_to_remap = get_remap_mol_ids(combined_results, mol_maps, aln_prop_thresh_to_remap,
