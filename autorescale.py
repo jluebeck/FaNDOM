@@ -72,16 +72,16 @@ elif args.query.endswith('.cmap'):
     query = parse_cmap(args.query,True)
 else:
     print('Query file is not in cmap or bnx format')
-    return
-
+    quit()
+print('Finish Parsing Query')
 if args.fandom.endswith('/'):
     fandom = args.fandom
 else:
     fandom = args.fandom+'/'
-
-if !args.ref.endswith('.cmap'):
+print(fandom)
+if not args.ref.endswith('.cmap'):
     print('Reference should be in cmap format')
-    return
+    quit()
 if args.output.endswith('/'):
     output = args.output[:-1]
 else:
@@ -113,7 +113,7 @@ for i in range(-4, 11):
                 else:
                     f.write(k + '\t'+str(length)+'\t'+str(number_label)+'\t'+str(index)+'\t1\t'+str(scaledSample[k][index])+'\t0.0\t1.0\t1.0\t17.0000\t0.0000\n')
     #Run Fandom on new resclaed molecules
-    os.system(fandom+'./FaNDOM'+' -t='+args.thread+' -r='+args.ref+' -q='+output+'/a.cmap -sname='+output+'/test '+ '-outfmt=xmap')
+    os.system(fandom+'./FaNDOM'+' -t='+args.thread+' -r='+args.ref+' -q='+output+'/a.cmap -sname='+output+'/test '+ '-outfmt=xmap -no_partial')
     sum_score = 0
     #Sum scores of molecule
     with open(output+'/test.xmap','r') as f:
