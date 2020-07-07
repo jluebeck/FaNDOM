@@ -80,31 +80,31 @@ vector<long> Graph::shortestPath(int s) {//just return the score and path
 //    for (int ard = 0; ard < size_vertices; ard++) {
 //        for (int srd = 0; srd < size_vertices; srd++) {
 //            if (srd != ard) {
-//                int payan_avali = vertices[ard].first + w - 1;
-//                int avale_dovomi = vertices[srd].first;
-//                int payan_avali_ref = vertices[ard].second + w - 1;
-//                int avale_dovomi_ref = vertices[srd].second;
-//                if (payan_avali <= avale_dovomi && payan_avali_ref <= avale_dovomi_ref) {
-//                    long dif_ref = long(ref_dist[avale_dovomi_ref - 1] - ref_dist[payan_avali_ref - 1]);
-//                    long query_dif = long(q_dist[avale_dovomi - 1] - q_dist[payan_avali - 1]);
-//                    long weight_edge = long(sqrt(dif_ref * dif_ref + query_dif * query_dif));
+//                int first_end = vertices[ard].first + w - 1;
+//                int second_start = vertices[srd].first;
+//                int first_end_ref = vertices[ard].second + w - 1;
+//                int second_start_ref = vertices[srd].second;
+//                if (first_end <= second_start && first_end_ref <= second_start_ref) {
+//                    long X_ref = long(ref_dist[second_start_ref - 1] - ref_dist[first_end_ref - 1]);
+//                    long Y_query = long(q_dist[second_start - 1] - q_dist[first_end - 1]);
+//                    long weight_edge = long(sqrt(X_ref * X_ref + Y_query * Y_query));
 //                    g[0].addEdge((ard + 1) * w, (srd + 1) * w - 2, weight_edge);
 //                }
-//                if (payan_avali - 1 == avale_dovomi && payan_avali_ref - 1 <= avale_dovomi_ref) {
-//                    long dif_ref = long(ref_dist[avale_dovomi_ref - 1] - ref_dist[payan_avali_ref - 2]);
-//                    g[0].addEdge((ard + 1) * w - 1, (srd + 1) * w - 2,long(sqrt(dif_ref * dif_ref)));
+//                if (first_end - 1 == second_start && first_end_ref - 1 <= second_start_ref) {
+//                    long X_ref = long(ref_dist[second_start_ref - 1] - ref_dist[first_end_ref - 2]);
+//                    g[0].addEdge((ard + 1) * w - 1, (srd + 1) * w - 2,long(sqrt(X_ref * X_ref)));
 //                }
 //
 //            }
 //        }
-//        long query_length = q_dist[vertices[ard].first - 1] - q_dist[0];
+//        long query_to_start_dist = q_dist[vertices[ard].first - 1] - q_dist[0];
 //        long ref_length = 0;
 //        g[0].addEdge(source, (ard + 1) * w - 2,
-//                     long(sqrt(2 * query_length * query_length + ref_length * ref_length)));
-//        query_length = q_dist[q_dist.size() - 1] - q_dist[vertices[ard].first + w - 1 - 1];
+//                     long(sqrt(2 * query_to_start_dist * query_to_start_dist + ref_length * ref_length)));
+//        query_to_start_dist = q_dist[q_dist.size() - 1] - q_dist[vertices[ard].first + w - 1 - 1];
 //        ref_length = 0;
 //        g[0].addEdge((ard + 1) * w, end,
-//                     long(sqrt(2 * query_length * query_length + ref_length * ref_length)));
+//                     long(sqrt(2 * query_to_start_dist * query_to_start_dist + ref_length * ref_length)));
 //    }
 //    vector<long> score = g[0].shortestPath(source);
 //    delete g;
@@ -126,30 +126,30 @@ vector<long> Graph::shortestPath(int s) {//just return the score and path
 //    for (int ard = 0; ard < size_vertices; ard++) {
 //        for (int srd = 0; srd < size_vertices; srd++) {
 //            if (srd != ard) {
-//                int payan_avali = vertices[ard].first - w + 1;
-//                int avale_dovomi = vertices[srd].first;
-//                int payan_avali_ref = vertices[ard].second + w - 1;
-//                int avale_dovomi_ref = vertices[srd].second;
-//                if (payan_avali >= avale_dovomi && payan_avali_ref <= avale_dovomi_ref) {
-//                    long dif_ref = long(ref_dist[avale_dovomi_ref - 1] - ref_dist[payan_avali_ref - 1]);
-//                    long query_dif = long(q_dist[avale_dovomi - 1] - q_dist[payan_avali - 1]);
-//                    long weight_edge = long(sqrt(dif_ref * dif_ref + query_dif * query_dif));
+//                int first_end = vertices[ard].first - w + 1;
+//                int second_start = vertices[srd].first;
+//                int first_end_ref = vertices[ard].second + w - 1;
+//                int second_start_ref = vertices[srd].second;
+//                if (first_end >= second_start && first_end_ref <= second_start_ref) {
+//                    long X_ref = long(ref_dist[second_start_ref - 1] - ref_dist[first_end_ref - 1]);
+//                    long Y_query = long(q_dist[second_start - 1] - q_dist[first_end - 1]);
+//                    long weight_edge = long(sqrt(X_ref * X_ref + Y_query * Y_query));
 //                    g[0].addEdge((ard + 1) * w, (srd + 1) * w - 2, weight_edge);
 //                }
-//                if (payan_avali + 1 == avale_dovomi && payan_avali_ref - 1 <= avale_dovomi_ref) {
-//                    long dif_ref = long(ref_dist[avale_dovomi_ref - 1] - ref_dist[payan_avali_ref - 2]);
-//                    long weight_edge = long(sqrt(dif_ref * dif_ref));
+//                if (first_end + 1 == second_start && first_end_ref - 1 <= second_start_ref) {
+//                    long X_ref = long(ref_dist[second_start_ref - 1] - ref_dist[first_end_ref - 2]);
+//                    long weight_edge = long(sqrt(X_ref * X_ref));
 //                    g[0].addEdge((ard + 1) * w - 1, (srd + 1) * w - 2, weight_edge);
 //                }
 //            }
 //        }
-//        long query_length = q_dist[vertices[ard].first - 1] - q_dist[q_dist.size() - 1];
+//        long query_to_start_dist = q_dist[vertices[ard].first - 1] - q_dist[q_dist.size() - 1];
 //        long ref_length = 0;
-//        g[0].addEdge(source, (ard + 1) * w - 2,long(sqrt(2 * query_length * query_length + ref_length * ref_length)));
-//        query_length = q_dist[vertices[ard].first - 1 - w + 1] - q_dist[0];
+//        g[0].addEdge(source, (ard + 1) * w - 2,long(sqrt(2 * query_to_start_dist * query_to_start_dist + ref_length * ref_length)));
+//        query_to_start_dist = q_dist[vertices[ard].first - 1 - w + 1] - q_dist[0];
 //        ref_length = 0;
 //        g[0].addEdge((ard + 1) * w, end,
-//                     long(sqrt(2 * query_length * query_length + ref_length * ref_length)));
+//                     long(sqrt(2 * query_to_start_dist * query_to_start_dist + ref_length * ref_length)));
 //    }
 //    vector<long> score = g[0].shortestPath(source);
 //    delete g;
@@ -173,35 +173,35 @@ vector<long> solve_graph(vector<pair<int, int>> vertices, vector<double> &q_dist
     for (int ard = 0; ard < size_vertices; ard++) {
         for (int srd = 0; srd < size_vertices; srd++) {
             if (srd != ard) {
-                int payan_avali = vertices[ard].first + dir*(w - 1);
-                int avale_dovomi = vertices[srd].first;
-                int payan_avali_ref = vertices[ard].second + w - 1;
-                int avale_dovomi_ref = vertices[srd].second;
-                if (dir*payan_avali <= dir*avale_dovomi && payan_avali_ref <= avale_dovomi_ref) {
-                    long dif_ref = long(ref_dist[avale_dovomi_ref - 1] - ref_dist[payan_avali_ref - 1]);
-                    long query_dif = long(q_dist[avale_dovomi - 1] - q_dist[payan_avali - 1]);
-                    long weight_edge = long(sqrt(dif_ref * dif_ref + query_dif * query_dif));
+                int first_end = vertices[ard].first + dir*(w - 1);
+                int second_start = vertices[srd].first;
+                int first_end_ref = vertices[ard].second + w - 1;
+                int second_start_ref = vertices[srd].second;
+                if (dir*first_end <= dir*second_start && first_end_ref <= second_start_ref) {
+                    long X_ref = long(ref_dist[second_start_ref - 1] - ref_dist[first_end_ref - 1]);
+                    long Y_query = long(q_dist[second_start - 1] - q_dist[first_end - 1]);
+                    long weight_edge = long(sqrt(X_ref * X_ref + Y_query * Y_query));
                     g[0].addEdge((ard + 1) * w, (srd + 1) * w - 2, weight_edge);
                 }
-                if (payan_avali - dir == avale_dovomi && payan_avali_ref - 1 <= avale_dovomi_ref) {
-                    long dif_ref = long(ref_dist[avale_dovomi_ref - 1] - ref_dist[payan_avali_ref - 2]);
-                    g[0].addEdge((ard + 1) * w - 1, (srd + 1) * w - 2, long(abs(dif_ref)));
+                if (first_end - dir == second_start && first_end_ref - 1 <= second_start_ref) {
+                    long X_ref = long(ref_dist[second_start_ref - 1] - ref_dist[first_end_ref - 2]);
+                    g[0].addEdge((ard + 1) * w - 1, (srd + 1) * w - 2, long(abs(X_ref)));
                 }
             }
         }
-        long query_length = q_dist[vertices[ard].first - 1];
-        long query_distance;
+        long query_to_start_dist = q_dist[vertices[ard].first - 1];
+        long query_to_end_dist;
         if (dir > 0) {
-            query_length -= q_dist[0];
-            query_distance = q_dist[q_dist.size() - 1] - q_dist[vertices[ard].first + w - 2]; //(+w - 1 -1 )
+            query_to_start_dist -= q_dist[0];
+            query_to_end_dist = q_dist[q_dist.size() - 1] - q_dist[vertices[ard].first + w - 2]; //(+w - 1 -1 )
 
         } else {
-            query_length -= q_dist[q_dist.size() - 1];
-            query_distance = q_dist[vertices[ard].first - w] - q_dist[0]; //(-1 - w + 1)
+            query_to_start_dist -= q_dist[q_dist.size() - 1];
+            query_to_end_dist = q_dist[vertices[ard].first - w] - q_dist[0]; //(-1 - w + 1)
         }
 
-        g[0].addEdge(source, (ard + 1) * w - 2,long(sqrt(2 * pow(query_length,2))));
-        g[0].addEdge((ard + 1) * w, end,long(sqrt(2 * pow(query_distance, 2))));
+        g[0].addEdge(source, (ard + 1) * w - 2,long(sqrt(2 * pow(query_to_start_dist,2))));
+        g[0].addEdge((ard + 1) * w, end,long(sqrt(2 * pow(query_to_end_dist, 2))));
     }
     vector<long> score = g[0].shortestPath(source);
     delete g;
