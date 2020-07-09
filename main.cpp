@@ -41,6 +41,7 @@ ofstream logfile;
 //Run Fandom alignment on a batch of seeds
 map<int, vector<Alignment>> run_aln(map<int,vector<double>> &ref_cmaps, map<int,vector<double>> &mols,
         map<int, vector<seedData>> &mol_seed_data, bool partial_mode) {
+
     map<int, vector<Alignment>> results;
 
     //iterate over the molecules
