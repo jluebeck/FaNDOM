@@ -1,13 +1,11 @@
 //Authors: Jens Luebeck (jluebeck@ucsd.edu), Siavash Raisi (sraeisid@ucsd.edu)
 
 #include <iostream>
-#include <fstream>
 #include <cstdio>
 #include <vector>
 #include <map>
 #include <ctime>
 #include <future>
-#include <chrono>
 
 #include "threadsafe_queue.h"
 #include "OMIO.h"
@@ -17,7 +15,7 @@
 
 using namespace std;
 
-static string version = "0.1";
+static string version = "0.2";
 
 //Alignment variables
 const int lookback = 5;
@@ -27,6 +25,7 @@ float aln_padding = 1000;
 bool multimap_mols = false;
 bool partial_alignment = true;
 int score_limit = 5000;
+const double thread_timeout_seconds = 14400.0; // run thread for up to four hours before asking for a new one
 
 //Data filtering
 int n_threads = 1;
@@ -51,8 +50,10 @@ map<int, vector<Alignment>> run_aln(map<int,vector<double>> &ref_cmaps, map<int,
         double best_score = 0;
         vector<Alignment> mol_alns;
         vector<double> mol_vect = mols[mol_id];
-        //TODO: This following function in OMHelper creates a collection of alignment windows from the seeds it is given. This step can be optimized
-        map<int, vector<seedData>> curr_mol_seeds = mol_seeds_to_aln_regions(curr_mol_seed_data, ref_cmaps, mol_vect, aln_padding);
+        //TODO: This following function in OMHelper creates a collection of alignment windows from the seeds
+        // it is given. This step can be optimized
+        map<int, vector<seedData>> curr_mol_seeds = mol_seeds_to_aln_regions(curr_mol_seed_data, ref_cmaps,
+                mol_vect, aln_padding);
 
         //iterate over the different reference contigs hit by the seeds
         for (auto &x: curr_mol_seeds) {
@@ -66,8 +67,8 @@ map<int, vector<Alignment>> run_aln(map<int,vector<double>> &ref_cmaps, map<int,
                 int b = s.ref_aln_rb;
                 //initialize storage for alignment
                 vector<vector<double>> S((b - a), vector<double>(mol_vect.size() - 1, 0));
-                vector<vector<pair<int, int>>> previous((b - a),
-                                                        vector<pair<int, int>>(mol_vect.size() - 1, {-1, -1}));
+                vector<vector<pair<int, int>>> previous((b - a),vector<pair<int, int>>(mol_vect.size() - 1,
+                        {-1, -1}));
 
                 //perform alignment
                 dp_aln(S, previous, mol_vect, ref_vect, a, b, lookback);
@@ -97,16 +98,12 @@ map<int, vector<Alignment>> run_aln(map<int,vector<double>> &ref_cmaps, map<int,
                 }
             }
         }
-
         //go over alignments and check if the alignments are secondary alignments and set the status
         int is_multimapped = (int) (mol_alns.size() > 1);
-        cout << mol_id << " " << lround(best_score) << "\n";
         for (auto &curr_aln: mol_alns) {
             curr_aln.is_multimapped = is_multimapped;
             if (get<2>(curr_aln.alignment.back()) < lround(best_score)) {
                 curr_aln.is_secondary = 1;
-            } else {
-                cout << " hit " << get<2>(curr_aln.alignment.back()) << "\n";
             }
         }
         results[mol_id] = mol_alns;
@@ -115,20 +112,26 @@ map<int, vector<Alignment>> run_aln(map<int,vector<double>> &ref_cmaps, map<int,
 }
 
 //run the filter and call the alignment
-map<int, vector<Alignment>> filt_and_aln(int thread_num, map<int,vector<double>> &ref_cmaps, map<int,vector<double>> &mols,
-                                        map<int, dis_to_index> &ref_DTI, map<int, int> &ref_lens,
-                                        threadsafe_queue<int> &mol_id_queue, bool partial_mode) {
+map<int, vector<Alignment>> filt_and_aln(int thread_num, map<int,vector<double>> &ref_cmaps,
+        map<int,vector<double>> &mols, map<int, dis_to_index> &ref_DTI, map<int, int> &ref_lens,
+        threadsafe_queue<int> &mol_id_queue, bool partial_mode) {
+
+    chrono::steady_clock::time_point threadStartTime = chrono::steady_clock::now();
+    chrono::steady_clock::time_point currentTime;
+    double elapsedThreadTime = 0;
+
     int counter = 0;
     vector<query> qq;
     map<int, vector<seedData>> seed_batch;
-    map<int, vector<Alignment>> curr;
     map<int, vector<Alignment>> result;
 
     //while molecules in queue pop off
-    while (true) {
+    while (elapsedThreadTime < thread_timeout_seconds) {
         int q_id = mol_id_queue.pop();
+        //check if there are no queries left to handle and break
         if (!q_id) {
             break;
+
         } else {
             int qsize = mol_id_queue.size();
             if (qsize % 10000 == 0) {
@@ -139,42 +142,42 @@ map<int, vector<Alignment>> filt_and_aln(int thread_num, map<int,vector<double>>
             qq.push_back(q);
             counter = counter + q.length + w;
         }
-        //if the storage for the seed list isn't full
+        //if the storage for the seed list isn't full, add to the batch
         if (counter > 5000) {
             seed_batch = OMFilter(qq, thread_num, ref_DTI, ref_lens, ref_cmaps, mols, partial_mode);
-            curr = run_aln(ref_cmaps, mols, seed_batch, partial_mode);
+            map<int, vector<Alignment>> curr = run_aln(ref_cmaps, mols, seed_batch, partial_mode);
             //////Log
-            for (auto &key : curr){
-                logfile<< "used in full sort " << key.first<<"\n";
-            }
+//            for (auto &key : curr){
+//                logfile<< "used in full sort " << key.first<<"\n";
+//            }
             //////
             result.insert(curr.begin(), curr.end());
             counter = 0;
             qq.clear();
         }
+
+        currentTime = chrono::steady_clock::now();
+        elapsedThreadTime = chrono::duration_cast<chrono::seconds>(currentTime - threadStartTime).count()/1000.;
     }
     //cleanup the case where the last element handled didn't fill up the seed list
     if (! qq.empty()) {
         seed_batch = OMFilter(qq, thread_num, ref_DTI, ref_lens, ref_cmaps, mols, partial_mode);
-        curr = run_aln(ref_cmaps, mols, seed_batch, partial_mode);
+        map<int, vector<Alignment>> curr = run_aln(ref_cmaps, mols, seed_batch, partial_mode);
         //////Log
-        for (auto &key : curr){
-            cout<< "used in cleanup sort " << key.first<<endl;
-        }
+//        for (auto &key : curr){
+//            cout<< "used in cleanup sort " << key.first<<endl;
+//        }
         ////////
         result.insert(curr.begin(), curr.end());
     }
+    currentTime = chrono::steady_clock::now();
+    elapsedThreadTime = chrono::duration_cast<chrono::seconds>(currentTime - threadStartTime).count()/1000.;
+    logfile << "thread " << thread_num << " finished after " << elapsedThreadTime << " seconds\n";
+
     return result;
 }
+
 //-----------------------------------------------------------------------
-//check filenames
-bool hasEnding (string const& fullString, string const& ending) {
-    if (fullString.length() >= ending.length()) {
-        return (0 == fullString.compare(fullString.length() - ending.length(), ending.length(), ending));
-    } else {
-        return false;
-    }
-}
 //handle args
 tuple<string,string,string,string,string,string> parse_args(int argc, char *argv[]) {
     string ref_cmap_file, queryfile, bedfile, keyfile, sample_name, outfmt;
@@ -264,10 +267,11 @@ int main (int argc, char *argv[]) {
     //get args
     string ref_cmap_file, queryfile, bedfile, keyfile, sample_name, outfmt;
     tie(ref_cmap_file,queryfile,bedfile,keyfile, sample_name, outfmt) = parse_args(argc,argv);
-    string log_dir = sample_name + "_log";
+    string log_dir = sample_name + ".log";
 
     logfile.open(log_dir);
-    logfile<<"First Line"<<endl;
+
+    logfile << "Began at: " << return_current_time_and_date() << "\n";
     cout << "reference genome cmap file: " << ref_cmap_file << "\n";
     cout << "query file: " << queryfile << "\n";
     cout << "\nNumber of threads for filtering & alignment: " << n_threads << "\n";
@@ -277,7 +281,7 @@ int main (int argc, char *argv[]) {
     chrono::steady_clock::time_point readWallS = chrono::steady_clock::now();
 
     map<int,vector<double>> ref_genome_unrev = parse_cmap(ref_cmap_file);
-    cout << "Finished reading the ref\n";
+    cout << "Finished reading reference genome\n";
     map<int,vector<double>> ref_cmaps = make_reverse_cmap(ref_genome_unrev);
 
     cout << "Reading queries\n";
@@ -306,7 +310,7 @@ int main (int argc, char *argv[]) {
     //make the mol_id_queue
     chrono::steady_clock::time_point ppWallS = chrono::steady_clock::now();
     filter_mols(mol_maps,min_map_lab,min_map_len);
-    cout << "Got " << mol_maps.size() << " molecules passing initial filters\n";
+    cout << "Got " << mol_maps.size() << " queries passing initial filters\n";
 
     threadsafe_queue<int> mol_id_queue;
     for (const auto &i: mol_maps) {
@@ -352,31 +356,38 @@ int main (int argc, char *argv[]) {
     //launch alignments
     chrono::steady_clock::time_point alnWallS = chrono::steady_clock::now();
     cout << "Performing alignments\n";
-    vector<future< map<int, vector<Alignment>>>> futs;
-    vector<promise< map<int, vector<Alignment>>>> promises(n_threads);
-   for (int i = 0; i < n_threads; i++) {
-       futs.push_back(async(launch:: async, filt_and_aln, i, ref(ref_cmaps), ref(mol_maps), ref(ref_DTI),
-               ref(ref_num_to_length), ref(mol_id_queue), false));
-   }
-    //-------------------------------------------------------
-    //gather results FULL
-    vector<Alignment> combined_results;
-    vector<Alignment> current_result;
     size_t total_alns = 0;
-    for (auto &f: futs) {
-       map<int, vector<Alignment>> curr_result = f.get();
-       for (const auto &x: curr_result) {
-           current_result = x.second;
-           combined_results.reserve(combined_results.size() + distance(x.second.begin(),x.second.end()));
-           combined_results.insert(combined_results.end(),x.second.begin(),x.second.end());
-           //write it
-           if (outfmt == "xmap") {
-               write_xmap_alignment(full_outfile, current_result, ref_cmaps, mol_maps, multimap_mols, total_alns+1);
-           } else {
-               write_fda_alignment(full_outfile, current_result, ref_cmaps, mol_maps, multimap_mols, total_alns+1);
-           }
-           total_alns+=x.second.size();
-       }
+    vector<Alignment> current_result;
+    vector<Alignment> combined_results;
+    while (mol_id_queue.size() > 0) {
+        logfile << "began full alignment round at " << return_current_time_and_date() << "\n";
+        vector<future<map<int, vector<Alignment>>>> futs;
+        vector<promise<map<int, vector<Alignment>>>> promises(n_threads);
+        for (int i = 0; i < n_threads; i++) {
+            futs.push_back(async(launch::async, filt_and_aln, i, ref(ref_cmaps), ref(mol_maps),
+                                 ref(ref_DTI), ref(ref_num_to_length), ref(mol_id_queue), false));
+        }
+        //-------------------------------------------------------
+        //gather results FULL
+        for (auto &f: futs) {
+            map<int, vector<Alignment>> curr_result = f.get();
+            for (const auto &x: curr_result) {
+                current_result = x.second;
+                combined_results.reserve(combined_results.size() + distance(x.second.begin(), x.second.end()));
+                combined_results.insert(combined_results.end(), x.second.begin(), x.second.end());
+                //write it
+                if (outfmt == "xmap") {
+                    write_xmap_alignment(full_outfile, current_result, ref_cmaps, mol_maps, multimap_mols,
+                                         total_alns + 1);
+                } else {
+                    write_fda_alignment(full_outfile, current_result, ref_cmaps, mol_maps, multimap_mols,
+                                        total_alns + 1);
+                }
+
+                total_alns += x.second.size();
+            }
+        }
+        logfile << "finished full alignment round at " << return_current_time_and_date() << "\n";
     }
 
     full_outfile << flush;
@@ -384,8 +395,7 @@ int main (int argc, char *argv[]) {
     cout << "Finished non-partial molecule alignment. \n" << total_alns << " total alignments\n";
 
     //------------------------------------------------------
-    //gather results PARTIAL
-//    vector<Alignment> combined_results_partial;
+    //Check PARTIAL
     if(partial_alignment){
         unordered_set<int> mols_to_remap = get_remap_mol_ids(combined_results, mol_maps, aln_prop_thresh_to_remap,
                                                              aln_len_thresh_to_remap);
@@ -393,6 +403,7 @@ int main (int argc, char *argv[]) {
         cout << mols_to_remap.size() << " molecules will undergo partial-seeding.\n";
         logfile << mols_to_remap.size() << " molecules will undergo partial-seeding.\n";
         ////////////////////
+        //update params for partial
         score_limit = 1000;
         dist_scale_par = 1.4;
         penalty_par = 7500;
@@ -400,53 +411,41 @@ int main (int argc, char *argv[]) {
         if (!mols_to_remap.empty()) {
             cout << "Performing partial alignments\n";
             logfile<< "Performing partial alignments\n";
-            threadsafe_queue<int> mol_id_queue_partial;
             for (auto &i: mols_to_remap) {
-                mol_id_queue_partial.push(i);
+                mol_id_queue.push(i);
             }
-            vector<future< map<int, vector<Alignment>>>> futs_partial;
-            vector<promise< map<int, vector<Alignment>>>> promises_partial(n_threads);
-            for (int i = 0; i < n_threads; i++) {
-                futs_partial.push_back(async(launch::async, filt_and_aln, i, ref(ref_cmaps), ref(mol_maps), ref(ref_DTI),
-                                             ref(ref_num_to_length), ref(mol_id_queue_partial), true));
-            }
-            total_alns = 0;
-            for (auto &f: futs_partial) {
-                map<int, vector<Alignment>> curr_result = f.get();
-                for (const auto &x: curr_result) {
-                    //write it
-                    current_result = x.second;
-                    if (outfmt == "xmap") {
-                        write_xmap_alignment(partial_outfile, current_result, ref_cmaps, mol_maps, multimap_mols, total_alns+1);
-                    } else {
-                        write_fda_alignment(partial_outfile, current_result, ref_cmaps, mol_maps, multimap_mols, total_alns+1);
-                    }
-                    total_alns+=x.second.size();
-                }
 
+            while (mol_id_queue.size() > 0) {
+                logfile << "began partial alignment round at " << return_current_time_and_date() << "\n";
+                vector<future<map<int, vector<Alignment>>>> futs_partial;
+                vector<promise<map<int, vector<Alignment>>>> promises_partial(n_threads);
+                for (int i = 0; i < n_threads; i++) {
+                    futs_partial.push_back(
+                            async(launch::async, filt_and_aln, i, ref(ref_cmaps), ref(mol_maps), ref(ref_DTI),
+                                  ref(ref_num_to_length), ref(mol_id_queue), true));
+                }
+                total_alns = 0;
+                for (auto &f: futs_partial) {
+                    map<int, vector<Alignment>> curr_result = f.get();
+                    for (const auto &x: curr_result) {
+                        //write it
+                        current_result = x.second;
+                        if (outfmt == "xmap") {
+                            write_xmap_alignment(partial_outfile, current_result, ref_cmaps, mol_maps, multimap_mols,
+                                                 total_alns + 1);
+                        } else {
+                            write_fda_alignment(partial_outfile, current_result, ref_cmaps, mol_maps, multimap_mols,
+                                                total_alns + 1);
+                        }
+                        total_alns += x.second.size();
+                    }
+                }
+                logfile << "finished partial alignment round at " << return_current_time_and_date() << "\n";
             }
             cout << "Finished partial molecule alignment. \n" << total_alns << " total alignments\n";
         }
     }
     chrono::steady_clock::time_point alnWallE = chrono::steady_clock::now();
-
-    ////////////////////
-    //write output
-//    chrono::steady_clock::time_point outWallS = chrono::steady_clock::now();
-//    cout << "Writing fulls\n";
-//    write_xmap_alignment(combined_results, ref_cmaps, mol_maps, outname, argstring, multimap_mols);
-//    combined_results.clear();
-//    cout << "Writing partials\n";
-//    if (partial_alignment) {
-//        write_xmap_alignment(combined_results_partial, ref_cmaps, mol_maps, partialname, argstring, multimap_mols);
-//    }
-//    } else {
-//    write_fda_alignment(combined_results, ref_cmaps, mol_maps, outname, multimap_mols);
-//    if (partial_alignment) {
-//        write_fda_alignment(combined_results_partial, ref_cmaps, mol_maps, partialname, multimap_mols);
-//    }
-
-//    chrono::steady_clock::time_point outWallE = chrono::steady_clock::now();
 
     double readWall = chrono::duration_cast<chrono::milliseconds>(readWallE - readWallS).count()/1000.;
     double ppWall = chrono::duration_cast<chrono::milliseconds>(ppWallE - ppWallS).count()/1000.;
@@ -463,7 +462,7 @@ int main (int argc, char *argv[]) {
     printf("Reading data: %.3f\n",readWall);
     printf("Preprocessing data: %.3f\n",ppWall);
     printf("Generating seeds and alignments: %.3f\n",alnWall);
-//    printf("Writing alignments: %.3f\n", outWall);
+    logfile << "Ended at: " << return_current_time_and_date() << endl;
     cout << endl;
 
     return 0;

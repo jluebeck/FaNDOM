@@ -11,12 +11,7 @@ using namespace std;
 vector<pair<int,int>> mergeIntervals(vector<pair<int,int>> ivect) {
     vector<pair<int, int>> s;
     if (!ivect.empty()) {
-//        sort(ivect.begin(), ivect.end(), comparePairs);
         sort(ivect.begin(), ivect.end());
-//        for (auto iter: ivect) {
-//            cout << "(" << iter.first << ", " << iter.second << ") ";
-//        }
-//        cout << "\n";
         s.push_back(ivect[0]);
         for (int i = 1; i < ivect.size(); i++) {
             pair<int, int> top = s.back();
@@ -153,7 +148,7 @@ unordered_set<int> get_remap_mol_ids(const vector<Alignment> &aln_list, map<int,
             double molLen = mol_maps[m_id].rbegin()[1];
             double aln_p1 = mol_maps[m_id][get<1>(a.alignment[0])];
             double aln_p2 = mol_maps[m_id][get<1>(a.alignment.back())];
-            cout << m_id << " primary thresh " << (aln_p2 - aln_p1)/molLen << " " << max(aln_p1, molLen - aln_p2) << "\n";
+//            cout << m_id << " primary thresh " << (aln_p2 - aln_p1)/molLen << " " << max(aln_p1, molLen - aln_p2) << "\n";
             if ((aln_p2 - aln_p1) / molLen < remap_prop_cut && max(aln_p1, molLen - aln_p2) > remap_len_cut) {
                     fail_mols.insert(m_id);
             }
@@ -169,6 +164,7 @@ unordered_set<int> get_remap_mol_ids(const vector<Alignment> &aln_list, map<int,
     return fail_mols;
 }
 
+//Remove molecules from consideration which are too short or which have gigantic areas of no labels
 void filter_mols(map<int,vector<double>> &mol_map, int min_map_lab, int min_map_len) {
     set<int> fail_mols;
     for (const auto &pair: mol_map) {
@@ -226,6 +222,28 @@ map<int, int> calculate_length(const map<int, vector<double>> &contigs) {
         contigs_to_length.insert({contig.first, contig.second.size() - 1});
     }
     return contigs_to_length;
+}
+
+
+//Human readable time and date
+//From bames53 on stack exchange
+//https://stackoverflow.com/questions/17223096/outputting-date-and-time-in-c-using-stdchrono
+string return_current_time_and_date() {
+    auto now = std::chrono::system_clock::now();
+    auto in_time_t = std::chrono::system_clock::to_time_t(now);
+
+    stringstream ss;
+    ss << put_time(std::localtime(&in_time_t), "%Y-%m-%d %X");
+    return ss.str();
+}
+
+//check filenames
+bool hasEnding (string const& fullString, string const& ending) {
+    if (fullString.length() >= ending.length()) {
+        return (0 == fullString.compare(fullString.length() - ending.length(), ending.length(), ending));
+    } else {
+        return false;
+    }
 }
 
 //-------------------------------------------------------------------------------

@@ -9,6 +9,9 @@
 #include <set>
 #include <algorithm>
 #include <unordered_set>
+#include <chrono>
+#include <iomanip>
+#include <sstream>
 
 using namespace std;
 
@@ -56,6 +59,9 @@ map<int,vector<double>> make_reverse_cmap(map<int,vector<double>> &cmap_map);
 
 map<int, int> calculate_length(const map<int, vector<double>> &contigs);
 
+string return_current_time_and_date();
+
+bool hasEnding (string const& fullString, string const& ending);
 #endif //FANDOM_OMHELPER_H
 
 
