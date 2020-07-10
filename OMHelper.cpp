@@ -166,7 +166,7 @@ unordered_set<int> get_remap_mol_ids(const vector<Alignment> &aln_list, map<int,
 
 //Remove molecules from consideration which are too short or which have gigantic areas of no labels
 void filter_mols(map<int,vector<double>> &mol_map, int min_map_lab, int min_map_len) {
-    set<int> fail_mols;
+    unordered_set<int> fail_mols;
     for (const auto &pair: mol_map) {
         int key = pair.first;
         vector<double> posns = pair.second;

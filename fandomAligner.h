@@ -23,7 +23,7 @@ void dp_aln(vector<vector<double>> &S, vector<vector<pair<int,int>>> &previous, 
             vector<double> &ref_vect, int a, int b, int lookback);
 
 //
-pair<int,int> get_max_pair(const vector<vector<double>> &S);
+pair<int,int> get_max_pair(const vector<vector<double>> &S, int ref_width, int mol_len);
 
 //
 Alignment dp_backtracking(vector<vector<double>> &S, vector<vector<pair<int,int>>> &previous, pair<int,int> max_pair,

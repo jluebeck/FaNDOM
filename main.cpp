@@ -25,10 +25,10 @@ float aln_padding = 1000;
 bool multimap_mols = false;
 bool partial_alignment = true;
 int score_limit = 5000;
-int rescale = 0;
 const double thread_timeout_seconds = 14400.0; // run thread for up to four hours before asking for a new one
 
 //Data filtering
+bool rescale = false;
 int n_threads = 1;
 int min_aln_len = 6;
 float aln_prop_thresh_to_remap = 0.8;
@@ -74,7 +74,7 @@ map<int, vector<Alignment>> run_aln(map<int,vector<double>> &ref_cmaps, map<int,
 
                 //perform alignment
                 dp_aln(S, previous, mol_vect, ref_vect, a, b, lookback);
-                pair<int,int> max_pair =  get_max_pair(S);
+                pair<int,int> max_pair =  get_max_pair(S, b - a, int(mol_vect.size()) - 1);
                 double curr_score = S[max_pair.first][max_pair.second];
 
                 //check if the alignment passes cutoffs
@@ -221,18 +221,21 @@ tuple<string,string,string,string,string,string> parse_args(int argc, char *argv
             outfmt = string(argv[i]).substr(string(argv[i]).find('=') + 1);
 
         } else if ((string(argv[i]).rfind("-no_partial", 0) == 0)) {
-//                Partial_aligning = stoi(string(argv[i]).substr(string(argv[i]).find('=') + 1));
             partial_alignment = false;
 
         } else if ((string(argv[i]).rfind("-multimap", 0) == 0)) {
             multimap_mols = true;
+
         } else if ((string(argv[i]).rfind("-rescale", 0) == 0)) {
-            rescale = 1;
+            rescale = true;
+
         } else if ((string(argv[i]).rfind("-version", 0) == 0)) {
             cout << "FaNDOM version " << version << "\n";
             exit(0);
+
         }
     }
+
     if (ref_cmap_file.empty()) {
         cerr << "Reference genome .cmap file [-r=] unspecified\n";
         exit(1);
@@ -273,16 +276,23 @@ int main (int argc, char *argv[]) {
     string ref_cmap_file, queryfile, bedfile, keyfile, sample_name, outfmt;
     tie(ref_cmap_file,queryfile,bedfile,keyfile, sample_name, outfmt) = parse_args(argc,argv);
     string log_dir = sample_name + ".log";
-    string command = "";
-    if (rescale==1){
+
+    //rescale molecules if needed
+    if (rescale){
         cout<<"Rescaling the input"<<endl;
-        command = "python3 autorescale.py -q " + queryfile + " -r " + ref_cmap_file + " -t " + to_string(n_threads) + " -o " + sample_name;
+        string command = "python3 autorescale.py -q " + queryfile + " -r " + ref_cmap_file + " -t " + to_string(n_threads) + " -o " + sample_name;
         const char *cm = command.c_str();
-        system(cm);
-        if (hasEnding(queryfile,".bnx")) {
+        int status = system(cm);
+        if (status) {
+            cout << "Attempted command: " << command << "\n";
+            cout << "Autorescale failed with status " << status << "\n";
+            exit(1);
+        } else if (hasEnding(queryfile,".bnx")) {
             queryfile = sample_name+"_rescaled.bnx";
-        } else{
+
+        } else {
             queryfile = sample_name+"_rescaled.cmap";
+
         }
     }
     logfile.open(log_dir);

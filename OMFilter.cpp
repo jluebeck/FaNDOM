@@ -57,45 +57,44 @@ void destroyTwoDimenArrayOnHeapUsingFree(int **ptr, int row, int col) {
 
 ////////////This function merge list LM and LN in the paper
 //int **merge_list(dis_to_index LM, dis_to_index LN) {
-void merge_list(dis_to_index LM, dis_to_index LN, int** a, const int thread_num) {
+inline void merge_list(dis_to_index LM, dis_to_index LN, int** a, const int thread_num) {
 //    int **a = allocateTwoDimenArrayOnHeapUsingMalloc(55000, 8500);
     for (int i = 0; i < 55000; i++) {
         for (int j = 0; j < 8500; j++) {
             a[i][j] = 0;
         }
     }
-    dis_to_index::iterator i = LN.begin();
-    while (i != LN.end()) {
-        int down = i->first - tolerance;    //down tolerance
-        int up = i->first + tolerance;    //up tolerance
+    //dis_to_index::iterator i = LN.begin();
+    //while (i != LN.end()) {
+    for (auto & i : LN) {
+        int down = i.first - tolerance;    //down tolerance
+        int up = i.first + tolerance;    //up tolerance
         dis_to_index::iterator down_index = LM.lower_bound(down);    //doing binary search
         dis_to_index::iterator up_index = LM.upper_bound(up);    //doing binary search
         unordered_set<int> q_p;    // query point
         unordered_set<int> r_p;    // reference point
-        if (down_index != up_index) {
-            for (dis_to_index::iterator it = down_index; it != up_index; it++) {
-                for (int j = 0; j < it->second.size(); j++) {
-                    for (int start_point = max(1, it->second[j].second - w + 1);
-                         start_point <= it->second[j].first; start_point++) {
-                        q_p.insert(start_point);    //add to all window that contains this genomic distance in query
-                    }
-                }
-            }
-            for (int j = 0; j < i->second.size(); j++) {
-                for (int s_p = max(1, i->second[j].second - w + 1); s_p <= i->second[j].first; s_p++) {
-                    r_p.insert(s_p);    // add to all window that containg this window in reference
-                }
-            }
-            for (unordered_set<int>::iterator k = r_p.begin(); k != r_p.end(); k++) {
-                for (unordered_set<int>::iterator j = q_p.begin(); j != q_p.end(); j++) {
-                    a[*k][*j]++;    /// increasing number in 2d array
+//        if (down_index != up_index) {
+        for (down_index; down_index != up_index; down_index++) {
+            for (int j = 0; j < down_index->second.size(); j++) {
+                for (int start_point = max(1, down_index->second[j].second - w + 1);
+                     start_point <= down_index->second[j].first; start_point++) {
+                    q_p.insert(start_point);    //add to all window that contains this genomic distance in query
                 }
             }
         }
-        i++;
+        for (int j = 0; j < i.second.size(); j++) {
+            for (int s_p = max(1, i.second[j].second - w + 1); s_p <= i.second[j].first; s_p++) {
+                r_p.insert(s_p);    // add to all window that containg this window in reference
+            }
+        }
+        for (int k : r_p) {
+            for (int j : q_p) {
+                a[k][j]++;    /// increasing number in 2d array
+            }
+        }
+        //}
+        //i++;
     }
-
-//    return a;
 }
 
 ////////////////////For finding complete alignment score/////////////
