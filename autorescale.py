@@ -45,7 +45,7 @@ def parse_bnx(bnxF, keep_length=False):
     return moleculeD
 
 # size of downsample for detecting ratio
-sampleSize = 500
+sampleSize = 250
 
 parser = argparse.ArgumentParser()
 # Query Dir
@@ -53,7 +53,7 @@ parser.add_argument("-q", "--query", help="query directory", required=True)
 # Ref Dir
 parser.add_argument("-r", "--ref", help="reference directory", required=True)
 # Path to folder of FaNDOM
-parser.add_argument("-f", "--fandom", help="FaNDOM directory", required=True)
+# parser.add_argument("-f", "--fandom", help="FaNDOM directory", required=True)
 # Output Dir
 parser.add_argument("-o", "--output", help="Output directory", required=True)
 # Number of thread
@@ -62,7 +62,7 @@ parser.add_argument("-t", "--thread", help="Number of Thread", required=True)
 parser.add_argument("-s", "--samplesize", help="Sample size for detecting rescale factor", required=False)
 args = parser.parse_args()
 
-if len(args.samplesize) > 0:
+if str(args.samplesize)!="None":
     sampleSize= int(args.samplesize)
 
 #Only parse cmap or bnx files
@@ -74,11 +74,11 @@ else:
     print('Query file is not in cmap or bnx format')
     quit()
 print('Finish Parsing Query')
-if args.fandom.endswith('/'):
-    fandom = args.fandom
-else:
-    fandom = args.fandom+'/'
-print(fandom)
+# if args.fandom.endswith('/'):
+#     fandom = args.fandom
+# else:
+#     fandom = args.fandom+'/'
+# print(fandom)
 if not args.ref.endswith('.cmap'):
     print('Reference should be in cmap format')
     quit()
@@ -97,7 +97,7 @@ result = {}
 
 for i in range(-4, 11):
     #write new resclaed sample on file
-    with open(output+'/a.cmap','w') as f :
+    with open(output+'_a.cmap','w') as f :
         for k in selected:
             scaledSample[k] = query[k].copy()
             if args.query.endswith('.bnx'):
@@ -113,24 +113,24 @@ for i in range(-4, 11):
                 else:
                     f.write(k + '\t'+str(length)+'\t'+str(number_label)+'\t'+str(index)+'\t1\t'+str(scaledSample[k][index])+'\t0.0\t1.0\t1.0\t17.0000\t0.0000\n')
     #Run Fandom on new resclaed molecules
-    os.system(fandom+'./FaNDOM'+' -t='+args.thread+' -r='+args.ref+' -q='+output+'/a.cmap -sname='+output+'/test '+ '-outfmt=xmap -no_partial')
+    os.system('./FaNDOM'+' -t='+args.thread+' -r='+args.ref+' -q='+output+'_a.cmap -sname='+output+'_test '+ '-outfmt=xmap -no_partial')
     sum_score = 0
     #Sum scores of molecule
-    with open(output+'/test.xmap','r') as f:
+    with open(output+'_test.xmap','r') as f:
         for line in f:
             if not line.startswith('#'):
                 line = line.split('\t')
                 sum_score += float(line[8])
     result[i] = sum_score
 print(result)
-os.system('rm '+output+'/a.cmap')
+os.system('rm '+output+'_a.cmap')
 max_index = int(max(result,key=result.get))
 
 print('Max score with rescale factor: ', max_index)
 
 #Rescla all molecules with detected rescale factor
 if args.query.endswith('.bnx'):
-    with open(output+'/rescaled.bnx','w') as f:
+    with open(output+'_rescaled.bnx','w') as f:
         with open(args.query,'r') as g:
             for line in g:
                 if line.startswith('0\t'):
@@ -145,7 +145,7 @@ if args.query.endswith('.bnx'):
                 f.write(line)
 
 if args.query.endswith('.cmap'):
-    with open(output + '/rescaled.cmap', 'w') as f:
+    with open(output + '_rescaled.cmap', 'w') as f:
         with open(args.query, 'r') as g:
             for line in g:
                 if not line.startswith('#'):
