@@ -7,8 +7,8 @@
 #include <map>
 #include <queue>
 #include <cmath>
-//#include <chrono>
 #include <algorithm>
+#include <cstring>
 
 #include "SeedGraph.h"
 #include "OMIO.h"
@@ -86,8 +86,8 @@ int **allocateTwoDimenArrayOnHeapUsingMalloc(int row, int col);
 
 void destroyTwoDimenArrayOnHeapUsingFree(int **ptr, int row, int col);
 
-int **merge_list(dis_to_index LM, dis_to_index LN);
-
+//int **merge_list(dis_to_index LM, dis_to_index LN);
+void merge_list(dis_to_index LM, dis_to_index LN, int** a, int thread_num);
 
 void calculate_seeds_score_in_band(vector<query> &qq, int ref_contig, vector<double> &ref_dist,
         map<int, vector<double>> &query_genome);
@@ -95,8 +95,8 @@ void calculate_seeds_score_in_band(vector<query> &qq, int ref_contig, vector<dou
 void calculate_seeds_score_in_band_SV(vector<query> &qq, int ref_contig, vector<double> &ref_dist,
         map<int, vector<double>> &query_genome);
 
-map<int, vector<seedData>> OMFilter(vector<query> qq, int number, map<int, dis_to_index> &ref_list,
-map<int, int> &ref_lens, map<int,vector<double>> &ref_cmaps, map<int,vector<double>> &query_cmaps,
-int SV_detection);
+map<int, vector<seedData>> OMFilter(vector<query> qq, int** a, int thread_num, map<int, dis_to_index> &ref_list,
+        map<int, int> &ref_lens, map<int,vector<double>> &ref_cmaps, map<int,vector<double>> &query_cmaps,
+        int SV_detection);
 
 #endif //FANDOM_OMFILTER_H

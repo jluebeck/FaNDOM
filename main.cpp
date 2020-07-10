@@ -125,6 +125,7 @@ map<int, vector<Alignment>> filt_and_aln(int thread_num, map<int,vector<double>>
     vector<query> qq;
     map<int, vector<seedData>> seed_batch;
     map<int, vector<Alignment>> result;
+    int **a = allocateTwoDimenArrayOnHeapUsingMalloc(55000, 8500);
 
     //while molecules in queue pop off
     while (elapsedThreadTime < thread_timeout_seconds) {
@@ -145,7 +146,7 @@ map<int, vector<Alignment>> filt_and_aln(int thread_num, map<int,vector<double>>
         }
         //if the storage for the seed list isn't full, add to the batch
         if (counter > 5000) {
-            seed_batch = OMFilter(qq, thread_num, ref_DTI, ref_lens, ref_cmaps, mols, partial_mode);
+            seed_batch = OMFilter(qq, a, thread_num, ref_DTI, ref_lens, ref_cmaps, mols, partial_mode);
             map<int, vector<Alignment>> curr = run_aln(ref_cmaps, mols, seed_batch, partial_mode);
             //////Log
 //            for (auto &key : curr){
@@ -162,7 +163,7 @@ map<int, vector<Alignment>> filt_and_aln(int thread_num, map<int,vector<double>>
     }
     //cleanup the case where the last element handled didn't fill up the seed list
     if (! qq.empty()) {
-        seed_batch = OMFilter(qq, thread_num, ref_DTI, ref_lens, ref_cmaps, mols, partial_mode);
+        seed_batch = OMFilter(qq, a, thread_num, ref_DTI, ref_lens, ref_cmaps, mols, partial_mode);
         map<int, vector<Alignment>> curr = run_aln(ref_cmaps, mols, seed_batch, partial_mode);
         //////Log
 //        for (auto &key : curr){
@@ -171,6 +172,7 @@ map<int, vector<Alignment>> filt_and_aln(int thread_num, map<int,vector<double>>
         ////////
         result.insert(curr.begin(), curr.end());
     }
+    destroyTwoDimenArrayOnHeapUsingFree(a, 55000, 8500);
     currentTime = chrono::steady_clock::now();
     elapsedThreadTime = chrono::duration_cast<chrono::seconds>(currentTime - threadStartTime).count()/1000.;
     logfile << "thread " << thread_num << " finished after " << elapsedThreadTime << " seconds\n";
@@ -321,7 +323,6 @@ int main (int argc, char *argv[]) {
 
     //set outfile names
     string outname = sample_name;
-    cout << "Writing alignments\n";
     string partialname = outname + "_partial";
     string argstring;
     for (int i = 0; i < argc; ++i) {

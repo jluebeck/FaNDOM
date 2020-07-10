@@ -56,8 +56,9 @@ void destroyTwoDimenArrayOnHeapUsingFree(int **ptr, int row, int col) {
 }
 
 ////////////This function merge list LM and LN in the paper
-int **merge_list(dis_to_index LM, dis_to_index LN) {
-    int **a = allocateTwoDimenArrayOnHeapUsingMalloc(55000, 8500);
+//int **merge_list(dis_to_index LM, dis_to_index LN) {
+void merge_list(dis_to_index LM, dis_to_index LN, int** a, const int thread_num) {
+//    int **a = allocateTwoDimenArrayOnHeapUsingMalloc(55000, 8500);
     for (int i = 0; i < 55000; i++) {
         for (int j = 0; j < 8500; j++) {
             a[i][j] = 0;
@@ -69,8 +70,8 @@ int **merge_list(dis_to_index LM, dis_to_index LN) {
         int up = i->first + tolerance;    //up tolerance
         dis_to_index::iterator down_index = LM.lower_bound(down);    //doing binary search
         dis_to_index::iterator up_index = LM.upper_bound(up);    //doing binary search
-        set<int> q_p;    // query point
-        set<int> r_p;    // reference point
+        unordered_set<int> q_p;    // query point
+        unordered_set<int> r_p;    // reference point
         if (down_index != up_index) {
             for (dis_to_index::iterator it = down_index; it != up_index; it++) {
                 for (int j = 0; j < it->second.size(); j++) {
@@ -85,15 +86,16 @@ int **merge_list(dis_to_index LM, dis_to_index LN) {
                     r_p.insert(s_p);    // add to all window that containg this window in reference
                 }
             }
-            for (set<int>::iterator j = q_p.begin(); j != q_p.end(); j++) {
-                for (set<int>::iterator k = r_p.begin(); k != r_p.end(); k++) {
+            for (unordered_set<int>::iterator j = q_p.begin(); j != q_p.end(); j++) {
+                for (unordered_set<int>::iterator k = r_p.begin(); k != r_p.end(); k++) {
                     a[*k][*j]++;    /// increasing number in 2d array
                 }
             }
         }
         i++;
     }
-    return a;
+
+//    return a;
 }
 
 ////////////////////For finding complete alignment score/////////////
@@ -380,9 +382,8 @@ void calculate_seeds_score_in_band_SV(vector<query> &qq, int ref_contig, vector<
 //qq is a query list
 //number is same as query_id
 //ref_lens is ref_num_to_length
-
 map<int, vector<seedData>>
-OMFilter(vector<query> qq, int number, map<int, dis_to_index> &ref_list, map<int, int> &ref_lens,
+OMFilter(vector<query> qq, int** a, const int thread_num, map<int, dis_to_index> &ref_list, map<int, int> &ref_lens,
          map<int, vector<double>> &ref_cmaps, map<int, vector<double>> &query_cmaps, const int SV_detection) {
 
     vector<int> index_to_query = vector<int>(8501);
@@ -406,6 +407,7 @@ OMFilter(vector<query> qq, int number, map<int, dis_to_index> &ref_list, map<int
         }
         counter = counter + w + q.length;
     }
+
     for (auto &ref_iterator: ref_list) {
         int ref_id = ref_iterator.first;
         for (auto &i: qq) {
@@ -413,7 +415,8 @@ OMFilter(vector<query> qq, int number, map<int, dis_to_index> &ref_list, map<int
             i.seeds_reverse = v_v_p(ref_lens[ref_id] + 50);
         }
         dis_to_index LN = ref_iterator.second;
-        int **a = merge_list(LM, LN);
+//        int **a = merge_list(LM, LN);
+        merge_list(LM, LN, a, thread_num);
         vector<double> ref_dist = ref_cmaps[ref_id];
         int l = ref_lens[ref_id];
         for (int c = 0; c < l; c++) {
@@ -472,7 +475,6 @@ OMFilter(vector<query> qq, int number, map<int, dis_to_index> &ref_list, map<int
                 }
             }
         }
-        destroyTwoDimenArrayOnHeapUsingFree(a, 55000, 8500);
         if (SV_detection == 1) {
             calculate_seeds_score_in_band_SV(qq, ref_id, ref_cmaps[ref_id], query_cmaps);
         } else {
@@ -578,7 +580,6 @@ OMFilter(vector<query> qq, int number, map<int, dis_to_index> &ref_list, map<int
             }
             //Cal aligning function
             molSeedMap[q.number] = seeds;
-            //        cout << q.number << " m_id_OMF " << seeds.size() << " seeds\n";
         }
     }
     return molSeedMap;
