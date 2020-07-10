@@ -3,7 +3,7 @@ using namespace std;
 
 int w = 3;
 int tolerance = 350;
-int ranked = 300;
+int ranked = 150;
 int ranked_partial = 300;
 int threshold = 3;
 int band_width = 6000;
