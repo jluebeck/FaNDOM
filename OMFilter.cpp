@@ -15,11 +15,11 @@ map<double, vec_pair_int> calculate_genomic_distance(vector<double> dist) {
         for (int j = it + 1; j < min(it + w, int(dist.size())); j++) {
             if (ans.find(double(roundf((dist[j] - dist[it]) * 1) / 1)) == ans.end()) {
                 vec_pair_int ind;
-                ind.push_back(make_pair(it + 1, j + 1));
-                ans.insert({double(roundf((dist[j] - dist[it]) * 1) / 1), ind});
-            } else {
-                ans[float(roundf((dist[j] - dist[it]) * 1) / 1)].push_back(make_pair(it + 1, j + 1));
-            }
+                //ind.push_back(make_pair(it + 1, j + 1));
+                //ans.insert({double(roundf((dist[j] - dist[it]) * 1) / 1), ind});
+            } //else {
+            ans[float(roundf((dist[j] - dist[it]) * 1) / 1)].push_back(make_pair(it + 1, j + 1));
+//            }
         }
     }
     return ans;
@@ -86,8 +86,8 @@ void merge_list(dis_to_index LM, dis_to_index LN, int** a, const int thread_num)
                     r_p.insert(s_p);    // add to all window that containg this window in reference
                 }
             }
-            for (unordered_set<int>::iterator j = q_p.begin(); j != q_p.end(); j++) {
-                for (unordered_set<int>::iterator k = r_p.begin(); k != r_p.end(); k++) {
+            for (unordered_set<int>::iterator k = r_p.begin(); k != r_p.end(); k++) {
+                for (unordered_set<int>::iterator j = q_p.begin(); j != q_p.end(); j++) {
                     a[*k][*j]++;    /// increasing number in 2d array
                 }
             }
@@ -209,7 +209,6 @@ void calculate_seeds_score_in_band(vector<query> &qq, int ref_contig, vector<dou
                 }
             }
             if (q.ans.size() < ranked && best_straight_ans.pos != -1 && q.find_loc == 0) {
-                int ali = 0;
                 q.ans.push(best_straight_ans);
             } else if (!q.ans.empty()) {
                 if (q.ans.top().score > best_straight_score && best_straight_ans.pos != -1) {
@@ -437,7 +436,7 @@ OMFilter(vector<query> qq, int** a, const int thread_num, map<int, dis_to_index>
                             while (ref_start_point > 0 &&
                                    ref_dist[c - 1] - ref_dist[ref_start_point - 1] <= l_to_seed + band_width) {
                                 if (ref_dist[c - 1] - ref_dist[ref_start_point - 1] >= l_to_seed - band_width) {
-                                    q->seeds_straight[ref_start_point].push_back(make_pair(query_index, c));
+                                    q->seeds_straight[ref_start_point].emplace_back(query_index, c);
                                 }
                                 ref_start_point--;
                             }
@@ -445,7 +444,7 @@ OMFilter(vector<query> qq, int** a, const int thread_num, map<int, dis_to_index>
                                 ref_start_point = c + 1;
                                 while (ref_start_point < s &&
                                        abs(ref_dist[c - 1] - ref_dist[ref_start_point - 1]) <= l_to_seed + band_width) {
-                                    q->seeds_straight[ref_start_point].push_back(make_pair(query_index, c));
+                                    q->seeds_straight[ref_start_point].emplace_back(query_index, c);
                                     ref_start_point++;
                                 }
                             }
@@ -457,7 +456,7 @@ OMFilter(vector<query> qq, int** a, const int thread_num, map<int, dis_to_index>
                                 while (ref_start_point < s &&
                                        ref_dist[ref_start_point - 1] - ref_dist[c - 1] <= l_to_seed + band_width) {
                                     if (ref_dist[ref_start_point - 1] - ref_dist[c - 1] >= l_to_seed - band_width) {
-                                        q->seeds_reverse[ref_start_point].push_back(make_pair(query_index + w - 1, c));
+                                        q->seeds_reverse[ref_start_point].emplace_back(query_index + w - 1, c);
                                     }
                                     ref_start_point++;
                                 }
@@ -465,7 +464,7 @@ OMFilter(vector<query> qq, int** a, const int thread_num, map<int, dis_to_index>
                                     ref_start_point = c - 1;
                                     while (ref_start_point > 0 &&
                                            abs(ref_dist[ref_start_point - 1] - ref_dist[c - 1]) <= l_to_seed + band_width) {
-                                        q->seeds_reverse[ref_start_point].push_back(make_pair(query_index + w - 1, c));
+                                        q->seeds_reverse[ref_start_point].emplace_back(query_index + w - 1, c);
                                         ref_start_point--;
                                     }
                                 }
