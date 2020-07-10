@@ -25,6 +25,7 @@ float aln_padding = 1000;
 bool multimap_mols = false;
 bool partial_alignment = true;
 int score_limit = 5000;
+int rescale = 0;
 const double thread_timeout_seconds = 14400.0; // run thread for up to four hours before asking for a new one
 
 //Data filtering
@@ -225,7 +226,8 @@ tuple<string,string,string,string,string,string> parse_args(int argc, char *argv
 
         } else if ((string(argv[i]).rfind("-multimap", 0) == 0)) {
             multimap_mols = true;
-
+        } else if ((string(argv[i]).rfind("-rescale", 0) == 0)) {
+            rescale = 1;
         } else if ((string(argv[i]).rfind("-version", 0) == 0)) {
             cout << "FaNDOM version " << version << "\n";
             exit(0);
@@ -271,7 +273,18 @@ int main (int argc, char *argv[]) {
     string ref_cmap_file, queryfile, bedfile, keyfile, sample_name, outfmt;
     tie(ref_cmap_file,queryfile,bedfile,keyfile, sample_name, outfmt) = parse_args(argc,argv);
     string log_dir = sample_name + ".log";
-
+    string command = "";
+    if (rescale==1){
+        cout<<"Rescaling the input"<<endl;
+        command = "python3 autorescale.py -q " + queryfile + " -r " + ref_cmap_file + " -t " + to_string(n_threads) + " -o " + sample_name;
+        const char *cm = command.c_str();
+        system(cm);
+        if (hasEnding(queryfile,".bnx")) {
+            queryfile = sample_name+"_rescaled.bnx";
+        } else{
+            queryfile = sample_name+"_rescaled.cmap";
+        }
+    }
     logfile.open(log_dir);
 
     logfile << "Began at: " << return_current_time_and_date() << "\n";
