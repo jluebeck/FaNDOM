@@ -276,7 +276,7 @@ int main (int argc, char *argv[]) {
     string ref_cmap_file, queryfile, bedfile, keyfile, sample_name, outfmt;
     tie(ref_cmap_file,queryfile,bedfile,keyfile, sample_name, outfmt) = parse_args(argc,argv);
     string log_dir = sample_name + ".log";
-
+    chrono::steady_clock::time_point rescaleS = chrono::steady_clock::now();
     //rescale molecules if needed
     if (rescale){
         cout<<"Rescaling the input"<<endl;
@@ -295,6 +295,7 @@ int main (int argc, char *argv[]) {
 
         }
     }
+    chrono::steady_clock::time_point rescaleE = chrono::steady_clock::now();
     logfile.open(log_dir);
 
     logfile << "Began at: " << return_current_time_and_date() << "\n";
@@ -337,6 +338,7 @@ int main (int argc, char *argv[]) {
     chrono::steady_clock::time_point ppWallS = chrono::steady_clock::now();
     filter_mols(mol_maps,min_map_lab,min_map_len);
     cout << "Got " << mol_maps.size() << " queries passing initial filters\n";
+    logfile << "Got " << mol_maps.size() << " queries passing initial filters\n";
 
     threadsafe_queue<int> mol_id_queue;
     for (const auto &i: mol_maps) {
@@ -418,9 +420,10 @@ int main (int argc, char *argv[]) {
     full_outfile << flush;
     full_outfile.close();
     cout << "Finished non-partial molecule alignment. \n" << total_alns << " total alignments\n";
-
+    chrono::steady_clock::time_point alnWallE = chrono::steady_clock::now();
     //------------------------------------------------------
     //Check PARTIAL
+    chrono::steady_clock::time_point alnPartialWallS = chrono::steady_clock::now();
     if(partial_alignment){
         unordered_set<int> mols_to_remap = get_remap_mol_ids(combined_results, mol_maps, aln_prop_thresh_to_remap,
                                                              aln_len_thresh_to_remap);
@@ -470,11 +473,14 @@ int main (int argc, char *argv[]) {
             cout << "Finished partial molecule alignment. \n" << total_alns << " total alignments\n";
         }
     }
-    chrono::steady_clock::time_point alnWallE = chrono::steady_clock::now();
+    chrono::steady_clock::time_point alnPartialWallE = chrono::steady_clock::now();
+
 
     double readWall = chrono::duration_cast<chrono::milliseconds>(readWallE - readWallS).count()/1000.;
     double ppWall = chrono::duration_cast<chrono::milliseconds>(ppWallE - ppWallS).count()/1000.;
     double alnWall = chrono::duration_cast<chrono::milliseconds>(alnWallE - alnWallS).count()/1000.;
+    double resclaeWall = chrono::duration_cast<chrono::milliseconds>(rescaleE - rescaleS).count()/1000.;
+    double alnPartialWall = chrono::duration_cast<chrono::milliseconds>(alnPartialWallE - alnPartialWallS).count()/1000.;
 //    double outWall = chrono::duration_cast<chrono::milliseconds>(outWallE - outWallS).count()/1000.;
 
     clock_t end = clock();
@@ -486,8 +492,18 @@ int main (int argc, char *argv[]) {
     cout << "Estimated wall time breakdown (seconds): \n";
     printf("Reading data: %.3f\n",readWall);
     printf("Preprocessing data: %.3f\n",ppWall);
+    printf("Rescaling input molecules: %.3f\n",resclaeWall);
     printf("Generating seeds and alignments: %.3f\n",alnWall);
+    printf("Generating seeds and partial alignments: %.3f\n",alnPartialWall);
+    printf("Total alignment time: %.3f\n",alnPartialWall+ alnWall);
+
     logfile << "Ended at: " << return_current_time_and_date() << endl;
+    logfile << "Reading data: " + to_string(readWall)<< endl;
+    logfile << "Preprocessing data: " + to_string(ppWall)<< endl;
+    logfile << "Rescaling input molecules: " + to_string(resclaeWall)<< endl;
+    logfile << "Generating seeds and alignments: " + to_string(alnWall)<< endl;
+    logfile << "Generating seeds and partial alignments: " + to_string(alnPartialWall)<< endl;
+    logfile << "Total alignment time: " + to_string(alnPartialWall+alnWall)<< endl;
     cout << endl;
 
     return 0;
