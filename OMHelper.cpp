@@ -156,7 +156,7 @@ unordered_set<int> get_remap_mol_ids(const vector<Alignment> &aln_list, map<int,
     }
     for (const auto &m: mol_maps) {
         if (seen_mols.find(m.first) == seen_mols.end()) {
-            cout << "No aln for " << m.first << "\n";
+//            cout << "No aln for " << m.first << "\n";
             fail_mols.insert(m.first);
         }
     }
