@@ -15,6 +15,7 @@ with open(args.aln, 'r') as f:
             line2 = line.strip().split('\t')
             id = int(line2[1])
             d[id].append(line2)
+print("Finish reading input")
 a = {}
 for i in range(1, 25):
     for j in range(i, 25):
@@ -67,6 +68,7 @@ for k in d.keys():
                         a[(chr2[0], chr1[0])].append((chr2[1], chr1[1],k))
 import numpy as np
 scale = 30000
+print("Finish Making SV")
 with open(args.output,'w') as f:
 	for k in a :
 	    if len(a[k]) > 0:
