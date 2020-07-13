@@ -14,7 +14,7 @@ with open(args.aln, 'r') as f:
         if not line.startswith('#'):
             line2 = line.strip().split('\t')
             id = int(line2[1])
-                d[id].append(line2)
+            d[id].append(line2)
 a = {}
 for i in range(1, 25):
     for j in range(i, 25):
