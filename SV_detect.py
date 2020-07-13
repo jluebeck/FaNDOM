@@ -5,18 +5,16 @@ parser.add_argument("-a", "--aln", help="Path to  Alignment in xmap format", req
 parser.add_argument("-m", "--min", help="Minimum number of support for BP", required=True)
 parser.add_argument("-o", "--output", help="Output dir for results", required=True)
 args = parser.parse_args()
-
+from collections import defaultdict
 limit = int(args.min)
 d = {}
+d = defaultdict(lambda:[],d)
 with open(args.aln, 'r') as f:
     for line in f:
         if not line.startswith('#'):
             line2 = line.strip().split('\t')
             id = int(line2[1])
-            if id in d.keys():
                 d[id].append(line2)
-            else:
-                d[id] = [line2]
 a = {}
 for i in range(1, 25):
     for j in range(i, 25):
