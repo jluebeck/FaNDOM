@@ -40,6 +40,40 @@ map<int,vector<double>> parse_cmap(const string &fname) {
     return cmap_pairs;
 }
 
+
+
+vector<vector<float >> parse_bed(const string &fname) {
+    vector<vector<float >> loc;
+    ifstream infile(fname);
+    if (infile.is_open()) {
+        string line;
+        size_t pos = 0;
+        float chrom = 0.0;
+        float dist = 0.0;
+        float id1 = 0.0;
+        float id2 = 0.0;
+        while (getline(infile, line)) {
+            int counter = 0;
+            while ((pos = line.find('\t')) != string::npos) {
+                string token = line.substr(0, pos);
+                if (counter == 0) {
+                    chrom = stof(token);
+                } else if (counter == 1) {
+                    dist = stof(token);
+                } else if (counter == 2) {
+                    id1 = stof(token);
+                }
+                line.erase(0, pos + 1);
+                counter++;
+            }
+            vector<float> vect{chrom, dist, id1, id1 + 1};
+            loc.push_back(vect);
+        }
+        infile.close();
+    }
+    return loc;
+}
+
 //Print out a CMAP map element by element
 void cmap_map_to_string(map<int,vector<double>> &cmap_map) {
     for (auto &iter: cmap_map) {
