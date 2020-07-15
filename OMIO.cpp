@@ -410,8 +410,8 @@ void write_xmap_alignment(ofstream &outfile, vector<Alignment> &aln_list, map<in
         for (const auto &piece : hitEnum) hitEnumString += piece;
         outline+=(hitEnumString + "\t" + to_string(mol_posns.back()) + "\t" + to_string(ref_posns.back()) + "\t1\t");
         for (const auto &piece : alnStringVect) alnString += piece;
-        outline+=(alnString + "\n");
-        outfile << outline;
+        outline+=alnString;
+        outfile << outline << endl;
 
     }
 //    outfile << flush;
@@ -513,7 +513,7 @@ void write_fda_alignment(ofstream &outfile, vector<Alignment> &aln_list, map<int
             prev_mol_lab = mol_lab;
             aln_pos++;
         }
-        outfile << outstring2 << "\n" << outstring3 << "\n";
+        outfile << outstring2 << "\n" << outstring3 << endl;
         a_pair_ind++;
     }
 //    outfile << flush;

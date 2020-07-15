@@ -25,7 +25,7 @@ float aln_padding = 1000;
 bool multimap_mols = false;
 bool partial_alignment = true;
 int score_limit = 5000;
-const double thread_timeout_seconds = 14400.0; // run thread for up to four hours before asking for a new one
+const double thread_timeout_seconds = 1800.0; // run thread for up to 30 minutes before asking for a new one
 
 //Data filtering
 bool rescale = false;
@@ -160,7 +160,7 @@ map<int, vector<Alignment>> filt_and_aln(int thread_num, map<int,vector<double>>
         }
 
         currentTime = chrono::steady_clock::now();
-        elapsedThreadTime = chrono::duration_cast<chrono::seconds>(currentTime - threadStartTime).count()/1000.;
+        elapsedThreadTime = chrono::duration_cast<chrono::seconds>(currentTime - threadStartTime).count();
     }
     //cleanup the case where the last element handled didn't fill up the seed list
     if (! qq.empty()) {
@@ -492,15 +492,15 @@ int main (int argc, char *argv[]) {
     clock_t end = clock();
     chrono::steady_clock::time_point endWall = chrono::steady_clock::now();
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-    double elapsedWall = chrono::duration_cast<chrono::milliseconds>(endWall - beginWall).count();
+    double elapsedWall = chrono::duration_cast<chrono::seconds>(endWall - beginWall).count();
     printf("Total multithreaded CPU time for run: %.3f seconds\n",elapsed_secs);
     printf("Total CPU wall time for run: %.3f seconds\n",elapsedWall);
     cout << "Estimated wall time breakdown (seconds): \n";
     printf("Reading data: %.3f\n",readWall);
     printf("Preprocessing data: %.3f\n",ppWall);
     printf("Rescaling input molecules: %.3f\n",resclaeWall);
-    printf("Generating seeds and alignments: %.3f\n",alnWall);
-    printf("Generating seeds and partial alignments: %.3f\n",alnPartialWall);
+    printf("Generating seeds and alignments (Full): %.3f\n",alnWall);
+    printf("Generating seeds and alignments (Partial): %.3f\n",alnPartialWall);
     printf("Total alignment time: %.3f\n",alnPartialWall+ alnWall);
 
     logfile << "Ended at: " << return_current_time_and_date() << endl;
