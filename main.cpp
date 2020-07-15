@@ -176,7 +176,7 @@ map<int, vector<Alignment>> filt_and_aln(int thread_num, map<int,vector<double>>
     destroyTwoDimenArrayOnHeapUsingFree(a, 55000, 8500);
     currentTime = chrono::steady_clock::now();
     elapsedThreadTime = chrono::duration_cast<chrono::seconds>(currentTime - threadStartTime).count()/1000.;
-    logfile << "thread " << thread_num << " finished after " << elapsedThreadTime << " seconds\n";
+    logfile << "thread " << thread_num << " finished after " << elapsedThreadTime << " seconds" << endl;
 
     return result;
 }
@@ -298,20 +298,20 @@ int main (int argc, char *argv[]) {
     chrono::steady_clock::time_point rescaleE = chrono::steady_clock::now();
     logfile.open(log_dir);
 
-    logfile << "Began at: " << return_current_time_and_date() << "\n";
-    cout << "reference genome cmap file: " << ref_cmap_file << "\n";
-    cout << "query file: " << queryfile << "\n";
-    cout << "\nNumber of threads for filtering & alignment: " << n_threads << "\n";
+    logfile << "Began at: " << return_current_time_and_date() << endl;
+    cout << "reference genome cmap file: " << ref_cmap_file << endl;
+    cout << "query file: " << queryfile << endl;
+    cout << "\nNumber of threads for filtering & alignment: " << n_threads << endl;
     //------------------------
     //parse inputs
     //parse ref genome
     chrono::steady_clock::time_point readWallS = chrono::steady_clock::now();
 
     map<int,vector<double>> ref_genome_unrev = parse_cmap(ref_cmap_file);
-    cout << "Finished reading reference genome\n";
+    cout << "Finished reading reference genome" << endl;
     map<int,vector<double>> ref_cmaps = make_reverse_cmap(ref_genome_unrev);
 
-    cout << "Reading queries\n";
+    cout << "Reading queries" << endl;
     map<int, vector<double>> mol_maps;
     if (hasEnding(queryfile,".bnx")) {
         mol_maps = parse_bnx(queryfile);
@@ -322,7 +322,7 @@ int main (int argc, char *argv[]) {
         return 1;
     }
 
-    cout << "Parsed query. Preprocessing...\n";
+    cout << "Parsed query. Preprocessing..." << endl;
     chrono::steady_clock::time_point readWallE = chrono::steady_clock::now();
 
     //-----------------------------------------------------------
@@ -341,8 +341,8 @@ int main (int argc, char *argv[]) {
     //make the mol_id_queue
     chrono::steady_clock::time_point ppWallS = chrono::steady_clock::now();
     filter_mols(mol_maps,min_map_lab,min_map_len);
-    cout << "Got " << mol_maps.size() << " queries passing initial filters\n";
-    logfile << "Got " << mol_maps.size() << " queries passing initial filters\n";
+    cout << "Got " << mol_maps.size() << " queries passing initial filters" << endl;
+    logfile << "Got " << mol_maps.size() << " queries passing initial filters" << endl;
 
     threadsafe_queue<int> mol_id_queue;
     for (const auto &i: mol_maps) {
@@ -386,12 +386,12 @@ int main (int argc, char *argv[]) {
     //------------------------------------------------------
     //launch alignments
     chrono::steady_clock::time_point alnWallS = chrono::steady_clock::now();
-    cout << "Performing alignments\n";
+    cout << "Performing alignments" << endl;
     size_t total_alns = 0;
     vector<Alignment> current_result;
     vector<Alignment> combined_results;
     while (mol_id_queue.size() > 0) {
-        logfile << "began full alignment round at " << return_current_time_and_date() << "\n";
+        logfile << "began full alignment round at " << return_current_time_and_date() << endl;
         vector<future<map<int, vector<Alignment>>>> futs;
         vector<promise<map<int, vector<Alignment>>>> promises(n_threads);
         for (int i = 0; i < n_threads; i++) {
@@ -418,12 +418,14 @@ int main (int argc, char *argv[]) {
                 total_alns += x.second.size();
             }
         }
-        logfile << "finished full alignment round at " << return_current_time_and_date() << "\n";
+        logfile << "finished full alignment round at " << return_current_time_and_date() << endl;
     }
 
     full_outfile << flush;
     full_outfile.close();
-    cout << "Finished non-partial molecule alignment. \n" << total_alns << " total alignments\n";
+    cout << "Finished non-partial molecule alignment. \n" << total_alns << " total alignments" << endl;
+    logfile << "Finished non-partial molecule alignment. \n" << total_alns << " total alignments" << endl;
+
     chrono::steady_clock::time_point alnWallE = chrono::steady_clock::now();
     //------------------------------------------------------
     //Check PARTIAL
@@ -432,8 +434,8 @@ int main (int argc, char *argv[]) {
         unordered_set<int> mols_to_remap = get_remap_mol_ids(combined_results, mol_maps, aln_prop_thresh_to_remap,
                                                              aln_len_thresh_to_remap);
 
-        cout << mols_to_remap.size() << " molecules will undergo partial-seeding.\n";
-        logfile << mols_to_remap.size() << " molecules will undergo partial-seeding.\n";
+        cout << mols_to_remap.size() << " molecules will undergo partial-seeding." << endl;
+        logfile << mols_to_remap.size() << " molecules will undergo partial-seeding." << endl;
         ////////////////////
         //update params for partial
         score_limit = 1000;
@@ -441,14 +443,14 @@ int main (int argc, char *argv[]) {
         penalty_par = 7500;
         //Here again make thread and run partial alignments for remaining molecules
         if (!mols_to_remap.empty()) {
-            cout << "Performing partial alignments\n";
-            logfile<< "Performing partial alignments\n";
+            cout << "Performing partial alignments" << endl;
+            logfile<< "Performing partial alignments" << endl;
             for (auto &i: mols_to_remap) {
                 mol_id_queue.push(i);
             }
 
             while (mol_id_queue.size() > 0) {
-                logfile << "began partial alignment round at " << return_current_time_and_date() << "\n";
+                logfile << "began partial alignment round at " << return_current_time_and_date() << endl;
                 vector<future<map<int, vector<Alignment>>>> futs_partial;
                 vector<promise<map<int, vector<Alignment>>>> promises_partial(n_threads);
                 for (int i = 0; i < n_threads; i++) {
@@ -472,9 +474,9 @@ int main (int argc, char *argv[]) {
                         total_alns += x.second.size();
                     }
                 }
-                logfile << "finished partial alignment round at " << return_current_time_and_date() << "\n";
+                logfile << "finished partial alignment round at " << return_current_time_and_date() << endl;
             }
-            cout << "Finished partial molecule alignment. \n" << total_alns << " total alignments\n";
+            cout << "Finished partial molecule alignment. \n" << total_alns << " total alignments" << endl;
         }
     }
     chrono::steady_clock::time_point alnPartialWallE = chrono::steady_clock::now();
@@ -508,7 +510,8 @@ int main (int argc, char *argv[]) {
     logfile << "Generating seeds and alignments: " + to_string(alnWall)<< endl;
     logfile << "Generating seeds and partial alignments: " + to_string(alnPartialWall)<< endl;
     logfile << "Total alignment time: " + to_string(alnPartialWall+alnWall)<< endl;
+    logfile << flush;
+    logfile.close();
     cout << endl;
-
     return 0;
 }
