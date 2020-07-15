@@ -37,6 +37,7 @@ inline bool file_exists (const string &fname) {
  */
 map<int,vector<double>> parse_cmap(const string &fname);
 
+vector<vector<float>> parse_bed(const string &fname);
 ///**
 // * Prints a cmap map by map-id to cout
 // */
