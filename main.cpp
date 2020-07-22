@@ -29,6 +29,7 @@ const double thread_timeout_seconds = 1800.0; // run thread for up to 30 minutes
 
 //Data filtering
 bool rescale = false;
+bool ref_genome_38 = false;
 int n_threads = 1;
 int min_aln_len = 6;
 float aln_prop_thresh_to_remap = 0.8;
@@ -226,6 +227,9 @@ tuple<string,string,string,string,string,string> parse_args(int argc, char *argv
         } else if ((string(argv[i]).rfind("-multimap", 0) == 0)) {
             multimap_mols = true;
 
+        } else if ((string(argv[i]).rfind("-ref38", 0) == 0)) {
+            ref_genome_38 = true;
+
         } else if ((string(argv[i]).rfind("-rescale", 0) == 0)) {
             rescale = true;
 
@@ -334,6 +338,9 @@ int main (int argc, char *argv[]) {
     //create map of genomic distance to label number
     map<int, dis_to_index> ref_DTI = genomic_distance(ref_genome_unrev);
     vector<vector<float>> bed = parse_bed("hg19_DLE.bed");
+    if (ref_genome_38){
+    	bed = parse_bed("hg38_DLE.bed");
+    }
     for (auto i:bed) {
         ref_DTI[int(i[0])][i[1]].erase(remove(ref_DTI[int(i[0])][i[1]].begin(), ref_DTI[int(i[0])][i[1]].end(),
                                               make_pair(int(i[2]), int(i[3]))),ref_DTI[int(i[0])][i[1]].end());
