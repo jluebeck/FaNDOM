@@ -1,8 +1,8 @@
 #include "fandomAligner.h"
 
 using namespace std;
-float dist_scale_par=1.2;
-int penalty_par=5000;
+float dist_scale_par=1.28;
+int penalty_par=6000;
 
 //fast pow function written by Martin Ankerl
 //https://martin.ankerl.com/2012/01/25/optimized-approximative-pow-in-c-and-cpp/

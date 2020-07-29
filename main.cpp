@@ -340,6 +340,7 @@ int main (int argc, char *argv[]) {
     vector<vector<float>> bed = parse_bed("hg19_DLE.bed");
     if (ref_genome_38){
     	bed = parse_bed("hg38_DLE.bed");
+    	cout<<"pars hg38 bed file"<<endl;
     }
     for (auto i:bed) {
         ref_DTI[int(i[0])][i[1]].erase(remove(ref_DTI[int(i[0])][i[1]].begin(), ref_DTI[int(i[0])][i[1]].end(),
@@ -445,7 +446,7 @@ int main (int argc, char *argv[]) {
         logfile << mols_to_remap.size() << " molecules will undergo partial-seeding." << endl;
         ////////////////////
         //update params for partial
-        score_limit = 1000;
+        score_limit = 4000;
         dist_scale_par = 1.4;
         penalty_par = 7500;
         //Here again make thread and run partial alignments for remaining molecules
