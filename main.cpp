@@ -24,7 +24,7 @@ const int min_map_len = 25000;
 float aln_padding = 1000;
 bool multimap_mols = false;
 bool partial_alignment = true;
-int score_limit = 3000;
+int score_limit = 5000;
 const double thread_timeout_seconds = 1800.0; // run thread for up to 30 minutes before asking for a new one
 
 //Data filtering
