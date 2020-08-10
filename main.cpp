@@ -24,7 +24,7 @@ const int min_map_len = 25000;
 float aln_padding = 1000;
 bool multimap_mols = false;
 bool partial_alignment = true;
-int score_limit = 5000;
+int score_limit = 3000;
 const double thread_timeout_seconds = 1800.0; // run thread for up to 30 minutes before asking for a new one
 
 //Data filtering
@@ -337,15 +337,15 @@ int main (int argc, char *argv[]) {
 
     //create map of genomic distance to label number
     map<int, dis_to_index> ref_DTI = genomic_distance(ref_genome_unrev);
-    vector<vector<float>> bed = parse_bed("hg19_DLE.bed");
-    if (ref_genome_38){
-    	bed = parse_bed("hg38_DLE.bed");
-    	cout<<"pars hg38 bed file"<<endl;
-    }
-    for (auto i:bed) {
-        ref_DTI[int(i[0])][i[1]].erase(remove(ref_DTI[int(i[0])][i[1]].begin(), ref_DTI[int(i[0])][i[1]].end(),
-                                              make_pair(int(i[2]), int(i[3]))),ref_DTI[int(i[0])][i[1]].end());
-    }
+    // vector<vector<float>> bed = parse_bed("hg19_DLE.bed");
+    // if (ref_genome_38){
+    // 	bed = parse_bed("hg38_DLE.bed");
+    // 	cout<<"pars hg38 bed file"<<endl;
+    // }
+    // for (auto i:bed) {
+    //     ref_DTI[int(i[0])][i[1]].erase(remove(ref_DTI[int(i[0])][i[1]].begin(), ref_DTI[int(i[0])][i[1]].end(),
+    //                                           make_pair(int(i[2]), int(i[3]))),ref_DTI[int(i[0])][i[1]].end());
+    // }
     //make the mol_id_queue
     chrono::steady_clock::time_point ppWallS = chrono::steady_clock::now();
     filter_mols(mol_maps,min_map_lab,min_map_len);
