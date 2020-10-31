@@ -6,7 +6,7 @@ parser.add_argument("-l", "--limit", help="Minimum limit for reporting SV", requ
 parser.add_argument("-c", "--chrom", help="Chromosome Version", required=True)
 parser.add_argument("-q", "--query", help="Query Dir", required=True)
 args = parser.parse_args()
-def parse_cmap(cmapf, keep_length=False):
+def parse_cmap(cmapf, keep_length=True):
     cmaps = {}
     with open(cmapf) as infile:
         for line in infile:
@@ -69,9 +69,9 @@ for k in d.keys():
                 s2 = (int(align.split(',')[1].split(')')[0]),int(float(p[5])),int(align.split(',')[0][1:]))
                 e2 = (int(align.split(',')[-1].split(')')[0]),int(float(p[6])),int(align.split(',')[-2].split('(')[1]))
                 s2, e2 = min(s2, e2), max(s2, e2)
-                
+                # print(mol[str(k)][1])
                 # if -3 < s2[0] - e[0] < 5 :
-                if abs(mol[str(k)][s2[0]] - mol[str(k)][e[0]]) < 30000 or -2 < s2[0] - e[0] < 5:
+                if abs(mol[str(k)][s2[0]] - mol[str(k)][e[0]]) < 30000 or -3 < s2[0] - e[0] < 6:
                         chr1 = (contig_id_map[int(q[2])], e[1])
                         chr2 = (contig_id_map[int(p[2])], s2[1])
                         if chr1[0] < chr2[0] or (chr1[0] == chr2[0] and min(chr2[1], chr1[1]) == chr1[1]):
@@ -94,8 +94,40 @@ for k in d.keys():
                             else:
                                 orientation_p = '-'
                             a[(chr2[0], chr1[0])].append((chr2[1], chr1[1],k,orientation_p,orientation_q))
+                elif s2[0] - e[0] > 0:
+                    if abs(float(p[3])- float(p[4]))> 60000 and  abs(float(q[3])- float(q[4]))> 60000 :
+                        find = 0
+                        for s in range(len(d[k])):
+                            if d[k][s]!=p and d[k][s]!=q:
+                                if max(float(q[3]),float(q[4])) <float(d[k][s][3]) < min(float(p[3]),float(p[4])) or max(float(q[3]),float(q[4])) <float(d[k][s][4]) < min(float(p[3]),float(p[4])):
+                                    find = 1
+                                    break
+                        if find == 0:
+                            chr1 = (contig_id_map[int(q[2])], e[1])
+                            chr2 = (contig_id_map[int(p[2])], s2[1])
+                            if chr1[0] < chr2[0] or (chr1[0] == chr2[0] and min(chr2[1], chr1[1]) == chr1[1]):
+                                if chr1[1] == int(float(q[6])):
+                                    orientation_q = '+'
+                                else:
+                                    orientation_q = '-'
+                                if chr2[1] == int(float(p[6])):
+                                    orientation_p = '-'
+                                else:
+                                    orientation_p = '+'
+                                a[(chr1[0], chr2[0])].append((chr1[1], chr2[1],k,orientation_q,orientation_p))                       
+                            else:
+                                if chr1[1] == int(float(q[6])):
+                                    orientation_q = '-'
+                                else:
+                                    orientation_q = '+'
+                                if chr2[1] == int(float(p[6])):
+                                    orientation_p = '+'
+                                else:
+                                    orientation_p = '-'
+                                a[(chr2[0], chr1[0])].append((chr2[1], chr1[1],k,orientation_p,orientation_q))
+                    
                 # elif -3 < s[0] - e2[0] < 5 :
-                elif abs(mol[str(k)][s[0]] - mol[str(k)][e2[0]]) < 30000 or -2 < s[0] - e2[0] < 5:
+                elif abs(mol[str(k)][s[0]] - mol[str(k)][e2[0]]) < 30000 or -3 < s[0] - e2[0] < 6:
                         chr1 = (contig_id_map[int(q[2])], s[1])
                         chr2 = (contig_id_map[int(p[2])], e2[1])
                         if chr1[0] < chr2[0] or (chr1[0] == chr2[0] and min(chr2[1], chr1[1]) == chr1[1]):
@@ -119,6 +151,38 @@ for k in d.keys():
                             else:
                                 orientation_p = '-'
                             a[(chr2[0], chr1[0])].append((chr2[1], chr1[1],k,orientation_p,orientation_q))
+                elif s[0] - e2[0] > 0:
+                    if abs(float(p[3])- float(p[4]))> 60000 and  abs(float(q[3])- float(q[4]))> 60000 :
+                        find = 0
+                        for s in range(len(d[k])):
+                            if d[k][s]!=p and d[k][s]!=q:
+                                if max(float(p[3]),float(p[4])) <float(d[k][s][3]) < min(float(q[3]),float(q[4])) or max(float(p[3]),float(p[4])) <float(d[k][s][4]) < min(float(q[3]),float(q[4])):
+                                    find = 1
+                                    break
+                        if find == 0:
+                            chr1 = (contig_id_map[int(q[2])], s[1])
+                            chr2 = (contig_id_map[int(p[2])], e2[1])
+                            if chr1[0] < chr2[0] or (chr1[0] == chr2[0] and min(chr2[1], chr1[1]) == chr1[1]):
+                                if chr1[1] == int(float(q[6])):
+                                    orientation_q = '+'
+                                else:
+                                    orientation_q = '-'
+                                if chr2[1] == int(float(p[6])):
+                                    orientation_p = '-'
+                                else:
+                                    orientation_p = '+'
+                                a[(chr1[0], chr2[0])].append((chr1[1], chr2[1],k,orientation_q,orientation_p))
+                            #     a[(chr2[0], chr1[0])].append((min(chr2[1], chr1[1]),max(chr2[1], chr1[1]),k,orientation_p==orientation_q))
+                            else:
+                                if chr1[1] == int(float(q[6])):
+                                    orientation_q = '-'
+                                else:
+                                    orientation_q = '+'
+                                if chr2[1] == int(float(p[6])):
+                                    orientation_p = '+'
+                                else:
+                                    orientation_p = '-'
+                                a[(chr2[0], chr1[0])].append((chr2[1], chr1[1],k,orientation_p,orientation_q))
 import numpy as np
 scale = 30000
 with open(args.output,'w') as file:

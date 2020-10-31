@@ -87,7 +87,7 @@ with open(args.output+'_assembled.xmap','w') as g:
                 qq = max(float(main_aln[3]), float(main_aln[4]))
                 ww = min(float(nex_aln[3]), float(nex_aln[4]))
                 if max(float(main_aln[3]), float(main_aln[4])) > min(float(nex_aln[3]), float(nex_aln[4])) and len(set(main_aln[-1].split(')')) & set(nex_aln[-1].split(')'))) > 1:
-                    if max(float(main_aln[5]), float(main_aln[6])) > min(float(nex_aln[5]), float(nex_aln[6])) and min(float(main_aln[5]), float(main_aln[6])) < min(float(nex_aln[5]), float(nex_aln[6])) :
+                    if max(float(main_aln[5]), float(main_aln[6])) > min(float(nex_aln[5]), float(nex_aln[6])) and min(float(main_aln[5]), float(main_aln[6])) < min(float(nex_aln[5]), float(nex_aln[6])) and main_aln[7] == '+':
                         if main_aln[7] == '+' :
                             main_aln[4] = nex_aln[4]
                             main_aln[6] = nex_aln[6]
@@ -98,6 +98,18 @@ with open(args.output+'_assembled.xmap','w') as g:
                             main_aln[-1] = join_string(main_aln[-1], nex_aln[-1], '-')
                         i+=1
                         find = 1
+                    if max(float(nex_aln[5]), float(nex_aln[6])) > min(float(main_aln[5]), float(main_aln[6])) and min(float(nex_aln[5]), float(nex_aln[6])) < min(float(main_aln[5]), float(main_aln[6])) and main_aln[7] == '-':
+                        if main_aln[7] == '+' :
+                            main_aln[4] = nex_aln[4]
+                            main_aln[6] = nex_aln[6]
+                            main_aln[-1] = join_string(main_aln[-1], nex_aln[-1], '+')
+                        else:
+                            main_aln[3] = nex_aln[3]
+                            main_aln[5] = nex_aln[5]
+                            main_aln[-1] = join_string(main_aln[-1], nex_aln[-1], '-')
+                        i+=1
+                        find = 1
+
             if find == 0:
                 g.write('\t'.join(main_aln))
                 g.write('\n')

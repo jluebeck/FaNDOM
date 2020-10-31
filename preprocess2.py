@@ -3,12 +3,12 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-q", "--query", help="query directory", required=True)
 parser.add_argument("-o", "--output", help="Output dir for processed contigs", required=True)
-parser.add_argument("-m", "--maxsize", help="Maximum size for each molecule. Default is 100", required=False)
+parser.add_argument("-m", "--maxsize", help="Maximum size for each molecule. Default is 25", required=False)
 args = parser.parse_args()
-max_len = 100
+max_len = 25
 if str(args.maxsize)!='None':
 	max_len = int(args.maxsize)
-const = 25
+const = 50
 long_lines = []
 max_id = 0
 map_new_id = {}

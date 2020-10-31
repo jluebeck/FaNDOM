@@ -156,7 +156,7 @@ with open(args.output,'w')as file :
                         ref_2 = int(alignment[v + 1].split(',')[0][1:])
                         q_2 = int(alignment[v + 1].split(',')[1])
                         ref_dist = abs(ref[ref_id][ref_1] - ref[ref_id][ref_2])
-                        if abs(q_2-q_1) < 3 and abs(ref_2-ref_1)<3:
+                        if abs(q_2-q_1) < 10 and abs(ref_2-ref_1)<10:
                             q_dist = abs(mol[q_id][q_1] - mol[q_id][q_2])
                             dif = ref_dist - q_dist
                             if dif < -2000:

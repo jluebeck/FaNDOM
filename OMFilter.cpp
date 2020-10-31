@@ -121,7 +121,7 @@ void calculate_seeds_score_in_band(vector<query> &qq, int ref_contig, vector<dou
             int last_index_rev = 0;
             for (int cc = 1; cc < q.seeds_straight.size(); cc++) {
                 if (ref_dist[cc] - ref_dist[last_index_str] > 3000) {
-                    if (q.seeds_straight[cc].size() > 3) {
+                    if (q.seeds_straight[cc].size() > threshold) {
                         last_index_str = cc;
                         long straight_score = 10000000;
 //                        vector<long> score_path = solve_graph_straight(q.seeds_straight[cc],q_dist,ref_dist, w);
@@ -164,7 +164,7 @@ void calculate_seeds_score_in_band(vector<query> &qq, int ref_contig, vector<dou
                     }
                 }
                 if (ref_dist[cc] - ref_dist[last_index_rev] > 3000) {
-                    if (q.seeds_reverse[cc].size() > 3) {
+                    if (q.seeds_reverse[cc].size() > threshold) {
                         last_index_rev = cc;
                         long reverse_score = 10000000;
 //                        vector<long> score_path = solve_graph_reverse(q.seeds_reverse[cc], q_dist, ref_dist, w);
@@ -272,8 +272,8 @@ void calculate_seeds_score_in_band_SV(vector<query> &qq, int ref_contig, vector<
                                                     ref_dist[q.seeds_straight[cc][i].second - 1],
                                                     q.seeds_straight[cc][i].second, score,
                                                     float(score * part_len),
-                                                    max(q.seeds_straight[cc][i].second - int(f1*1.5), 0),
-                                                    min(int(ref_dist.size()) - 1, q.seeds_straight[cc][j].second + int((q_dist.size()-e1)*1.5)),
+                                                    max(q.seeds_straight[cc][i].second - int(f1*2), 0),
+                                                    min(int(ref_dist.size()) - 1, q.seeds_straight[cc][j].second + int((q_dist.size()-e1)*2)),
                                                     f1, e1
                                             };
                                     if (abs(prev_index - cc) > 1) {
@@ -326,8 +326,8 @@ void calculate_seeds_score_in_band_SV(vector<query> &qq, int ref_contig, vector<
                                                     ref_dist[q.seeds_reverse[cc][i].second - 1],
                                                     q.seeds_reverse[cc][i].second, score,
                                                     float(score * part_len),
-                                                    max(q.seeds_reverse[cc][i].second - int((q_dist.size()-e1) * 1.5), 0),
-                                                    min(int(ref_dist.size()) - 1, q.seeds_reverse[cc][j].second + int(f1*1.5)),
+                                                    max(q.seeds_reverse[cc][i].second - int((q_dist.size()-e1) * 2), 0),
+                                                    min(int(ref_dist.size()) - 1, q.seeds_reverse[cc][j].second + int(f1*2)),
                                                     f1, e1
                                             };
                                     if (abs(prev_index_rev - cc) > 1) {
@@ -419,7 +419,7 @@ OMFilter(vector<query> qq, int** a, const int thread_num, map<int, dis_to_index>
         int l = ref_lens[ref_id];
         for (int c = 0; c < l; c++) {
             for (int e = 0; e < counter + 30; e++) {
-                if (a[c][e] >= threshold) {
+                if (a[c][e] >= 3) {
                     int q_number = index_to_query[e];
                     auto pred = [q_number](const query &item) {
                         return item.number == q_number;
@@ -480,7 +480,7 @@ OMFilter(vector<query> qq, int** a, const int thread_num, map<int, dis_to_index>
         }
     }
     if (SV_detection == 1) {
-        int paird_count = 0;
+//        int paird_count = 0;
         for (auto &q: qq) {
             int p = 1;
             vector<seedData> seeds;

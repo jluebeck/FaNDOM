@@ -24,6 +24,7 @@ with open(args.output,'w') as f:
 				if abs(float(aln_2[3]) - float(nex_aln_2[2])) < 30000:
 					nex_aln_2[2] = aln_2[2]
 					nex_aln_2[4] +=','+aln_2[4]
+					nex_aln_2[6] = str(float(nex_aln_2[6]) + float(aln_2[6]))
 					a[i+1] = '\t'.join(nex_aln_2)+ '\n'
 				else:
 					w.append(a[i])

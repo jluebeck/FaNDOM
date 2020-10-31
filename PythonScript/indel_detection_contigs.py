@@ -1,4 +1,4 @@
-def parse_cmap(cmapf, keep_length=False):
+def parse_cmap(cmapf, keep_length=True):
     cmaps = {}
     with open(cmapf) as infile:
         for line in infile:
@@ -156,7 +156,7 @@ with open(args.output,'w')as file :
                         ref_2 = int(alignment[v + 1].split(',')[0][1:])
                         q_2 = int(alignment[v + 1].split(',')[1])
                         ref_dist = abs(ref[ref_id][ref_1] - ref[ref_id][ref_2])
-                        if abs(q_2-q_1) < 10 and abs(ref_2-ref_1)< 10:
+                        if abs(q_2-q_1) < 20 and abs(ref_2-ref_1)< 20:
                             q_dist = abs(mol[q_id][q_1] - mol[q_id][q_2])
                             dif = ref_dist - q_dist
                             if dif < -2000:
@@ -177,7 +177,7 @@ with open(args.output,'w')as file :
                     s = 0
                     s2 = 0
                     for aln in ans[i]:
-                        if aln[1] >= i_j[0] - 5 and aln[2] <= i_j[1] + 5:
+                        if aln[1] >= i_j[0] - 0 and aln[2] <= i_j[1] + 0:
                             i_j = (min(i_j[0], aln[1]), max(i_j[1], aln[2]))
                             selected.append(aln[0])
                             s += aln[5]
@@ -185,19 +185,19 @@ with open(args.output,'w')as file :
                         else:
                             if len(selected) > 0:
                             	kar = len(selected)
-                                selected = list(set(selected))
-                                file.write(i + '\t' + str(k) + '\t' + str(ref[str(rev_contig[k])][i_j[0]]) + '\t' + str(
+                            	selected = list(set(selected))
+                            	file.write(i + '\t' + str(k) + '\t' + str(ref[str(rev_contig[k])][i_j[0]]) + '\t' + str(
                                     ref[str(rev_contig[k])][i_j[1]]) + '\t' + ','.join(selected) + '\t' + str(
                                     len(set(selected))) + '\t' + str(float(float(s) / kar)) + '\t' + str(
                                     float(float(s2) / len(selected)))+'\n')
-                            i_j = (max(1, aln[1] - 5), min(aln[2] + 5, len(ref[str(rev_contig[k])])))
+                            i_j = (max(1, aln[1] - 0), min(aln[2] + 0, len(ref[str(rev_contig[k])])))
                             selected = [aln[0]]
                             s = aln[5]
                             s2 = aln[6]
                     if len(selected) > 0:
                     	kar = len(selected)
-                        selected = list(set(selected))
-                        file.write(i + '\t' + str(k) + '\t' + str(ref[str(rev_contig[k])][i_j[0]]) + '\t' + str(
+                    	selected = list(set(selected))
+                    	file.write(i + '\t' + str(k) + '\t' + str(ref[str(rev_contig[k])][i_j[0]]) + '\t' + str(
                             ref[str(rev_contig[k])][i_j[1]]) + '\t' + ','.join(selected) + '\t' + str(
                             len(set(selected))) + '\t' + str(float(float(s) / kar)) + '\t' + str(
                             float(float(s2) / len(selected)))+'\n')

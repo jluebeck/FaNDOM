@@ -65,7 +65,7 @@ with open(args.output+'.xmap', 'w') as g:
                 align = align.split(',')
                 l = len(align) - 1
                 score = conf / l
-                if abs(a1 - a2) > 30000 and ((12 > abs(b1 - b2) > 7 and score > 7000) or (abs(b1 - b2) > 11 and score > 5500)):
+                if abs(a1 - a2) > 45000 and ((12 > abs(b1 - b2) > 9 and score > 5000) or (16 > abs(b1-b2) > 11 and score > 4500) or (abs(b1 - b2) > 15 and score > 4500)):
                     d[id].append((score, line))
             else:
                 g.write(line)
@@ -79,10 +79,14 @@ with open(args.output+'.xmap', 'w') as g:
             for j in range(i + 1, len(d[k])):
                 b = d[k][j]
                 b1 = b[1].split('\t')
-                if min(float(a1[3]), float(a1[4])) <= min(float(b1[3]), float(b1[4])) and max(float(a1[3]),
-                                                                                              float(a1[4])) >= max(
+                if min(float(a1[3]), float(a1[4]))-2000 <= min(float(b1[3]), float(b1[4])) and max(float(a1[3]),
+                                                                                              float(a1[4]))+2000 >= max(
                     float(b1[3]), float(b1[4])):
                     deleted.append(b)
+                #age extelaf xeili ziade save nakonimesh
+                if min(float(b1[3]), float(b1[4])) <= min(float(a1[3]), float(a1[4])) and max(float(b1[3]),float(b1[4])) >= max(float(a1[3]), float(a1[4])):
+                    if abs(float(b1[3]) -float(b1[4])) - abs(float(a1[3])- float(a1[4]))> 50000:
+                        deleted.append(a)
         d[k] = [x for x in d[k] if not x in deleted]
     for k in d.keys():
         for a in d[k]:
