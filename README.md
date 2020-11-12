@@ -32,18 +32,23 @@ FaNDOM outputs alignments of the OM molecules in FaNDOM's `.fda` file format. `.
 ##### Required arguments
 - `-r=` Path to reference genome for alignment
 - `-q=` Path to Bionano Saphyr molecules
-- `-s=` Prefix for output files
+- `-sname=` Prefix for output files
+- `-outfmt=` Specify output format for alignments. We support `.fda`and `.xmap` format.
 
 ##### Optional arguments (basic)
 - `-multimap` Report multiple alignments per molecule (default: only highest scoring alignment)
 - `-version` Print version and exit
 - `-t=` Number of threads to use (recommend 12+)
 - `-padding=` Additional size (in bp) around seed region to open alignment window (default: 1000)
+- `-no_partial=` True if Just looking for full alignment (default: True)
+- `-ref38=` If you are using reference genome assembly GRCh38 set it to True (default: False)
+- `-rescale=` True if data are raw molecule and it is necessary to rescale them (default: False)
 
 ##### Optional arguments (advanced)
 - `-tolerance=` Seeding label position error tolerance (default: 350)
-- `-rank=` Seed ranks to consider (default: 300)
+- `-rank=` Seed ranks to consider (default: 150)
 - `-threshold=` Seed chain mininum length (default: 3)
+- `-band_width=` Half of band width (default 6000)
 
 ### `.fda` file format
 
