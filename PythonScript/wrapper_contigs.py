@@ -21,7 +21,7 @@ out = args.output
 if out[-1] != '/':
     out = out + '/'
 name = args.name
-pre_proces_cmd = 'python preprocess2.py -q ' + args.query + ' -o ' + out + args.name + '_preprocess'
+pre_proces_cmd = 'python PythonScript/preprocess2.py -q ' + args.query + ' -o ' + out + args.name + '_preprocess'
 os.system(pre_proces_cmd)
 fandom_cmd = './FaNDOM -t=' + args.thread + ' -r=' + args.ref + ' -q=' + out + args.name + '_preprocess.cmap' + ' -sname=' + out + args.name + ' -outfmt=xmap '
 os.system(fandom_cmd)
@@ -29,9 +29,9 @@ remove_part_cmd = 'python PythonScript/remove_part.py -p ' + out + args.name + '
 os.system(remove_part_cmd)
 filter_partial_cmd = 'python PythonScript/filter_contigs.py -i ' + out + args.name + '_partial.xmap -r ' + args.ref + ' -o ' + out + name + '_partial_filtered'
 os.system(filter_partial_cmd)
-filter_partial_post_cmd = 'python post_process.py -f ' + out + name + '_partial_filtered.xmap -d ' + out + args.name + '_preprocess_dic -o ' + out + name + '_partial_filtered'
+filter_partial_post_cmd = 'python PythonScript/post_process.py -f ' + out + name + '_partial_filtered.xmap -d ' + out + args.name + '_preprocess_dic -o ' + out + name + '_partial_filtered'
 os.system(filter_partial_post_cmd)
-full_post_cmd = 'python post_process.py -f ' + out + args.name + '_full.xmap -d ' + out + args.name + '_preprocess_dic -o ' + out + args.name + '_full'
+full_post_cmd = 'python PythonScript/post_process.py -f ' + out + args.name + '_full.xmap -d ' + out + args.name + '_preprocess_dic -o ' + out + args.name + '_full'
 os.system(full_post_cmd)
 assemble_cmd = 'python PythonScript/assemble_reads.py -i ' + out + args.name + '_full_post_process.xmap -o ' + out + args.name + '_full_post_process'
 os.system(assemble_cmd)
@@ -51,8 +51,8 @@ os.system(indel_detect_cmd)
 os.chdir( out)
 os.system("grep 'ins' indel > insertion")
 os.system("grep 'del' indel > deletion")
-os.chdir( args.fandom)
-cluser_cmd = 'python PythonScript/cluster_indels.py -i ' + out +'insertion '+ '-o '+out+'insertion_clustered'
-os.system(cluser_cmd)
-cluser_cmd = 'python PythonScript/cluster_indels.py -i ' + out +'deletion '+ '-o '+out+'deletion_clustered'
-os.system(cluser_cmd)
+# os.chdir( args.fandom)
+# cluser_cmd = 'python PythonScript/cluster_indels.py -i ' + out +'insertion '+ '-o '+out+'insertion_clustered'
+# os.system(cluser_cmd)
+# cluser_cmd = 'python PythonScript/cluster_indels.py -i ' + out +'deletion '+ '-o '+out+'deletion_clustered'
+# os.system(cluser_cmd)

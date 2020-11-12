@@ -203,10 +203,12 @@ tuple<string,string,string,string,string,string> parse_args(int argc, char *argv
         } else if (string(argv[i]).rfind("-padding=", 0) == 0) {
             aln_padding = stof(string(argv[i]).substr(string(argv[i]).find('=') + 1));
 
-        } else if ((string(argv[i]).rfind("-w=", 0) == 0)) {
-            w = stoi(string(argv[i]).substr(string(argv[i]).find('=') + 1));
-
-        } else if ((string(argv[i]).rfind("-band_width=", 0) == 0)) {
+        }
+//        else if ((string(argv[i]).rfind("-w=", 0) == 0)) {
+//            w = stoi(string(argv[i]).substr(string(argv[i]).find('=') + 1));
+//
+//        }
+        else if ((string(argv[i]).rfind("-band_width=", 0) == 0)) {
             band_width = stoi(string(argv[i]).substr(string(argv[i]).find('=') + 1));
 
         } else if ((string(argv[i]).rfind("-tolerance=", 0) == 0)) {

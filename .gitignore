@@ -16,6 +16,7 @@ log/
 .idea/dictionaries
 .idea/vcs.xml
 .idea/jsLibraryMappings.xml
+.DS_Store
 
 # Sensitive or high-churn files:
 .idea/dataSources.ids
