@@ -64,6 +64,11 @@ As an example:
 ```
 python wrapper_contigs.py -f /home/FaNDOM -t 22 -r /home/reference_genomes/hg19_Merge_800_masked.cmap -q /home/exp_refineFinal1_sv/exp_refineFinal1_merged_q.cmap -n Covid_3_41 -o /home/res -c 19
 ```
+For making sure that you install FaNDOM correctly, when you are at FaNDOM directory run the following command:
+```
+python PythonScript/wrapper_contigs.py -f $PWD -t 1 -r test_data/reference.cmap -q test_data/query.cmap -n test -o $PWD/test_data/res -c 19
+```
+It should run pipeline for simple datasets and have the results at `test_data/res` directory.
 ## Python scripts
 Here we explain each script that is used in our pipeline.
 ### `autorescale.py` script
