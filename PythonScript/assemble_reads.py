@@ -1,4 +1,4 @@
-def join_string(main , next , direction):
+def join_string(main, next, direction):
     if next in main:
         return main
     if direction == '+':
@@ -12,31 +12,44 @@ def join_string(main , next , direction):
                 next = ')'.join(next)
         while True:
             a = main.split(')')[-2]
-            a = a+ ')'
+            a = a + ')'
             if a in next:
                 break
             else:
-                main =main[:main.rfind('(')]
+                main = main[:main.rfind('(')]
         if next in main:
-            return  main
-        main = main.split(')')[:-4]
-        main = ')'.join(main)+ ')'
-        find =1
-        i = 1
-        while find ==1 :
-            if next[:i] in main:
-                i+=1
-            else:
-                find = 0
-        return main + next[i-1:]
+            return main
+        # main = main.split(')')[:-4]
+        # main = ')'.join(main) + ')'
+        main1 = main.split(')')
+        next1 = next.split(')')
+        while '' in main1:
+            main1.remove('')
+        while '' in next1:
+            next1.remove('')
+        all = main1 + next1
+        all = list(set(all))
+        all = sorted(all, key=lambda x: int(x.split(',')[0][1:]))
+        all = ')'.join(all) + ')'
+        return all
+        # find = 1
+        # i = 1
+        # while find == 1:
+        #     if next[:i] in main:
+        #         i += 1
+        #     else:
+        #         find = 0
+        # return main + next[i - 1:]
     else:
         while True:
             a = next.split(')')[-2]
-            a = a+ ')'
+            a = a + ')'
+            # b = next[:next.rfind('(')]
+            # b = b.split(')')[-2] + ')'
             if a in main:
                 break
             else:
-                next =next[:next.rfind('(')]
+                next = next[:next.rfind('(')]
         while True:
             a = main.split(')')[0]
             a = a + ')'
@@ -46,20 +59,35 @@ def join_string(main , next , direction):
                 main = main.split(')')[1:]
                 main = ')'.join(main)
         if next in main:
-            return  main
-        main = main.split(')')[3:]
-        main = ')'.join(main)
-        find = 1
-        i = 1
-        while find ==1:
-            if next[len(next)-i:] in main:
-                i = i+ 1
-            else:
-                find = 0
-        return next[:len(next) -i+1] + main
+            return main
+        # main = main.split(')')[3:]
+        # main = ')'.join(main)
+        main1 = main.split(')')
+        next1 = next.split(')')
+        while '' in main1:
+            main1.remove('')
+        while '' in next1:
+            next1.remove('')
+        all = main1 + next1
+        all = list(set(all))
+        all = sorted(all, key=lambda x: int(x.split(',')[0][1:]))
+        all = ')'.join(all)+ ')'
+        return  all
+        # find = 1
+        # i = 1
+        # while find == 1:
+        #     if next[len(next) - i:] in main:
+        #         print(next[len(next) - i:])
+        #         i = i + 1
+        #     else:
+        #         find = 0
+        # return next[:len(next) - i + 1] + main
+
+
 from collections import defaultdict
+
 d = {}
-d = defaultdict(lambda:[],d)
+d = defaultdict(lambda: [], d)
 
 import argparse
 parser = argparse.ArgumentParser()
@@ -76,7 +104,7 @@ with open(args.output+'_assembled.xmap','w') as g:
                 line2 = line.strip().split('\t')
                 d[line2[1]].append(line2)
     for k in d :
-	print(k)
+        print(k)
         d[k] = sorted(d[k], key=lambda x: min(float(x[3]),float(x[4])))
         i = 1
         main_aln = d[k][0]
