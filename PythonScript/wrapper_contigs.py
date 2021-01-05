@@ -12,10 +12,13 @@ parser.add_argument("-c", "--chrom", help="Output_dir", required=True)
 parser.add_argument("-m", "--mode", help="Output_dir", required=True)
 args = parser.parse_args()
 c = 'hg19'
+gene_dir =''
 if args.chrom == '38':
     c = 'hg38'
+    gene_dir = args.fandom+'/reference_genomes/Gene_hg38.txt '
 else:
     c = 'hg19'
+    gene_dir = args.fandom+'/reference_genomes/Gene_hg19.txt '
 
 os.chdir(args.fandom)
 out = args.output
@@ -37,21 +40,26 @@ if p == 1:
 	os.system(filter_partial_post_cmd)
 	full_post_cmd = 'python PythonScript/post_process.py -f ' + out + args.name + '_full.xmap -d ' + out + args.name + '_preprocess_dic -o ' + out + args.name + '_full'
 	os.system(full_post_cmd)
+	print("assemble reads1")
 	assemble_cmd = 'python PythonScript/assemble_reads.py -i ' + out + args.name + '_full_post_process.xmap -o ' + out + args.name + '_full_post_process'
 	os.system(assemble_cmd)
 	os.chdir(out)
 	os.system(
 	    'cat ' + out + args.name + '_full_post_process_assembled.xmap ' + out + name + '_partial_filtered_post_process.xmap >' + name + '_all.xmap')
 	os.chdir( args.fandom)
+	print("assemble reads2")
 	assemble_cmd = 'python PythonScript/assemble_reads.py -i ' + out + name + '_all.xmap' + ' -o ' + out + name + '_all'
 	os.system(assemble_cmd)
-	sv_detect_cmd = 'python3 PythonScript/SV_detection_contigs.py -i ' + out + name + '_all_assembled.xmap -l 1 -c ' + c + ' -r=' + args.ref+ ' -q ' + args.query + ' -o ' +out + 'SV'
+	print("SV detect")
+	sv_detect_cmd = 'python3 PythonScript/SV_detection_contigs.py -i ' + out + name + '_all_assembled.xmap -l 1 -c ' + c + ' -r=' + args.ref+ ' -q ' + args.query +' -g '+gene_dir+ ' -o ' +out + 'SV'
 	os.system(sv_detect_cmd)
 	os.chdir( out)
 	os.system('cat '+ out + args.name + '_full_post_process.xmap '+ out + name + '_partial_filtered_post_process.xmap >' + name + '_all_indel.xmap')
 	os.chdir( args.fandom)
-	indel_detect_cmd = 'python3 PythonScript/indel_detection_contigs.py -r ' + args.ref + ' -c ' + c + ' -m ' + args.query + ' -a ' + out + name + '_all_assembled.xmap -o ' + out + 'indel'
+	print("Indel detect")
+	indel_detect_cmd = 'python3 PythonScript/indel_detection_contigs.py -r ' + args.ref +' -g '+gene_dir+ ' -c ' + c + ' -m ' + args.query + ' -a ' + out + name + '_all_assembled.xmap -o ' + out + 'indel'
 	os.system(indel_detect_cmd)
+	print('Done')
 	os.chdir( out)
 	os.system("grep 'ins' indel > insertion")
 	os.system("grep 'del' indel > deletion")
@@ -74,12 +82,12 @@ if p==2:
 	os.chdir( args.fandom)
 	# assemble_cmd = 'python PythonScript/assemble_reads.py -i ' + out + name + '_all.xmap' + ' -o ' + out + name + '_all'
 	# os.system(assemble_cmd)
-	sv_detect_cmd = 'python3 PythonScript/SV_detection_contigs.py -i ' + out + name + '_all.xmap -l 1 -c ' + c + ' -r=' + args.ref+ ' -q ' + args.query + ' -o ' +out + 'SV'
+	sv_detect_cmd = 'python3 PythonScript/SV_detection_contigs.py -i ' + out + name + '_all.xmap -l 1 -c ' + c + ' -r ' + args.ref+ ' -q ' + args.query +' -g '+gene_dir+ ' -o ' +out + 'SV'
 	os.system(sv_detect_cmd)
 	os.chdir( out)
 	# os.system('cat '+ out + args.name + '_full_post_process.xmap '+ out + name + '_partial_filtered_post_process.xmap >' + name + '_all_indel.xmap')
 	os.chdir( args.fandom)
-	indel_detect_cmd = 'python3 PythonScript/indel_detection_contigs.py -r ' + args.ref + ' -c ' + c + ' -m ' + args.query + ' -a ' + out + name + '_all.xmap -o ' + out + 'indel'
+	indel_detect_cmd = 'python3 PythonScript/indel_detection_contigs.py -r ' + args.ref + ' -g '+gene_dir+' -c ' + c + ' -m ' + args.query + ' -a ' + out + name + '_all.xmap -o ' + out + 'indel'
 	os.system(indel_detect_cmd)
 	os.chdir( out)
 	os.system("grep 'ins' indel > insertion")

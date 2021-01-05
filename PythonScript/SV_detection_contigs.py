@@ -6,6 +6,7 @@ parser.add_argument("-l", "--limit", help="Minimum limit for reporting SV", requ
 parser.add_argument("-c", "--chrom", help="Chromosome Version", required=True)
 parser.add_argument("-q", "--query", help="Query Dir", required=True)
 parser.add_argument("-r", "--ref", help="Reference directory", required=True)
+parser.add_argument("-g", "--gene", help="Gene Coodinates Dir", required=False)
 args = parser.parse_args()
 def parse_cmap(cmapf, keep_length=True):
     cmaps = {}
@@ -250,6 +251,20 @@ for k in d.keys():
                                 a[(chr2[0], chr1[0])].append((chr2[1], chr1[1],k,orientation_p,orientation_q))
 import numpy as np
 scale = 30000
+
+genes = {}
+genes = defaultdict(lambda:[],d)
+with open(args.gene , 'r') as f :
+    for line in f :
+        line = line.strip().split('\t')
+        gene_name = line[-4]
+        chromosome = line[2]
+        strand = line[3]
+        start = int(line[4])
+        end = int(line[5])
+        if chromosome.startswith('chr'):
+            genes[chromosome].append([start, end , strand ,gene_name])
+gene_interupt_neighbour = 20000
 with open(args.output,'w') as file:
     file.write('#Header\tChrom1\tRefPos1\tDirection1\tChrom2\tRefPos2\tDirectio2\tNumberofSupport\tIds\tSupports\n')
     for k in a :
@@ -276,11 +291,72 @@ with open(args.output,'w') as file:
             for ans in selected:
                 for kal in ori[(ans[0],ans[1])].keys():
                     if len(set(ori[(ans[0],ans[1])][kal])) > limit-1 :
-                        file.write(str(k[0])+'\t'+str(ans[0]*scale+15000)+'\t'+kal[0]+'\t'+str(k[1])+'\t'+str(ans[1]*scale+15000)+'\t'+kal[1]+'\t'+str( count_matrix[ans[0]][ans[1]])+'\t' + str(','.join(str(i) for i in set(ori[(ans[0],ans[1])][kal])))+'\t'+str(len(set(ori[(ans[0],ans[1])][kal])))+'\n')                
+                        chrom1 = k[0]
+                        if str(chrom1) =='23':
+                            chrom1 = 'X'
+                        if str(chrom1) =='24':
+                            chrom1 = 'Y'
+                        pos1 = ans[0]*scale+15000
+                        chrom2 = k[1]
+                        if str(chrom2) =='23':
+                            chrom2 = 'X'
+                        if str(chrom2) =='24':
+                            chrom2 = 'Y'
+                        chrom1 = 'chr'+ str(chrom1)
+                        chrom2 = 'chr'+ str(chrom2)
+                        pos2 = ans[1]*scale+15000
+                        genes_chr = genes[chrom1]
+                        gene_interupt = []
+                        fuse1 = []
+                        fuse2 = []
+                        for g in genes_chr:
+                            if g[0] - gene_interupt_neighbour <= pos1 <= g[1]+gene_interupt_neighbour:
+                                gene_interupt.append(g[-1])
+                                if kal[0] != g[2]:
+                                    fuse1.append(g[-1])
+                        genes_chr = genes[chrom2]
+                        for g in genes_chr:
+                            if g[0] - gene_interupt_neighbour <= pos2 <= g[1]+gene_interupt_neighbour:
+                                gene_interupt.append(g[-1])
+                                if kal[1] != g[2]:
+                                    fuse2.append(g[-1])
+                        gene_interupt = list(set(gene_interupt))
+                        fused = 'False'
+                        if len(fuse1) > 0 and len(fuse2) > 0:
+                            fused = 'Gene_Fusion'
+                        file.write(str(k[0])+'\t'+str(ans[0]*scale+15000)+'\t'+kal[0]+'\t'+str(k[1])+'\t'+str(ans[1]*scale+15000)+'\t'+kal[1]+'\t'+str( count_matrix[ans[0]][ans[1]])+'\t' + str(','.join(str(i) for i in set(ori[(ans[0],ans[1])][kal])))+'\t'+str(len(set(ori[(ans[0],ans[1])][kal])))+'\t'+','.join(gene_interupt)+'\t'+fused+'\n')                
     for line in duplications:
-        file.write(line[4]+'\t'+str(line[0])+'\t'+str(line[1])+'\t'+str(line[2])+'\t'+str(line[3])+'\n')
+        chrom1 = str(line[0])
+        if str(chrom1) =='23':
+            chrom1 = 'X'
+        if str(chrom1) =='24':
+            chrom1 = 'Y'
+        chrom1 = 'chr'+ str(chrom1)
+        pos1 = line[1]
+        pos2 = line[2]
+        gene_interupt = []
+        genes_chr = genes[chrom1]
+        for g in genes_chr:
+            if g[0] - gene_interupt_neighbour <= pos1 <= g[1]+gene_interupt_neighbour or g[0] - gene_interupt_neighbour <= pos2 <= g[1]+gene_interupt_neighbour:
+               gene_interupt.append(g[-1]) 
+        gene_interupt = list(set(gene_interupt))
+        file.write(line[4]+'\t'+str(line[0])+'\t'+str(line[1])+'\t'+str(line[2])+'\t'+str(line[3])+'\t'+','.join(gene_interupt)+'\n')
     for line in inversions:
-        file.write(line[4]+'\t'+str(line[0])+'\t'+str(line[1])+'\t'+str(line[2])+'\t'+str(line[3])+'\n')
+        chrom1 = str(line[0])
+        if str(chrom1) =='23':
+            chrom1 = 'X'
+        if str(chrom1) =='24':
+            chrom1 = 'Y'
+        chrom1 = 'chr'+ str(chrom1)
+        pos1 = line[1]
+        pos2 = line[2]
+        gene_interupt = []
+        genes_chr = genes[chrom1]
+        for g in genes_chr:
+            if g[0] - gene_interupt_neighbour <= pos1 <= g[1]+gene_interupt_neighbour or g[0] - gene_interupt_neighbour <= pos2 <= g[1]+gene_interupt_neighbour:
+               gene_interupt.append(g[-1]) 
+        gene_interupt = list(set(gene_interupt))
+        file.write(line[4]+'\t'+str(line[0])+'\t'+str(line[1])+'\t'+str(line[2])+'\t'+str(line[3])+'\t'+','.join(gene_interupt)+'\n')
 
      
 

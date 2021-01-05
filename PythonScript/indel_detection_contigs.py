@@ -102,6 +102,7 @@ parser.add_argument("-o", "--output", help="Output dir for processed contigs", r
 parser.add_argument("-a", "--alignment", help="Alignment Xmap file", required=True)
 parser.add_argument("-m", "--mol", help="Query Cmap or Bnx file", required=True)
 parser.add_argument("-c", "--chrom", help="Chromosome Version", required=True)
+parser.add_argument("-g", "--gene", help="Gene Coodinates Dir", required=False)
 args = parser.parse_args()
 
 contig_id_map = {1: 1, 12: 2, 16: 3, 17: 4, 18: 5, 19: 6, 20: 7, 21: 8, 22: 9, 2: 10, 3: 11, 4: 12, 5: 13, 6: 14,
@@ -133,6 +134,24 @@ else:
 			   20: 63025520.0, 21: 48129895.0, 22: 51304566.0, 3: 198022430.0, 4: 191154276.0, 5: 180915260.0,
 			   6: 171115067.0, 7: 159138663.0, 8: 146364022.0, 9: 141213431.0, 23: 155270560.0, 24: 59373566.0}
 from collections import defaultdict
+
+###########################Rreading Gene#########################
+###############################################################
+genes = {}
+genes = defaultdict(lambda:[],d)
+with open(args.gene , 'r') as f :
+    for line in f :
+        line = line.strip().split('\t')
+        gene_name = line[-4]
+        chromosome = line[2]
+        strand = line[3]
+        start = int(line[4])
+        end = int(line[5])
+        if chromosome.startswith('chr'):
+            genes[chromosome].append([start, end , strand ,gene_name])
+gene_interupt_neighbour = 20000
+
+##########################################################################
 
 a = {} # dict of chromosome number to dict of position to alignments
 
@@ -315,4 +334,20 @@ with open(args.output, 'w')as file:
 						w.append(a[i])
 				w.append(a[-1])
 				for i in w:
-					file.write(i)
+					i = i.strip().split('\t')
+					chrom = i[1]
+					pos_start = float(i[2])
+					pos_end = float(i[3])
+					if str(chrom) =='23':
+						chrom = 'X'
+					if str(chrom) =='24':
+						chrom = 'Y'
+					chrom = 'chr'+ str(chrom)
+					gene_interupt = []
+					genes_chr = genes[chrom]
+					for g in genes_chr:
+						if max(pos_start, g[0]) < min (pos_end,g[1]):
+							gene_interupt.append(g[-1])
+					gene_interupt = list(set(gene_interupt))
+					i.append(','.join(gene_interupt))
+					file.write('\t'.join(i)+'\n')
