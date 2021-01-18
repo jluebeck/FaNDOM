@@ -419,7 +419,9 @@ OMFilter(vector<query> qq, int** a, const int thread_num, map<int, dis_to_index>
         int l = ref_lens[ref_id];
         for (int c = 0; c < l; c++) {
             for (int e = 0; e < counter + 30; e++) {
-                if (a[c][e] >= 3) {
+                // match two distances - one from ref, one from query
+                if (a[c][e] >= threshold) {
+                    //determine which query this distance came from
                     int q_number = index_to_query[e];
                     auto pred = [q_number](const query &item) {
                         return item.number == q_number;
