@@ -103,16 +103,32 @@ for k in d.keys():
                         # print(duplicated,'dup')
                         if len(duplicated) > 3:
                             # print(p_chrom,duplicated,k)
+                            direction = ''
+                            opp_direction = ''
+                            if min(p_query_start,q_query_start) == min(float(p[3]), float(q[3])):
+                                direction = '+'
+                                opp_direction = '-'
+                            else:
+                                direction = '-'
+                                opp_direction = '+'
                             detected = 1
                             if p[7] == q[7]:
-                                duplications.append([str(contig_id_map[p_chrom]),ref[str(p_chrom)][min(duplicated)],ref[str(p_chrom)][max(duplicated)],k,'duplication'])
+                                duplications.append([str(contig_id_map[p_chrom]),ref[str(p_chrom)][min(duplicated)],ref[str(p_chrom)][max(duplicated)],k,'duplication',direction,direction])
                             else:
-                                duplications.append([str(contig_id_map[p_chrom]),ref[str(p_chrom)][min(duplicated)],ref[str(p_chrom)][max(duplicated)],k,'duplication_inverted'])
+                                duplications.append([str(contig_id_map[p_chrom]),ref[str(p_chrom)][min(duplicated)],ref[str(p_chrom)][max(duplicated)],k,'duplication_inverted',direction,opp_direction])
                 #==============================================================================
                 #==========================        INVERSION FINDER       =====================
                 if p_chrom == q_chrom and p[7] != q[7] and detected == 0:
                     if max(q_ref_start,p_ref_start) < min(q_ref_end,p_ref_end) or max(q_ref_start,p_ref_start) - min(q_ref_end,p_ref_end) < 100000:
                         if max(q_query_start,p_query_start) < min(q_query_end,p_query_end) or max(q_query_start,p_query_start) - min(q_query_end,p_query_end) < 100000:
+                            direction = ''
+                            opp_direction = ''
+                            if min(p_query_start,q_query_start) == min(float(p[3]), float(q[3])):
+                                direction = '+'
+                                opp_direction = '-'
+                            else:
+                                direction = '-'
+                                opp_direction = '+'
                             if p_ref_end < q_ref_end:
                                 next_in_ref = max(p_align.keys()) + 1 
                                 if next_in_ref in q_align.keys() or ref[str(p_chrom)][min(q_align.keys())] - ref[str(p_chrom)][max(p_align.keys())] < 100000:
@@ -122,7 +138,7 @@ for k in d.keys():
                                         inversion_end = ref[str(p_chrom)][q_align_rev[last_ind]]
                                     else:
                                         inversion_end = ref[str(p_chrom)][q_align_rev[min(q_align_rev.keys())]]
-                                    inversions.append([str(contig_id_map[p_chrom]), inversion_start, inversion_end,k,'inversion'])
+                                    inversions.append([str(contig_id_map[p_chrom]), inversion_start, inversion_end,k,'inversion',direction,opp_direction])
                                     detected = 1
                             if q_ref_end < p_ref_end:
                                 next_in_ref = max(q_align.keys()) + 1 
@@ -133,7 +149,7 @@ for k in d.keys():
                                         inversion_end = ref[str(p_chrom)][p_align_rev[last_ind]]
                                     else:
                                         inversion_end = ref[str(p_chrom)][p_align_rev[min(p_align_rev.keys())]]
-                                    inversions.append([str(contig_id_map[p_chrom]), inversion_start, inversion_end,k,'inversion'])
+                                    inversions.append([str(contig_id_map[p_chrom]), inversion_start, inversion_end,k,'inversion',direction,opp_direction])
                                     detected = 1
 
                 #==============================================================================
@@ -265,6 +281,13 @@ with open(args.gene , 'r') as f :
         if chromosome.startswith('chr'):
             genes[chromosome].append([start, end , strand ,gene_name])
 gene_interupt_neighbour = 20000
+
+import itertools
+duplications.sort()
+inversions.sort()
+duplications = list(duplications for duplications,_ in itertools.groupby(duplications))
+inversions = list(inversions for inversions,_ in itertools.groupby(inversions))
+
 with open(args.output,'w') as file:
     file.write('#Header\tChrom1\tRefPos1\tDirection1\tChrom2\tRefPos2\tDirectio2\tNumberofSupport\tIds\tSupports\n')
     for k in a :
@@ -340,7 +363,7 @@ with open(args.output,'w') as file:
             if g[0] - gene_interupt_neighbour <= pos1 <= g[1]+gene_interupt_neighbour or g[0] - gene_interupt_neighbour <= pos2 <= g[1]+gene_interupt_neighbour:
                gene_interupt.append(g[-1]) 
         gene_interupt = list(set(gene_interupt))
-        file.write(line[4]+'\t'+str(line[0])+'\t'+str(line[1])+'\t'+str(line[2])+'\t'+str(line[3])+'\t'+','.join(gene_interupt)+'\n')
+        file.write(line[4]+'\t'+str(line[0])+'\t'+str(line[1])+'\t'+line[5]+'\t'+str(line[2])+'\t'+line[6]+'\t'+str(line[3])+'\t'+','.join(gene_interupt)+'\n')
     for line in inversions:
         chrom1 = str(line[0])
         if str(chrom1) =='23':
@@ -356,7 +379,7 @@ with open(args.output,'w') as file:
             if g[0] - gene_interupt_neighbour <= pos1 <= g[1]+gene_interupt_neighbour or g[0] - gene_interupt_neighbour <= pos2 <= g[1]+gene_interupt_neighbour:
                gene_interupt.append(g[-1]) 
         gene_interupt = list(set(gene_interupt))
-        file.write(line[4]+'\t'+str(line[0])+'\t'+str(line[1])+'\t'+str(line[2])+'\t'+str(line[3])+'\t'+','.join(gene_interupt)+'\n')
+        file.write(line[4]+'\t'+str(line[0])+'\t'+str(line[1])+'\t'+line[5]+'\t'+str(line[2])+'\t'+line[6]+'\t'+str(line[3])+'\t'+','.join(gene_interupt)+'\n')
 
      
 

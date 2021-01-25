@@ -138,7 +138,7 @@ from collections import defaultdict
 ###########################Rreading Gene#########################
 ###############################################################
 genes = {}
-genes = defaultdict(lambda:[],d)
+genes = defaultdict(lambda:[],genes)
 with open(args.gene , 'r') as f :
     for line in f :
         line = line.strip().split('\t')

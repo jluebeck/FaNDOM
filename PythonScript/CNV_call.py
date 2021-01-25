@@ -51,6 +51,25 @@ with open(args.input, 'r') as f:
                 	query_pairs[id].append((pair_ref,pair_query,chrom))
                 	ref_cov_number_contig[chrom][pair_ref].append(id)
 
+
+# d = {}
+# d = defaultdict(lambda:[],d)
+# with open(args.input, 'r') as f:
+#     for line in f:
+#         if not line.startswith('#'):
+#             line2 = line.strip().split('\t')
+#             id = int(line2[1])
+#             chrom = int(line2[2])
+            
+#             d[id].append(line2)
+
+
+
+
+
+
+
+
 with open(args.output, 'w') as file:
     with open(args.ref, 'r') as f:
         for line in f:

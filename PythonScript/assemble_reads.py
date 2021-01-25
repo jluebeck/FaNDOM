@@ -105,7 +105,26 @@ with open(args.output+'_assembled.xmap','w') as g:
                 d[line2[1]].append(line2)
     for k in d :
         print(k)
-        d[k] = sorted(d[k], key=lambda x: min(float(x[3]),float(x[4])))
+        d[k] = sorted(d[k], key=lambda x: (min(float(x[3]),float(x[4])),-max(float(x[3]),float(x[4]))))
+        ####delete duplicated alignments or subset alignments
+        
+        deleted = []
+        # if str(k) == '1530':
+        for i in range(len(d[k])):
+            i1 = d[k][i]
+            for j in range(len(d[k])):
+                if i <j:
+                    j1 = d[k][j]
+                    if j1[-1] in i1[-1]:
+                        if j1 not in deleted:
+                            deleted.append(j1)
+                        # break
+                        # elif j1[-1] in i1[-1]:
+                        #     deleted.append(j1)
+                        #     # break
+            # print(deleted)
+        for i in deleted:
+            d[k].remove(i)
         i = 1
         main_aln = d[k][0]
         while i < len(d[k]):
