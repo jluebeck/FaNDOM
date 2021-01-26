@@ -51,7 +51,7 @@ if p == 1:
 	assemble_cmd = 'python PythonScript/assemble_reads.py -i ' + out + name + '_all.xmap' + ' -o ' + out + name + '_all'
 	os.system(assemble_cmd)
 	print("SV detect")
-	sv_detect_cmd = 'python3 PythonScript/SV_detection_contigs.py -i ' + out + name + '_all_assembled.xmap -l 1 -c ' + c + ' -r=' + args.ref+ ' -q ' + args.query +' -g '+gene_dir+ ' -o ' +out + 'SV'
+	sv_detect_cmd = 'python3 PythonScript/SV_detection_contigs.py -i ' + out + name + '_all_assembled.xmap -l 1 -c ' + c + ' -r=' + args.ref+ ' -q ' + args.query +' -g '+gene_dir+ ' -o ' +out + 'SV2'
 	os.system(sv_detect_cmd)
 	os.chdir( out)
 	os.system('cat '+ out + args.name + '_full_post_process.xmap '+ out + name + '_partial_filtered_post_process.xmap >' + name + '_all_indel.xmap')
