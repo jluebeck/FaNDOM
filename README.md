@@ -18,7 +18,7 @@ To install FaNDOM, do
 ```
 git clone https://github.com/jluebeck/FaNDOM
 cd FaNDOM
-cmake && make 
+cmake CMakeLists.txt && make 
 ```
 
 ## Usage
