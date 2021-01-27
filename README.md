@@ -51,6 +51,8 @@ FaNDOM outputs alignments of the OM molecules in FaNDOM's `.fda` or `.xmap` file
 - `-band_width=` Half of band width (default 6000)
 ### Example
 `./FaNDOM -t=20 -r=reference_genomes/hg19_Merge_800_DLE.cmap -q=query/EXP_REFINEFINAL1_q.cmap -sname=output/output -outfmt=xmap`
+For making sure that you install FaNDOM correctly, when you are at FaNDOM directory run the following command:
+`./FaNDOM -t=1 -r=test_data/reference.cmap -q=test_data/query.cmap -sname=test_data/res -outfmt=xmap`
 ## wrapper for contigs
 If you want to run whole the pipeline for detecting SV's on assembled contigs, you can use a python script in "Pythonscript" folder named `wrapper_contigs.py` 
 -  `-q` Path to contigs file in '.cmap' file format.
@@ -67,7 +69,7 @@ python wrapper_contigs.py -f /home/FaNDOM -t 22 -r /home/reference_genomes/hg19_
 ```
 For making sure that you install FaNDOM correctly, when you are at FaNDOM directory run the following command:
 ```
-python PythonScript/wrapper_contigs.py -f $PWD -t 1 -r test_data/reference.cmap -q test_data/query.cmap -n test -o $PWD/test_data/res -c 19
+python PythonScript/wrapper_contigs.py -f $PWD -t 1 -r test_data/reference.cmap -q test_data/query.cmap -n test -o $PWD/test_data/res -c 19 -m 1
 ```
 It should run pipeline for simple datasets and have the results at `test_data/res` directory.
 ## Python scripts
