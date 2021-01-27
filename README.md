@@ -54,7 +54,10 @@ FaNDOM outputs alignments of the OM molecules in FaNDOM's `.fda` or `.xmap` file
 
 
 For making sure that you install FaNDOM correctly, when you are at FaNDOM directory run the following command:
-`./FaNDOM -t=1 -r=test_data/reference.cmap -q=test_data/query.cmap -sname=test_data/res -outfmt=xmap`
+```
+./FaNDOM -t=1 -r=test_data/reference.cmap -q=test_data/query.cmap -sname=test_data/res -outfmt=xmap
+
+```
 
 
 ## wrapper for contigs
