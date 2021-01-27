@@ -318,60 +318,60 @@ def detect_indel_discordant(id_to_partial_alignment):
 def cluster_reads():
     with open(args.output, 'w')as file:
         file.write("#Type\tChromosome\tRefStartPos\tRefEndPos\tPredictedSize\tSupportsId\tSupportsCount\n")
-    id_to_partial_alignment = {}
-    id_to_partial_alignment = defaultdict(lambda: defaultdict(list), id_to_partial_alignment)
-    for line_t in lines_to_write:
-        c = int(line_t.split('\t')[1])
-        sv_type = line_t.split('\t')[0]
-        id_to_partial_alignment[c][sv_type].append(line_t)
-    for mol_id in id_to_partial_alignment:
-        for sv_type in id_to_partial_alignment[mol_id]:
-            svs = id_to_partial_alignment[mol_id][sv_type]
-            if len(svs) > 0:
-                indel_list = []
-                for i in range(len(svs) - 1):
-                    aln = svs[i]
-                    nex_aln = svs[i + 1]
-                    aln_2 = aln.strip().split('\t')
-                    nex_aln_2 = nex_aln.strip().split('\t')
-                    if abs(float(aln_2[3]) - float(nex_aln_2[2])) < 30000:
-                        nex_aln_2[2] = aln_2[2]
-                        nex_aln_2[3] = str(max(float(nex_aln_2[3]), float(aln_2[3])))
-                        nex_aln_2[5] += ',' + aln_2[5]
-                        nex_aln_2[5] = ','.join(list(set(nex_aln_2[5].split(','))))
-                        nex_aln_2[6] = str(len(nex_aln_2[5].split(',')))
-                        nex_aln_2[4] = str(float(nex_aln_2[4]) + float(aln_2[4]))
-                        svs[i + 1] = '\t'.join(nex_aln_2) + '\n'
-                    elif (abs(float(aln_2[2]) - float(nex_aln_2[2])) < 30000 and abs(
-                            float(aln_2[3]) - float(nex_aln_2[3])) < 30000):
-                        nex_aln_2[2] = aln_2[2]
-                        nex_aln_2[3] = str(max(float(nex_aln_2[3]), float(aln_2[3])))
-                        nex_aln_2[5] += ',' + aln_2[5]
-                        nex_aln_2[5] = ','.join(list(set(nex_aln_2[5].split(','))))
-                        nex_aln_2[6] = str(len(nex_aln_2[5].split(',')))
-                        nex_aln_2[4] = str(max(float(nex_aln_2[4]), float(aln_2[4])))
-                        svs[i + 1] = '\t'.join(nex_aln_2) + '\n'
-                    else:
-                        indel_list.append(svs[i])
-                indel_list.append(svs[-1])
-                for i in indel_list:
-                    i = i.strip().split('\t')
-                    chrom = i[1]
-                    pos_start = float(i[2])
-                    pos_end = float(i[3])
-                    if str(chrom) == '23':
-                        chrom = 'X'
-                    if str(chrom) == '24':
-                        chrom = 'Y'
-                    chrom = 'chr' + str(chrom)
-                    gene_interupt = []
-                    genes_chr = genes[chrom]
-                    for g in genes_chr:
-                        if max(pos_start, g[0]) < min(pos_end, g[1]):
-                            gene_interupt.append(g[-1])
-                    gene_interupt = list(set(gene_interupt))
-                    i.append(','.join(gene_interupt))
-                    file.write('\t'.join(i) + '\n')
+        id_to_partial_alignment = {}
+        id_to_partial_alignment = defaultdict(lambda: defaultdict(list), id_to_partial_alignment)
+        for line_t in lines_to_write:
+            c = int(line_t.split('\t')[1])
+            sv_type = line_t.split('\t')[0]
+            id_to_partial_alignment[c][sv_type].append(line_t)
+        for mol_id in id_to_partial_alignment:
+            for sv_type in id_to_partial_alignment[mol_id]:
+                svs = id_to_partial_alignment[mol_id][sv_type]
+                if len(svs) > 0:
+                    indel_list = []
+                    for i in range(len(svs) - 1):
+                        aln = svs[i]
+                        nex_aln = svs[i + 1]
+                        aln_2 = aln.strip().split('\t')
+                        nex_aln_2 = nex_aln.strip().split('\t')
+                        if abs(float(aln_2[3]) - float(nex_aln_2[2])) < 30000:
+                            nex_aln_2[2] = aln_2[2]
+                            nex_aln_2[3] = str(max(float(nex_aln_2[3]), float(aln_2[3])))
+                            nex_aln_2[5] += ',' + aln_2[5]
+                            nex_aln_2[5] = ','.join(list(set(nex_aln_2[5].split(','))))
+                            nex_aln_2[6] = str(len(nex_aln_2[5].split(',')))
+                            nex_aln_2[4] = str(float(nex_aln_2[4]) + float(aln_2[4]))
+                            svs[i + 1] = '\t'.join(nex_aln_2) + '\n'
+                        elif (abs(float(aln_2[2]) - float(nex_aln_2[2])) < 30000 and abs(
+                                float(aln_2[3]) - float(nex_aln_2[3])) < 30000):
+                            nex_aln_2[2] = aln_2[2]
+                            nex_aln_2[3] = str(max(float(nex_aln_2[3]), float(aln_2[3])))
+                            nex_aln_2[5] += ',' + aln_2[5]
+                            nex_aln_2[5] = ','.join(list(set(nex_aln_2[5].split(','))))
+                            nex_aln_2[6] = str(len(nex_aln_2[5].split(',')))
+                            nex_aln_2[4] = str(max(float(nex_aln_2[4]), float(aln_2[4])))
+                            svs[i + 1] = '\t'.join(nex_aln_2) + '\n'
+                        else:
+                            indel_list.append(svs[i])
+                    indel_list.append(svs[-1])
+                    for i in indel_list:
+                        i = i.strip().split('\t')
+                        chrom = i[1]
+                        pos_start = float(i[2])
+                        pos_end = float(i[3])
+                        if str(chrom) == '23':
+                            chrom = 'X'
+                        if str(chrom) == '24':
+                            chrom = 'Y'
+                        chrom = 'chr' + str(chrom)
+                        gene_interupt = []
+                        genes_chr = genes[chrom]
+                        for g in genes_chr:
+                            if max(pos_start, g[0]) < min(pos_end, g[1]):
+                                gene_interupt.append(g[-1])
+                        gene_interupt = list(set(gene_interupt))
+                        i.append(','.join(gene_interupt))
+                        file.write('\t'.join(i) + '\n')
 
 
 if __name__ == '__main__':
