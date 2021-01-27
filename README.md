@@ -73,7 +73,7 @@ python wrapper_contigs.py -f /home/FaNDOM -t 22 -r /home/reference_genomes/hg19_
 ```
 For making sure that you install FaNDOM correctly, when you are at FaNDOM directory run the following command:
 ```
-python PythonScript/wrapper_contigs.py -f $PWD -t 1 -r test_data/reference.cmap -q test_data/query.cmap -n test -o $PWD/test_data/res -c 19 -m 1
+python PythonScript/wrapper_contigs.py -f $PWD -t 1 -r test_data/reference.cmap -q test_data/query.cmap -n test -o $PWD/test_data -c 19 -m 1
 ```
 It should run pipeline for simple datasets and have the results at `test_data/res` directory.
 ## Python scripts
