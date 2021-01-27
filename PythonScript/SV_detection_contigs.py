@@ -278,13 +278,13 @@ def check_gene_interuption(chromosome, pos, kal):
 
 def write_sv(k, selected):
     text = ''
-    for ans in selected:
-        for kal in ori[(ans[0], ans[1])].keys():
-            if len(set(ori[(ans[0], ans[1])][kal])) > limit - 1:
+    for index in selected:
+        for kal in ori[(index[0], index[1])].keys():
+            if len(set(ori[(index[0], index[1])][kal])) > limit - 1:
                 chrom1 = convert_chromosome(k[0])
                 chrom2 = convert_chromosome(k[1])
-                pos1 = ans[0] * scale + 15000
-                pos2 = ans[1] * scale + 15000
+                pos1 = index[0] * scale + 15000
+                pos2 = index[1] * scale + 15000
                 gene_interupt1, fuse1 = check_gene_interuption(chrom1, pos1, kal)
                 gene_interupt2, fuse2 = check_gene_interuption(chrom2, pos2, kal)
                 gene_interupt = list(set(gene_interupt1 + gene_interupt2))
@@ -292,9 +292,9 @@ def write_sv(k, selected):
                 if len(fuse1) > 0 and len(fuse2) > 0:
                     fused = 'Gene_Fusion'
                 sv = "{chr1}\t{pos1}\t{dir1}\t{chr2}\t{pos2}\t{dir2}\t{type}\t{ids}\t{numsup}\t{interupt}\t{fuse}\n".format(
-                    chr1=k[0], pos1=ans[0] * scale + 15000, dir1=kal[0], chr2=k[1], pos2=ans[1] * scale + 15000,
-                    dir2=kal[1], type='Unknown', ids=','.join(str(i) for i in set(ori[(ans[0], ans[1])][kal])),
-                    numsup=len(set(ori[(ans[0], ans[1])][kal])), interupt=','.join(gene_interupt), fuse=fused)
+                    chr1=k[0], pos1=index[0] * scale + 15000, dir1=kal[0], chr2=k[1], pos2=index[1] * scale + 15000,
+                    dir2=kal[1], type='Unknown', ids=','.join(str(i) for i in set(ori[(index[0], index[1])][kal])),
+                    numsup=len(set(ori[(index[0], index[1])][kal])), interupt=','.join(gene_interupt), fuse=fused)
                 text = text + sv
     return text
 

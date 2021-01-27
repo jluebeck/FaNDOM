@@ -9,16 +9,16 @@ contig_id_map = {1: 1, 12: 2, 16: 3, 17: 4, 18: 5, 19: 6, 20: 7, 21: 8, 22: 9, 2
                  7: 15,
                  8: 16, 9: 17, 10: 18, 11: 19, 13: 20, 14: 21, 15: 22, 24: 23, 25: 24}
 
-
-with open(args.output+'.xmap' ,'w') as f:
-	with open(args.input,'r') as g:
-		for line in g:
-			if not line.startswith('#'):
-				line = line.strip().split('\t')
-				line[2] = str(contig_id_map[int(line[2])])
-				line = '\t'.join(line)
-				f.write(line)
-				f.write('\n')
-			else:
-				f.write(line)
+if __name__ == '__main__':
+	with open(args.output+'.xmap' ,'w') as f:
+		with open(args.input,'r') as g:
+			for line in g:
+				if not line.startswith('#'):
+					line = line.strip().split('\t')
+					line[2] = str(contig_id_map[int(line[2])])
+					line = '\t'.join(line)
+					f.write(line)
+					f.write('\n')
+				else:
+					f.write(line)
 
