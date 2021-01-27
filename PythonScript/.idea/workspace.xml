@@ -3,16 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="7585a440-e43a-49d1-8229-be0f444364dd" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SV_detection_contigs.py" beforeDir="false" afterPath="$PROJECT_DIR$/SV_detection_contigs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assemble_reads.py" beforeDir="false" afterPath="$PROJECT_DIR$/assemble_reads.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cluster_indels.py" beforeDir="false" afterPath="$PROJECT_DIR$/cluster_indels.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/filter_contigs.py" beforeDir="false" afterPath="$PROJECT_DIR$/filter_contigs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/filter_individual.py" beforeDir="false" afterPath="$PROJECT_DIR$/filter_individual.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/indel_detection_contigs.py" beforeDir="false" afterPath="$PROJECT_DIR$/indel_detection_contigs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post_process.py" beforeDir="false" afterPath="$PROJECT_DIR$/post_process.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/preprocess2.py" beforeDir="false" afterPath="$PROJECT_DIR$/preprocess2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/remove_part.py" beforeDir="false" afterPath="$PROJECT_DIR$/remove_part.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/translate.py" beforeDir="false" afterPath="$PROJECT_DIR$/translate.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/wrapper_contigs.py" beforeDir="false" afterPath="$PROJECT_DIR$/wrapper_contigs.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -33,25 +24,25 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="py" value="20" />
+          <entry key="py" value="24" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Python" value="20" />
+          <entry key="Python" value="24" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="Python Console" value="219" />
-          <entry key="dummy" value="17" />
-          <entry key="py" value="3601" />
+          <entry key="dummy" value="81" />
+          <entry key="py" value="4215" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="17" />
-          <entry key="Python" value="3820" />
+          <entry key="PLAIN_TEXT" value="81" />
+          <entry key="Python" value="4434" />
         </counts>
       </usages-collector>
     </session>
@@ -61,17 +52,21 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/indel_detection_contigs.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-532">
-              <caret line="8" column="44" lean-forward="true" selection-start-line="8" selection-start-column="44" selection-end-line="8" selection-end-column="44" />
+            <state relative-caret-position="409">
+              <caret line="364" column="35" lean-forward="true" selection-start-line="364" selection-start-column="35" selection-end-line="364" selection-end-column="35" />
+              <folding>
+                <element signature="e#0#15#0" expanded="true" />
+                <marker date="1611736535000" expanded="true" signature="17004:20103" ph="..." />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/remove_part.py">
+        <entry file="file://$PROJECT_DIR$/translate.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="420">
-              <caret line="28" selection-start-line="28" selection-end-line="28" selection-end-column="26" />
+            <state relative-caret-position="165">
+              <caret line="11" selection-start-line="11" selection-end-line="11" selection-end-column="26" />
             </state>
           </provider>
         </entry>
@@ -80,36 +75,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>if chr1[1] == q.align_end_ref:</find>
-      <find>chr1 = (contig_id_map[int(q.chrom)], q.e[1])</find>
-      <find>chr1</find>
-      <find>str(mol</find>
-      <find>duplication_finder</find>
-      <find>kal</find>
-      <find>file</find>
-      <find>file.wr</find>
-      <find>gene_interupt_neighbour</find>
-      <find>ans</find>
-      <find>defaultdict</find>
-      <find>k</find>
-      <find>sep</find>
-      <find>l</find>
-      <find>l</find>
-      <find>300000</find>
-      <find>last_mol_len = lines[(i - 1) * max_line - 1].split('\t')[5]</find>
-      <find>generate_new_contigs(lines[(i - 1) * max_line:], last_mol_len, i, 1)</find>
-      <find>low_complexity</find>
-      <find>args.ref</find>
-      <find>ref</find>
-      <find>kk</find>
-      <find>sc</find>
-      <find>alignment_pair</find>
-      <find>join_string</find>
-      <find>next1</find>
       <find>qq</find>
       <find>max(float(main_aln[3]), float(main_aln[4]))</find>
       <find>min(float(nex_aln[3]), float(nex_aln[4]))</find>
       <find>I</find>
+      <find>rev_contig</find>
+      <find>alnstring</find>
+      <find>parse_gene</find>
+      <find>gene_interupt_neighbour</find>
+      <find>gene_interupt_neighbou</find>
+      <find>gene_i</find>
+      <find>gene_interupt</find>
+      <find>alignment</find>
+      <find>region_to_alignments</find>
+      <find>find_del</find>
+      <find>0.25 * mol[q_id][len(mol[q_id]</find>
+      <find>if mol[q_id][min(q_1, q_2)] &gt; min(0.25 * mol[q_id][len(mol[q_id])], padding_limit) and \</find>
+      <find>mol[q_id][max(q_1, q_2)] &lt; max(0.75 * mol[q_id][len(mol[q_id])],</find>
+      <find>mol[q_id][len(mol[q_id])] - padding_limit):</find>
+      <find>len_selected_before_set</find>
+      <find>write_indel</find>
+      <find>chromosome</find>
+      <find>alignment_i</find>
+      <find>sv_size</find>
+      <find>svs[i + 1] = '\t'.join(nex_aln_2) + '\n'</find>
+      <find>nex_aln_2[4] = str(max(float(nex_aln_2[4]), float(aln_2[4])))</find>
+      <find>nex_aln_2[6] = str(len(nex_aln_2[5].split(',')))</find>
+      <find>nex_aln_2[5] = ','.join(list(set(nex_aln_2[5].split(','))))</find>
+      <find>nex_aln_2[5] += ',' + aln_2[5]</find>
+      <find>nex_aln_2[3] = str(max(float(nex_aln_2[3]), float(aln_2[3])))</find>
+      <find>nex_aln_2[2] = aln_2[2]</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -124,10 +119,10 @@
         <option value="$PROJECT_DIR$/remove_part.py" />
         <option value="$PROJECT_DIR$/SV_detection_contigs.py" />
         <option value="$PROJECT_DIR$/cluster_indels.py" />
-        <option value="$PROJECT_DIR$/indel_detection_contigs.py" />
         <option value="$PROJECT_DIR$/preprocess2.py" />
         <option value="$PROJECT_DIR$/filter_contigs.py" />
         <option value="$PROJECT_DIR$/assemble_reads.py" />
+        <option value="$PROJECT_DIR$/indel_detection_contigs.py" />
       </list>
     </option>
   </component>
@@ -198,7 +193,7 @@
     <frame x="0" y="-1177" width="1920" height="1123" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.16453674" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.16453674" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -213,7 +208,7 @@
       <window_info anchor="bottom" id="Database Changes" order="9" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="bottom" id="Terminal" order="11" />
-      <window_info active="true" anchor="bottom" id="Python Console" order="12" visible="true" weight="0.34623015" />
+      <window_info anchor="bottom" id="Python Console" order="12" weight="0.34623015" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -238,27 +233,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/translate.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="24" lean-forward="true" selection-start-line="24" selection-end-line="24" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/post_process.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="582">
           <caret line="43" column="28" selection-start-line="43" selection-start-column="28" selection-end-line="43" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SV_detection_contigs.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="179">
-          <caret line="73" column="4" selection-start-line="73" selection-start-column="4" selection-end-line="74" selection-end-column="34" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -290,8 +268,26 @@
           <caret line="76" column="40" selection-start-line="76" selection-start-column="40" selection-end-line="76" selection-end-column="40" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
-            <marker date="1611703622000" expanded="true" signature="298:3317" ph="..." />
-            <marker date="1611703622000" expanded="true" signature="1216:3317" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/assemble_reads.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="57">
+          <caret line="101" column="16" lean-forward="true" selection-start-line="101" selection-start-column="16" selection-end-line="101" selection-end-column="16" />
+          <folding>
+            <element signature="e#0#35#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SV_detection_contigs.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="308">
+          <caret line="338" column="4" selection-start-line="338" selection-start-column="4" selection-end-line="338" selection-end-column="33" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -303,24 +299,21 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/assemble_reads.py">
+    <entry file="file://$PROJECT_DIR$/translate.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="57">
-          <caret line="101" column="16" lean-forward="true" selection-start-line="101" selection-start-column="16" selection-end-line="101" selection-end-column="16" />
-          <folding>
-            <element signature="e#0#35#0" expanded="true" />
-            <marker date="1611707874000" expanded="true" signature="325:881" ph="..." />
-            <marker date="1611707874000" expanded="true" signature="2649:2654" ph="..." />
-            <marker date="1611707874000" expanded="true" signature="2867:3344" ph="..." />
-            <marker date="1611707874000" expanded="true" signature="3315:3316" ph="..." />
-          </folding>
+        <state relative-caret-position="165">
+          <caret line="11" selection-start-line="11" selection-end-line="11" selection-end-column="26" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/indel_detection_contigs.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-532">
-          <caret line="8" column="44" lean-forward="true" selection-start-line="8" selection-start-column="44" selection-end-line="8" selection-end-column="44" />
+        <state relative-caret-position="409">
+          <caret line="364" column="35" lean-forward="true" selection-start-line="364" selection-start-column="35" selection-end-line="364" selection-end-column="35" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+            <marker date="1611736535000" expanded="true" signature="17004:20103" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>

@@ -40,9 +40,9 @@ if p == 1:
 	# os.system(filter_partial_post_cmd)
 	# full_post_cmd = 'python PythonScript/post_process.py -f ' + out + args.name + '_full.xmap -d ' + out + args.name + '_preprocess_dic -o ' + out + args.name + '_full'
 	# os.system(full_post_cmd)
-	print("assemble reads1")
-	assemble_cmd = 'python PythonScript/assemble_reads.py -i ' + out + args.name + '_full_post_process.xmap -o ' + out + args.name + '_full_post_process2'
-	os.system(assemble_cmd)
+	# print("assemble reads1")
+	# assemble_cmd = 'python PythonScript/assemble_reads.py -i ' + out + args.name + '_full_post_process.xmap -o ' + out + args.name + '_full_post_process'
+	# os.system(assemble_cmd)
 	# os.chdir(out)
 	# os.system(
 	#     'cat ' + out + args.name + '_full_post_process_assembled.xmap ' + out + name + '_partial_filtered_post_process.xmap >' + name + '_all.xmap')
@@ -56,9 +56,9 @@ if p == 1:
 	# os.chdir( out)
 	# os.system('cat '+ out + args.name + '_full_post_process.xmap '+ out + name + '_partial_filtered_post_process.xmap >' + name + '_all_indel.xmap')
 	# os.chdir( args.fandom)
-	# print("Indel detect")
-	# indel_detect_cmd = 'python3 PythonScript/indel_detection_contigs.py -r ' + args.ref +' -g '+gene_dir+ ' -c ' + c + ' -m ' + args.query + ' -a ' + out + name + '_all_assembled.xmap -o ' + out + 'indel2'
-	# os.system(indel_detect_cmd)
+	print("Indel detect")
+	indel_detect_cmd = 'python3 PythonScript/indel_detection_contigs.py -r ' + args.ref +' -g '+gene_dir+ ' -c ' + c + ' -m ' + args.query + ' -a ' + out + name + '_all_assembled.xmap -o ' + out + 'indel2'
+	os.system(indel_detect_cmd)
 	# print('Done')
 	# os.chdir( out)
 	# os.system("grep 'ins' indel > insertion")
