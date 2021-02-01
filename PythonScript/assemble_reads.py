@@ -102,7 +102,7 @@ if __name__ == '__main__':
             while i < len(contigs_alignments[contig_id]):
                 find = 0
                 nex_aln = contigs_alignments[contig_id][i]
-                if main_aln[2] == nex_aln[2] and main_aln[7] == nex_aln[7]:
+                if main_aln[2] == nex_aln[2] and main_aln[7] == nex_aln[7]: #same chromosome and same direction
                     main_aln_query_end_pos = max(float(main_aln[3]), float(main_aln[4]))
                     nex_aln_query_start_pos = min(float(nex_aln[3]), float(nex_aln[4]))
                     if main_aln_query_end_pos > nex_aln_query_start_pos and len(
@@ -123,6 +123,28 @@ if __name__ == '__main__':
                                 main_aln[-1] = join_string(main_aln[-1], nex_aln[-1], '-')
                             i += 1
                             find = 1
+                    elif main_aln[7] == '+':
+                        main_aln_query_end = int(main_aln[-1].split(',')[-1][:-1])
+                        main_aln_ref_end = int(main_aln[-1].split(',')[-2].split('(')[1])
+                        next_aln_query_start = int(nex_aln[-1].split(',')[1].split(')')[0])
+                        next_aln_ref_start = int(nex_aln[-1].split(',')[0][1:])
+                        if next_aln_query_start - main_aln_query_end == next_aln_ref_start - main_aln_ref_end == 1:
+                            main_aln[4] = nex_aln[4]
+                            main_aln[6] = nex_aln[6]
+                            main_aln[-1] = main_aln[-1]+nex_aln[-1]
+                            find = 1
+                            i+=1
+                    elif main_aln[7] == '-':
+                        main_aln_query_end = int(main_aln[-1].split(',')[1].split(')')[0])
+                        main_aln_ref_end = int(main_aln[-1].split(',')[0][1:])
+                        next_aln_query_start = int(nex_aln[-1].split(',')[-1][:-1])
+                        next_aln_ref_start = int(main_aln[-1].split(',')[-2].split('(')[1])
+                        if next_aln_query_start - main_aln_query_end == main_aln_ref_end - next_aln_ref_start == 1:
+                            main_aln[3] = nex_aln[3]
+                            main_aln[5] = nex_aln[5]
+                            main_aln[-1] =nex_aln[-1] = main_aln[-1]
+                            find = 1
+                            i+=1
                 if find == 0:
                     g.write('\t'.join(main_aln))
                     g.write('\n')
