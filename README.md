@@ -60,8 +60,8 @@ For making sure that you install FaNDOM correctly, when you are at FaNDOM direct
 ```
 
 
-## wrapper for contigs
-If you want to run whole the pipeline for detecting SV's on assembled contigs, you can use a python script in "Pythonscript" folder named `wrapper_contigs.py` 
+## Wrapper for SV analysis of assembled contig data
+If you want to run whole the pipeline for detecting SVs on assembled contigs, you can use a python script in "Pythonscript" folder named `wrapper_contigs.py` 
 -  `-q` Path to contigs file in '.cmap' file format.
 -  `-r` Path to reference file. It should be in cmap format.
 -  `-f` Path to foldar that contains executable file of FaNDOM.
@@ -82,7 +82,7 @@ python PythonScript/wrapper_contigs.py -f $PWD -t 1 -r test_data/reference.cmap 
 ```
 It should run pipeline for simple datasets and have the results at `test_data/res` directory.
 ## Python scripts
-Here we explain each script that is used in our pipeline.
+The following scripts are used inside the SV wrapper - `wrapper_contigs.py`, and can be invoke separately if desired.
 ### `autorescale.py` script
 This script used for finding the best rescale factor for molecules. We highly recommend to use this script if you are using raw molecules.
 -  `-q` Path to molecules file. It can be bnx or cmap file.
