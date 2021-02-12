@@ -82,7 +82,9 @@ def parse_xmap(xmap_dir):  # generate dictionary from each molecile id to all al
                 q = line2
                 align = q[-1]
                 s = (int(align.split(',')[1].split(')')[0]), int(float(q[5])), int(align.split(',')[0][1:]))
-                e = (int(align.split(',')[-1].split(')')[0]), int(float(q[6])), int(align.split(',')[-2].split('(')[1]))
+                e = (
+                    int(align.split(',')[-1].split(')')[0]), int(float(q[6])),
+                    int(align.split(',')[-2].split('(')[1]))
                 alignment.s, alignment.e = min(s, e), max(s, e)
                 alignment.chrom = int(q[2])
                 alignment.ref_start = min(float(q[5]), float(q[6]))
@@ -96,6 +98,7 @@ def parse_xmap(xmap_dir):  # generate dictionary from each molecile id to all al
                 alignment.direction = q[7]
                 alignment.align_end_ref = int(float(q[6]))
                 alignment.id = str(id)
+                # if id == 2551:
                 d[id].append(alignment)
     return d
 
@@ -130,7 +133,7 @@ def duplication_finder(q, p, k):
 
 def inversion_finder(q, p, k):
     detected = False
-    max_gap_between_alignment = 100000
+    max_gap_between_alignment = 300000
     if p.chrom == q.chrom and p.direction != q.direction:
         if max(q.ref_start, p.ref_start) < min(q.ref_end, p.ref_end) or max(q.ref_start, p.ref_start) - min(
                 q.ref_end, p.ref_end) < max_gap_between_alignment:
@@ -179,58 +182,74 @@ def find_between(q, p, mol_id):
     for i in range(len(d[mol_id])):
         if d[mol_id][i] != p and d[mol_id][i] != q:
             if q.query_end < float(d[mol_id][i].query_start) < p.query_start or q.query_end < float(
-                    d[mol_id][i].query_end) < p.query_start:
+                    d[mol_id][i].query_end) < p.query_start or (
+                    float(d[mol_id][i].query_start) < q.query_end and float(d[mol_id][i].query_end) > p.query_start):
                 distance = min(p.query_start, d[mol_id][i].query_end) - max(q.query_end, d[mol_id][i].query_start)
                 if distance > minimum_between_length:
                     return True
     return False
 
 
+def rev_dir(a):
+    if a == '+':
+        return '-'
+    return '+'
+
+
 def determine_sv_orientation(q, p, sv1, sv2, mol_id):
     if sv1[0] < sv2[0] or (sv1[0] == sv2[0] and min(sv2[1], sv1[1]) == sv1[1]):
-        if sv1[1] == q.align_end_ref:
-            orientation_q = '+'
-        else:
-            orientation_q = '-'
-        if sv2[1] == p.align_end_ref:
-            orientation_p = '-'
-        else:
-            orientation_p = '+'
+        # if sv1[1] == q.align_end_ref:
+        #     orientation_q = '+'
+        # else:
+        #     orientation_q = '-'
+        # if sv2[1] == p.align_end_ref:
+        #     orientation_p = '-'
+        # else:
+        #     orientation_p = '+'
+        orientation_q = q.direction
+        orientation_p = p.direction
         a[(sv1[0], sv2[0])].append((sv1[1], sv2[1], mol_id, orientation_q, orientation_p))
     else:
-        if sv1[1] == q.align_end_ref:
-            orientation_q = '-'
-        else:
-            orientation_q = '+'
-        if sv2[1] == p.align_end_ref:
-            orientation_p = '+'
-        else:
-            orientation_p = '-'
+        # if sv1[1] == q.align_end_ref:
+        #     orientation_q = '-'
+        # else:
+        #     orientation_q = '+'
+        # if sv2[1] == p.align_end_ref:
+        #     orientation_p = '+'
+        # else:
+        #     orientation_p = '-'
+        orientation_q = rev_dir(q.direction)
+        orientation_p = rev_dir(p.direction)
         a[(sv2[0], sv1[0])].append((sv2[1], sv1[1], mol_id, orientation_p, orientation_q))
 
 
 def sv_finder(q, p, mol_id):
     partial_alignment_minimum_length = 60000
     max_gap_consecutive_alignments = 30000
+    max_overlap_limit= 200000
     # at first check if two alignments have overlap in query or not:
     if not min(q.e[0], p.e[0]) > max(q.s[0], p.s[0]):  # no overlap
         indel_check = 0
         if q.s[0] > p.e[0]:
             p, q = q, p
+        # print(p.query_start, q.query_start,abs(abs(q.e[1] - p.s[1]) - abs(q.ref_start - p.ref_end)))
         if p.chrom == q.chrom and p.direction == q.direction:
-            if p.direction == '+':
-                if abs(abs(q.e[1] - p.s[1]) - abs(q.ref_end - p.ref_start)) < 300000:
+            if p.direction == '+' and p.ref_start > q.ref_end:
+                if abs(abs(q.query_end - p.query_start) - abs(q.ref_end - p.ref_start)) < 300000:
                     indel_check = True
                     return
-            else:
-                if abs(abs(q.e[1] - p.s[1]) - abs(q.ref_start - p.ref_end)) < 300000:
+            elif p.direction == '-'  and p.ref_end < q.ref_start:
+                if abs(abs(q.query_end - p.query_start) - abs(q.ref_start - p.ref_end)) < 300000:
                     indel_check = True
                     return
+
         if abs(mol[str(mol_id)][p.s[0]] - mol[str(mol_id)][q.e[0]]) < max_gap_consecutive_alignments or -3 < p.s[0] - \
                 q.e[
                     0] < 6:
+
             sv1 = (contig_id_map[int(q.chrom)], q.e[1])
             sv2 = (contig_id_map[int(p.chrom)], p.s[1])
+
             determine_sv_orientation(q, p, sv1, sv2, mol_id)
         elif p.s[0] - q.e[0] > 0:
             if abs(p.query_start - p.query_end) > partial_alignment_minimum_length and abs(
@@ -242,31 +261,35 @@ def sv_finder(q, p, mol_id):
     elif not ((q.e[0] > p.e[0] and q.s[0] < p.s[0]) or (q.e[0] < p.e[0] and q.s[0] > p.s[0])):
         if q.s[0] > p.s[0]:  # not whole subset of the other
             p, q = q, p  # first one q and second one p
-        if abs(q.query_start - p.query_start) > partial_alignment_minimum_length and abs(
-                q.query_end - p.query_end) > partial_alignment_minimum_length:
-            if q.direction == '+':
-                sv1 = (contig_id_map[int(q.chrom)], q.e[1] - abs(q.query_end - p.query_start))
-                q_dist = abs(mol[str(mol_id)][q.e[0] + 1] - mol[str(mol_id)][q.e[0]]) - abs(p.s[1] -abs(q.e[1]-abs(q.query_end - p.query_start)))
-            else:
-                sv1 = (contig_id_map[int(q.chrom)], q.e[1] + abs(q.query_end - p.query_start))
-                q_dist = abs(mol[str(mol_id)][q.e[0] + 1] - mol[str(mol_id)][q.e[0]]) - abs(
-                    p.s[1] - abs(q.e[1] + abs(q.query_end - p.query_start)))
-            sv2 = (contig_id_map[int(p.chrom)], p.s[1])
-            if p.chrom == q.chrom and p.direction == q.direction and abs(q_dist) < 300000:
-                return
-            determine_sv_orientation(q, p, sv1, sv2, mol_id)
-        if abs(q.query_start - p.query_start) > partial_alignment_minimum_length and abs(
-                q.query_end - p.query_end) > partial_alignment_minimum_length:
-            sv1 = (contig_id_map[int(q.chrom)], q.e[1])
-            if p.direction == '+':
-                sv2 = (contig_id_map[int(p.chrom)], p.s[1] + abs(q.query_end - p.query_start))
-                q_dist = abs(mol[str(mol_id)][p.s[0] - 1] - mol[str(mol_id)][p.s[0]]) - abs(q.e[1] -abs(p.s[1] + abs(q.query_end - p.query_start)))
-            else:
-                sv2 = (contig_id_map[int(p.chrom)], p.s[1] - abs(q.query_end - p.query_start))
-                q_dist = abs(mol[str(mol_id)][p.s[0] - 1] - mol[str(mol_id)][p.s[0]]) - abs(q.e[1] -abs(p.s[1] - abs(q.query_end - p.query_start)))
-            if p.chrom == q.chrom and p.direction == q.direction and abs(q_dist) < 300000:
-                return
-            determine_sv_orientation(q, p, sv1, sv2, mol_id)
+        if abs(q.query_end - p.query_start) < max_overlap_limit: #overlap not be very long
+            if abs(q.query_start - p.query_start) > partial_alignment_minimum_length and abs(
+                    q.query_end - p.query_end) > partial_alignment_minimum_length:
+                if q.direction == '+':
+                    sv1 = (contig_id_map[int(q.chrom)], q.e[1] - abs(q.query_end - p.query_start))
+                    q_dist = abs(mol[str(mol_id)][q.e[0] + 1] - mol[str(mol_id)][q.e[0]]) - abs(
+                        p.s[1] - abs(q.e[1] - abs(q.query_end - p.query_start)))
+                else:
+                    sv1 = (contig_id_map[int(q.chrom)], q.e[1] + abs(q.query_end - p.query_start))
+                    q_dist = abs(mol[str(mol_id)][q.e[0] + 1] - mol[str(mol_id)][q.e[0]]) - abs(
+                        p.s[1] - abs(q.e[1] + abs(q.query_end - p.query_start)))
+                sv2 = (contig_id_map[int(p.chrom)], p.s[1])
+                if p.chrom == q.chrom and p.direction == q.direction and abs(q_dist) < 300000:
+                    return
+                determine_sv_orientation(q, p, sv1, sv2, mol_id)
+            if abs(q.query_start - p.query_start) > partial_alignment_minimum_length and abs(
+                    q.query_end - p.query_end) > partial_alignment_minimum_length:
+                sv1 = (contig_id_map[int(q.chrom)], q.e[1])
+                if p.direction == '+':
+                    sv2 = (contig_id_map[int(p.chrom)], p.s[1] + abs(q.query_end - p.query_start))
+                    q_dist = abs(mol[str(mol_id)][p.s[0] - 1] - mol[str(mol_id)][p.s[0]]) - abs(
+                        q.e[1] - abs(p.s[1] + abs(q.query_end - p.query_start)))
+                else:
+                    sv2 = (contig_id_map[int(p.chrom)], p.s[1] - abs(q.query_end - p.query_start))
+                    q_dist = abs(mol[str(mol_id)][p.s[0] - 1] - mol[str(mol_id)][p.s[0]]) - abs(
+                        q.e[1] - abs(p.s[1] - abs(q.query_end - p.query_start)))
+                if p.chrom == q.chrom and p.direction == q.direction and abs(q_dist) < 300000:
+                    return
+                determine_sv_orientation(q, p, sv1, sv2, mol_id)
 
 
 def parse_gene(gene_dir):
@@ -293,7 +316,6 @@ def cluster_sv(k):
     ori = {}
     ori = defaultdict(lambda: {('+', '+'): [], ('+', '-'): [], ('-', '+'): [], ('-', '-'): []}, ori)
     for x in a[k]:
-        # print(x,k)
         i = int(x[0] / scale)
         j = int(x[1] / scale)
         ori[(i, j)][(x[3], x[4])].append(x[2])
@@ -381,6 +403,7 @@ if __name__ == '__main__':
                 for j in range(i + 1, len(d[k])):
                     p = d[k][j]
                     detected = 0
+                    # res2 = False
                     res = duplication_finder(q, p, k)
                     if not res:
                         res = inversion_finder(q, p, k)

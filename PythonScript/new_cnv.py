@@ -1,5 +1,6 @@
 from collections import defaultdict
 import argparse
+import numpy as np
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-c", "--contig_query", help="contigs cmap file", required=True)
@@ -79,6 +80,13 @@ with open(contigs_alignment, 'r') as f:
                     query_pairs[id].append((pair_ref, pair_query, chrom))
 
 # print(ref_cov)
+all_cov = []
+for chrom in ref_cov.keys():
+    for pos in ref_cov[chrom].keys():
+        all_cov.append(len(ref_cov[chrom][pos]))
+mean = np.mean(all_cov)
+std = np.std(all_cov)
+
 
 with open(output_dir, 'w') as file:
     with open(reference_dir, 'r') as f:
@@ -88,7 +96,12 @@ with open(output_dir, 'w') as file:
                 id = contig_id_map[int(line2[0])]
                 line2[0] = str(id)
                 line2[7] = str(len(ref_cov[id][int(line2[3])]))
+                copynumner = str(2 * int(line2[7])/mean)
+                if line2[7] == '0':
+                    copynumner = '0'
+                line2.append(copynumner)
+                # line.append(str(2 * (int(line[7])) / mean))
                 ref_cov[id][int(line2[3])] = [str(i) for i in ref_cov[id][int(line2[3])]]
                 line2.append(','.join(ref_cov[id][int(line2[3])]))
-                line = '\t'.join(line2) + '\n'
+                line = '\t'.join(line2) +'\n'
             file.write(line)

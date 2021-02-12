@@ -20,7 +20,7 @@ public:
         if (q.empty()) {
             return NULL;
         }
-        Data &item = q.front();
+        Data item = q.front();
         q.pop();
         return item;
     }

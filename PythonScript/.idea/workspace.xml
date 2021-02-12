@@ -2,10 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7585a440-e43a-49d1-8229-be0f444364dd" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../FaNDOM" beforeDir="false" afterPath="$PROJECT_DIR$/../FaNDOM" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SV_detection_contigs.py" beforeDir="false" afterPath="$PROJECT_DIR$/SV_detection_contigs.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assemble_reads.py" beforeDir="false" afterPath="$PROJECT_DIR$/assemble_reads.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cluster_indels.py" beforeDir="false" afterPath="$PROJECT_DIR$/cluster_indels.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/new_cnv.py" beforeDir="false" afterPath="$PROJECT_DIR$/new_cnv.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/wrapper_contigs.py" beforeDir="false" afterPath="$PROJECT_DIR$/wrapper_contigs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../autorescale.py" beforeDir="false" afterPath="$PROJECT_DIR$/../autorescale.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../threadsafe_queue.h" beforeDir="false" afterPath="$PROJECT_DIR$/../threadsafe_queue.h" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -25,107 +30,31 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="py" value="29" />
+          <entry key="py" value="31" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Python" value="29" />
+          <entry key="Python" value="31" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="Python Console" value="354" />
+          <entry key="Python Console" value="386" />
           <entry key="dummy" value="81" />
-          <entry key="py" value="5611" />
+          <entry key="py" value="6324" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="PLAIN_TEXT" value="81" />
-          <entry key="Python" value="5965" />
+          <entry key="Python" value="6710" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/indel_detection_contigs.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5190">
-              <caret line="347" column="64" selection-start-line="347" selection-start-column="64" selection-end-line="347" selection-end-column="64" />
-              <folding>
-                <element signature="e#0#15#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/preprocess2.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1380">
-              <caret line="92" column="39" selection-start-line="92" selection-start-column="39" selection-end-line="92" selection-end-column="39" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/SV_detection_contigs.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="484">
-              <caret line="177" column="30" selection-start-line="177" selection-start-column="30" selection-end-line="177" selection-end-column="30" />
-              <folding>
-                <element signature="e#0#15#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/assemble_reads.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="760">
-              <caret line="127" column="89" lean-forward="true" selection-start-line="127" selection-start-column="89" selection-end-line="127" selection-end-column="89" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/filter_contigs.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="212">
-              <caret line="40" column="16" lean-forward="true" selection-start-line="40" selection-start-column="16" selection-end-line="46" selection-end-column="76" />
-              <folding>
-                <element signature="e#0#15#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/filter_contig2.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="356">
-              <caret line="36" column="215" lean-forward="true" selection-start-line="36" selection-start-column="215" selection-end-line="36" selection-end-column="215" />
-              <folding>
-                <element signature="e#0#15#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/translate.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="11" selection-start-line="11" selection-end-line="11" selection-end-column="26" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -136,9 +65,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>gene_interupt_neighbour</find>
-      <find>gene_interupt_neighbou</find>
-      <find>gene_i</find>
       <find>gene_interupt</find>
       <find>alignment</find>
       <find>region_to_alignments</find>
@@ -166,6 +92,9 @@
       <find>sv1 = (contig_id_map[int(q.chrom)], q.e[1] - abs(q.query_end - p.query_start))</find>
       <find>alignment_i[</find>
       <find>filter_contig_alignments</find>
+      <find>len(contigs_alignments[contig_id])</find>
+      <find>pri</find>
+      <find>def</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -174,7 +103,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/new_cnv.py" />
         <option value="$PROJECT_DIR$/translate.py" />
         <option value="$PROJECT_DIR$/post_process.py" />
         <option value="$PROJECT_DIR$/remove_part.py" />
@@ -183,8 +111,9 @@
         <option value="$PROJECT_DIR$/filter_contigs.py" />
         <option value="$PROJECT_DIR$/indel_detection_contigs.py" />
         <option value="$PROJECT_DIR$/filter_contig2.py" />
-        <option value="$PROJECT_DIR$/SV_detection_contigs.py" />
         <option value="$PROJECT_DIR$/assemble_reads.py" />
+        <option value="$PROJECT_DIR$/SV_detection_contigs.py" />
+        <option value="$PROJECT_DIR$/new_cnv.py" />
       </list>
     </option>
   </component>
@@ -255,7 +184,7 @@
     <frame x="0" y="-1177" width="1920" height="1123" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.16773163" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.16773163" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -270,7 +199,7 @@
       <window_info anchor="bottom" id="Database Changes" order="9" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="bottom" id="Terminal" order="11" />
-      <window_info active="true" anchor="bottom" id="Python Console" order="12" visible="true" weight="0.13988096" />
+      <window_info anchor="bottom" id="Python Console" order="12" visible="true" weight="0.36011904" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -285,99 +214,17 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/wrapper_contigs.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/post_process.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="582">
-          <caret line="43" column="28" selection-start-line="43" selection-start-column="28" selection-end-line="43" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cluster_indels.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
-          <caret line="21" selection-start-line="21" selection-end-line="21" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/new_cnv.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-873" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/remove_part.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="28" selection-start-line="28" selection-end-line="28" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/indel_detection_contigs.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5190">
-          <caret line="347" column="64" selection-start-line="347" selection-start-column="64" selection-end-line="347" selection-end-column="64" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/preprocess2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1380">
-          <caret line="92" column="39" selection-start-line="92" selection-start-column="39" selection-end-line="92" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/translate.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" selection-start-line="11" selection-end-line="11" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/filter_contigs.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="212">
-          <caret line="40" column="16" lean-forward="true" selection-start-line="40" selection-start-column="16" selection-end-line="46" selection-end-column="76" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/filter_contig2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="356">
-          <caret line="36" column="215" lean-forward="true" selection-start-line="36" selection-start-column="215" selection-end-line="36" selection-end-column="215" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SV_detection_contigs.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="484">
-          <caret line="177" column="30" selection-start-line="177" selection-start-column="30" selection-end-line="177" selection-end-column="30" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/assemble_reads.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="760">
-          <caret line="127" column="89" lean-forward="true" selection-start-line="127" selection-start-column="89" selection-end-line="127" selection-end-column="89" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/wrapper_contigs.py" />
+    <entry file="file://$PROJECT_DIR$/post_process.py" />
+    <entry file="file://$PROJECT_DIR$/cluster_indels.py" />
+    <entry file="file://$PROJECT_DIR$/remove_part.py" />
+    <entry file="file://$PROJECT_DIR$/indel_detection_contigs.py" />
+    <entry file="file://$PROJECT_DIR$/preprocess2.py" />
+    <entry file="file://$PROJECT_DIR$/translate.py" />
+    <entry file="file://$PROJECT_DIR$/filter_contigs.py" />
+    <entry file="file://$PROJECT_DIR$/filter_contig2.py" />
+    <entry file="file://$PROJECT_DIR$/assemble_reads.py" />
+    <entry file="file://$PROJECT_DIR$/new_cnv.py" />
+    <entry file="file://$PROJECT_DIR$/SV_detection_contigs.py" />
   </component>
 </project>

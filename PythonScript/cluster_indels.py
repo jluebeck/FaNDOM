@@ -35,15 +35,15 @@ if __name__ == '__main__':
                     if abs(float(aln_2[3]) - float(nex_aln_2[2])) < 30000:
                         nex_aln_2[2] = aln_2[2]
                         nex_aln_2[3] = str(max(float(nex_aln_2[3]), float(aln_2[3])))
-                        nex_aln_2[4] += ',' + aln_2[4]
-                        nex_aln_2[6] = str(float(nex_aln_2[6]) + float(aln_2[6]))
+                        nex_aln_2[5] += ',' + aln_2[5]
+                        nex_aln_2[4] = str(float(nex_aln_2[4]) + float(aln_2[4]))
                         a[i + 1] = '\t'.join(nex_aln_2) + '\n'
                     elif (abs(float(aln_2[2]) - float(nex_aln_2[2])) < 30000 and abs(
                             float(aln_2[3]) - float(nex_aln_2[3])) < 30000):
                         nex_aln_2[2] = aln_2[2]
                         nex_aln_2[3] = str(max(float(nex_aln_2[3]), float(aln_2[3])))
-                        nex_aln_2[4] += ',' + aln_2[4]
-                        nex_aln_2[6] = str(max(float(nex_aln_2[6]), float(aln_2[6])))
+                        nex_aln_2[5] += ',' + aln_2[5]
+                        nex_aln_2[4] = str(max(float(nex_aln_2[4]), float(aln_2[4])))
                         a[i + 1] = '\t'.join(nex_aln_2) + '\n'
                     else:
                         w.append(a[i])
