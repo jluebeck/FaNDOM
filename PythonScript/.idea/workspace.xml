@@ -1,17 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="7585a440-e43a-49d1-8229-be0f444364dd" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../FaNDOM" beforeDir="false" afterPath="$PROJECT_DIR$/../FaNDOM" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SV_detection_contigs.py" beforeDir="false" afterPath="$PROJECT_DIR$/SV_detection_contigs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assemble_reads.py" beforeDir="false" afterPath="$PROJECT_DIR$/assemble_reads.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cluster_indels.py" beforeDir="false" afterPath="$PROJECT_DIR$/cluster_indels.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/new_cnv.py" beforeDir="false" afterPath="$PROJECT_DIR$/new_cnv.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wrapper_contigs.py" beforeDir="false" afterPath="$PROJECT_DIR$/wrapper_contigs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../autorescale.py" beforeDir="false" afterPath="$PROJECT_DIR$/../autorescale.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../threadsafe_queue.h" beforeDir="false" afterPath="$PROJECT_DIR$/../threadsafe_queue.h" afterDir="false" />
-    </list>
+    <list default="true" id="7585a440-e43a-49d1-8229-be0f444364dd" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
