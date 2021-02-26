@@ -50,21 +50,21 @@ if p == 1:
 	print("assemble reads2")
 	assemble_cmd = 'python PythonScript/assemble_reads.py -i ' + out + name + '_all.xmap' + ' -o ' + out + name + '_all'
 	os.system(assemble_cmd)
-	filter_partial_cmd = 'python PythonScript/filter_contig2.py -i ' + out + name + '_all_assembled.xmap ' + ' -o ' + out + name + '_all_assembled2'
+	filter_partial_cmd = 'python PythonScript/filter_contig2.py -i ' + out + name + '_all_assembled.xmap ' + ' -o ' + out + name + '_final_alignment'
 	os.system(filter_partial_cmd)
 	print("SV detect")
-	sv_detect_cmd = 'python3 PythonScript/SV_detection_contigs.py -i ' + out + name + '_all_assembled2.xmap -l 1 -c ' + c + ' -r=' + args.ref+ ' -q ' + args.query +' -g '+gene_dir+ ' -o ' +out + 'SV3'
+	sv_detect_cmd = 'python3 PythonScript/SV_detection_contigs.py -i ' + out + name + '_final_alignment.xmap -l 1 -c ' + c + ' -r=' + args.ref+ ' -q ' + args.query +' -g '+gene_dir+ ' -o ' +out + 'SV.txt'
 	os.system(sv_detect_cmd)
 	os.chdir( out)
 	# os.system('cat '+ out + args.name + '_full_post_process.xmap '+ out + name + '_partial_filtered_post_process.xmap >' + name + '_all_indel.xmap')
 	os.chdir( args.fandom)
 	print("Indel detect")
-	indel_detect_cmd = 'python3 PythonScript/indel_detection_contigs.py -r ' + args.ref +' -g '+gene_dir+ ' -c ' + c + ' -m ' + args.query + ' -a ' + out + name + '_all_assembled2.xmap -o ' + out + 'indel'
+	indel_detect_cmd = 'python3 PythonScript/indel_detection_contigs.py -r ' + args.ref +' -g '+gene_dir+ ' -c ' + c + ' -m ' + args.query + ' -a ' + out + name + '_final_alignment.xmap -o ' + out + 'indel.txt'
 	os.system(indel_detect_cmd)
 	print('Done')
-	os.chdir( out)
-	os.system("grep 'ins' indel > insertion")
-	os.system("grep 'del' indel > deletion")
+	# os.chdir( out)
+	# os.system("grep 'ins' indel > insertion")
+	# os.system("grep 'del' indel > deletion")
 	# os.chdir( args.fandom)
 	# cluser_cmd = 'python PythonScript/cluster_indels.py -i ' + out +'insertion '+ '-o '+out+'insertion_clustered'
 	# os.system(cluser_cmd)
