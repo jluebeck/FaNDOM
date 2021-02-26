@@ -146,7 +146,7 @@ if __name__ == '__main__':
                             if next_aln_query_start - main_aln_query_end == main_aln_ref_end - next_aln_ref_start == 1:
                                 main_aln[3] = nex_aln[3]
                                 main_aln[5] = nex_aln[5]
-                                main_aln[-1] = nex_aln[-1] = main_aln[-1]
+                                main_aln[-1] = nex_aln[-1] + main_aln[-1]
                                 find = 1
                                 contigs_alignments[contig_id][j] = main_aln
                                 break
