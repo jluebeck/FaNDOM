@@ -64,7 +64,7 @@ if p==2:
 	os.system(fandom_cmd)
 	remove_part_cmd = 'python PythonScript/remove_part.py -p ' + out + args.name + '_partial.xmap -f ' + out + args.name + '.xmap -o ' + out + args.name + '_full'
 	os.system(remove_part_cmd)
-	filter_partial_cmd = 'python PythonScript/filter_contigs.py -i ' + out + args.name + '_partial.xmap -r ' + args.ref + ' -o ' + out + name + '_partial_filtered'
+	filter_partial_cmd = 'python PythonScript/filter_contigs.py -i ' + out + args.name + '_partial.xmap ' + ' -o ' + out + name + '_partial_filtered'
 	os.system(filter_partial_cmd)
 	os.chdir(out)
 	os.system(
