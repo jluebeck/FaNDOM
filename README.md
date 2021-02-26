@@ -70,6 +70,7 @@ If you want to run whole the pipeline for detecting SVs on assembled contigs, yo
 -  `-n` Name of alignment files
 -  `-c` Assemble of reference that is used. 19 for GRCh37(hg19) and 38 for GRCh38(hg38)
 -  `-m` If you are aligning contigs having more than 300 labels, use mode 1 to preprocess input data and generate shorter contigs, otherwise use mode 2. 
+
 The output of this pipeline is in `-o`directory. 'SV.txt' Contains structural variants call, 'indel.txt' contains indel calls and alignment file ending with 'final_alignment.xmap' contains final alignment file. 
 As an example:
 ```
