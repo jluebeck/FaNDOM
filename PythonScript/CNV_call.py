@@ -13,6 +13,8 @@ from collections import defaultdict
 
 ref_cov = {}
 ref_cov = defaultdict(lambda: {}, ref_cov)
+ref_cov_number_contig = {}
+ref_cov_number_contig = defaultdict(lambda: {}, ref_cov_number_contig)
 query_pairs = {}
 query_pairs = defaultdict(lambda:[], query_pairs)
 with open(args.ref, 'r') as f:
@@ -21,6 +23,7 @@ with open(args.ref, 'r') as f:
             line2 = line.strip().split('\t')
             id = int(line2[0])
             ref_cov[contig_id_map[id]][int(line2[3])] = 0
+            ref_cov_number_contig[contig_id_map[id]][int(line2[3])] = []
 
 query_cov = {}
 query_cov = defaultdict(lambda: {}, query_cov)
@@ -46,6 +49,27 @@ with open(args.input, 'r') as f:
                 if (pair_ref,pair_query,chrom) not in query_pairs[id]:
                 	ref_cov[chrom][pair_ref] = ref_cov[chrom][pair_ref] + query_cov[id][pair_query]
                 	query_pairs[id].append((pair_ref,pair_query,chrom))
+                	ref_cov_number_contig[chrom][pair_ref].append(id)
+
+
+# d = {}
+# d = defaultdict(lambda:[],d)
+# with open(args.input, 'r') as f:
+#     for line in f:
+#         if not line.startswith('#'):
+#             line2 = line.strip().split('\t')
+#             id = int(line2[1])
+#             chrom = int(line2[2])
+            
+#             d[id].append(line2)
+
+
+
+
+
+
+
+
 with open(args.output, 'w') as file:
     with open(args.ref, 'r') as f:
         for line in f:
@@ -54,5 +78,6 @@ with open(args.output, 'w') as file:
                 id = contig_id_map[int(line2[0])]
                 line2[0] = str(id)
                 line2[7] = str(ref_cov[id][int(line2[3])])
+                line2.append(str(len(set(ref_cov_number_contig[id][int(line2[3])]))))
                 line = '\t'.join(line2) + '\n'
             file.write(line)

@@ -63,8 +63,8 @@ with open(args.output+'.xmap', 'w') as g:
                 b1 = int(align.split(')')[0].split(',')[1])
                 b2 = int(align.split(')')[-2].split(',')[1])
                 align = align.split(',')
-                l = len(align) - 1
-                score = conf / l
+                separate_lines = len(align) - 1
+                score = conf / separate_lines
                 if abs(a1 - a2) > 30000 and abs(b1 - b2) > 8 and score > 4000:
 			#if not (score < 5000 and line2[2]=='25'):
 			d[id].append((score, line))

@@ -3,7 +3,7 @@
 
 ## About
 
-FaNDOM performs alignment of Bionano Saphyr optical map molecules to a reference, using a seed-based filter.
+FaNDOM performs alignment of Bionano Saphyr optical map molecules and contigs to a reference, using a seed-based filter.
 FaNDOM is implemented in C++ and supports multithreading. Currently, FaNDOM is available for beta testing.
 
 FaNDOM is developed by Siavash Raeisi Dehkordi and Jens Luebeck.
@@ -18,20 +18,20 @@ To install FaNDOM, do
 ```
 git clone https://github.com/jluebeck/FaNDOM
 cd FaNDOM
-cmake && make 
+cmake CMakeLists.txt && make 
 ```
 
 ## Usage
 
-FaNDOM takes as input Bionano Saphyr molecules stored in `.bnx` or `.cmap` form, and a pre-processed reference genome.
-
+FaNDOM takes as input Bionano Saphyr molecules stored in `.bnx` or `.cmap` form or assembled contigs in `.cmap` form, and a pre-processed reference genome.
+Right now, FaNDOM supports GRCh37(hg19) and GRCh38 available in `reference_genomes` folder.
 FaNDOM outputs alignments of the OM molecules in FaNDOM's `.fda` or `.xmap` file format.
 
 ### Command line arguments
 
 ##### Required arguments
 - `-r=` Path to reference genome for alignment
-- `-q=` Path to Bionano Saphyr molecules
+- `-q=` Path to Bionano Saphyr molecules or contigs
 - `-sname=` Prefix for output files
 - `-outfmt=` Specify output format for alignments. We support `.fda`and `.xmap` format.
 
@@ -40,7 +40,7 @@ FaNDOM outputs alignments of the OM molecules in FaNDOM's `.fda` or `.xmap` file
 - `-version` Print version and exit
 - `-t=` Number of threads to use (recommend 12+)
 - `-padding=` Additional size (in bp) around seed region to open alignment window (default: 1000)
-- `-no_partial=` True if Just looking for full alignment (default: True)
+- `-no_partial=` 0 if Just looking for full alignment (default: 1)
 - `-ref38=` If you are using reference genome assembly GRCh38 set it to True (default: False)
 - `-rescale=` True if data are raw molecule and it is necessary to rescale them (default: False)
 
@@ -51,8 +51,17 @@ FaNDOM outputs alignments of the OM molecules in FaNDOM's `.fda` or `.xmap` file
 - `-band_width=` Half of band width (default 6000)
 ### Example
 `./FaNDOM -t=20 -r=reference_genomes/hg19_Merge_800_DLE.cmap -q=query/EXP_REFINEFINAL1_q.cmap -sname=output/output -outfmt=xmap`
-## wrapper for contigs
-If you want to run whole the pipeline for detecting SV's on assembled contigs, you can use a python script in "Pythonscript" folder named `wrapper_contigs.py` 
+
+
+For making sure that you install FaNDOM correctly, when you are at FaNDOM directory run the following command:
+```
+./FaNDOM -t=1 -r=test_data/reference.cmap -q=test_data/query.cmap -sname=test_data/res -outfmt=xmap
+
+```
+
+
+## Wrapper for SV analysis of assembled contig data
+If you want to run whole the pipeline for detecting SVs on assembled contigs, you can use a python script in "Pythonscript" folder named `wrapper_contigs.py` 
 -  `-q` Path to contigs file in '.cmap' file format.
 -  `-r` Path to reference file. It should be in cmap format.
 -  `-f` Path to foldar that contains executable file of FaNDOM.
@@ -60,17 +69,22 @@ If you want to run whole the pipeline for detecting SV's on assembled contigs, y
 -  `-o` Path to a directory for saving all alignments and SV calls.
 -  `-n` Name of alignment files
 -  `-c` Assemble of reference that is used. 19 for GRCh37(hg19) and 38 for GRCh38(hg38)
+-  `-m` If you are aligning contigs having more than 300 labels, use mode 1 to preprocess input data and generate shorter contigs, otherwise use mode 2. 
+
+The output of this pipeline is in `-o`directory. 'SV.txt' Contains structural variants call, 'indel.txt' contains indel calls and alignment file ending with 'final_alignment.xmap' contains final alignment file. 
 As an example:
 ```
-python wrapper_contigs.py -f /home/FaNDOM -t 22 -r /home/reference_genomes/hg19_Merge_800_masked.cmap -q /home/exp_refineFinal1_sv/exp_refineFinal1_merged_q.cmap -n Covid_3_41 -o /home/res -c 19
+python wrapper_contigs.py -f /home/FaNDOM -t 22 -r /home/reference_genomes/hg19_Merge_800_masked.cmap -q /home/exp_refineFinal1_sv/exp_refineFinal1_merged_q.cmap -n Covid_3_41 -o /home/res -c 19 -m 1
 ```
 For making sure that you install FaNDOM correctly, when you are at FaNDOM directory run the following command:
+
 ```
-python PythonScript/wrapper_contigs.py -f $PWD -t 1 -r test_data/reference.cmap -q test_data/query.cmap -n test -o $PWD/test_data/res -c 19
+python PythonScript/wrapper_contigs.py -f $PWD -t 1 -r test_data/reference.cmap -q test_data/query.cmap -n test -o $PWD/test_data -c 19 -m 1
+
 ```
 It should run pipeline for simple datasets and have the results at `test_data/res` directory.
 ## Python scripts
-Here we explain each script that is used in our pipeline.
+The following scripts are used inside the SV wrapper - `wrapper_contigs.py`, and can be invoke separately if desired.
 ### `autorescale.py` script
 This script used for finding the best rescale factor for molecules. We highly recommend to use this script if you are using raw molecules.
 -  `-q` Path to molecules file. It can be bnx or cmap file.
@@ -120,11 +134,10 @@ python post_process.py -f Fandom_output.xmap -p Fandom_output_partial.xmap -o Fa
 ```
 ### `filter_contigs.py` script
 This script is used for filtering high confidence partial alignments for assembled contigs.
--  `-r` Path to reference file. It should be in cmap format.
 -  `-i` Path to partial alignments file in xmap format.
 -  `-o` Output directory filtered partial alignments.
 ```
-python filter_contigs.py -r hg19_DLE.cmap -i Fandom_output_partial.xmap -o Fandom_output_partial_filtered.xmap
+python filter_contigs.py -i Fandom_output_partial.xmap -o Fandom_output_partial_filtered.xmap
 ```
 ### `filter_individual.py` script
 This script is used for filtering high confidence partial alignments for raw molecules.
@@ -141,8 +154,9 @@ This script is used for finding indels in assembled contigs alignment files.
 -  `-o` Output directory for indel finding
 -  `-m` Path to query file in bnx or cmap file format.
 -  `-c` Assemble of reference that is used. 19 for GRCh37(hg19) and 38 for GRCh38(hg38)
+-  `-g` Gene coordinate directory for human genome
 ```
-python indel_detection_contigs.py -r hg19_DLE.cmap -a Fandom.xmap -o res/indel -c 19 -m query/query.contigs
+python indel_detection_contigs.py -r hg19_DLE.cmap -g Gene_hg19.txt -a Fandom.xmap -o res/indel -c 19 -m query/query.contigs
 ```
 ### `indel_detection_individual.py` script
 This script is used for finding indels in raw molecule alignment files.
@@ -158,13 +172,15 @@ python indel_detection_individual.py -r hg19_DLE.cmap -a Fandom.xmap -o res/inde
 ### `SV_detection_contigs.py` script
 This script used for detecting potential integration points.
 -  `-i` Path to alignment file.
--  `-l` Minimum number molecules to support a integration point.
+-  `-l` Minimum number molecules to support a integration point. Our suggestion for contigs is 1.
 -  `-o` Output directory for list of integration points.
 -  `-c` Assemble of reference that is used. 19 for GRCh37(hg19) and 38 for GRCh38(hg38)
 -  `-q` Path to query file in cmap file format.
+-  `-r` Path to reference file. It should be in cmap format.
+-  `-g` Gene coordinate directory for human genome
 As an example:
 ```
-python SV_detection_contigs.py -i alignment.xmap -l 1 -o SV.txt -q query/query_contigs.cmap -c 19
+python SV_detection_contigs.py -i alignment.xmap -r hg19_DLE.cmap -g Gene_hg19.txt -l 1 -o SV.txt -q query/query_contigs.cmap -c 19
 ```
 
 ## `.fda` file format

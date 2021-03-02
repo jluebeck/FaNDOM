@@ -240,6 +240,12 @@ tuple<string,string,string,string,string,string> parse_args(int argc, char *argv
             exit(0);
 
         }
+        else if ((string(argv[i]).rfind("-help", 0) == 0)) {
+            cout << "Required arguments\n-r= Path to reference genome for alignment\n-q= Path to Bionano Saphyr molecules or contigs\n-sname= Prefix for output files\n";
+            cout<< "-outfmt= Specify output format for alignments. We support .fda and .xmap format\nOptional arguments (basic)\n-multimap Report multiple alignments per molecule (default: only highest scoring alignment)\n-version Print version and exit\n-t= Number of threads to use (recommend 12+)\n-padding= Additional size (in bp) around seed region to open alignment window (default: 1000)\n-no_partial= 0 if Just looking for full alignment (default: 1)\n-ref38= If you are using reference genome assembly GRCh38 set it to True (default: False)\n-rescale= True if data are raw molecule and it is necessary to rescale them (default: False)\nOptional arguments (advanced)\n-tolerance= Seeding label position error tolerance (default: 350)\n-rank= Seed ranks to consider (default: 150)\n-threshold= Seed chain mininum length (default: 3)\n-band_width= Half of band width (default 6000)\n";
+            exit(0);
+
+        }
     }
 
     if (ref_cmap_file.empty()) {

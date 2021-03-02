@@ -95,7 +95,7 @@ scaledSample = {}
 #contain result and their score
 result = {}
 
-for i in range(-4, 11):
+for i in range(-4, 21):
     #write new resclaed sample on file
     with open(output+'_a.cmap','w') as f :
         for k in selected:
@@ -125,13 +125,14 @@ for i in range(-4, 11):
 print(result)
 os.system('rm '+output+'_a.cmap')
 max_index = int(max(result,key=result.get))
-
+print("############################################################")
 print('Max score with rescale factor: ', max_index)
-
+print("############################################################")
 #Rescla all molecules with detected rescale factor
 if args.query.endswith('.bnx'):
     with open(output+'_rescaled.bnx','w') as f:
         with open(args.query,'r') as g:
+            f.write('#Rescaled Factor= '+str(max_index)+'\n')
             for line in g:
                 if line.startswith('0\t'):
                     line = line.strip().split('\t')
