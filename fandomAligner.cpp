@@ -66,7 +66,7 @@ for (int j_ind = 0; j_ind < (b-a); j_ind++) {
 }
 
 pair<int,int> get_max_pair(const vector<vector<double>> &S, int ref_width, int mol_len) {
-    double max_score = 0;
+    double max_score = -100000;
     pair<int,int> max_pair = {-1,-1};
     for (int j_ind = 0; j_ind < ref_width; j_ind++) {
         for (int q_ind = 0; q_ind < mol_len; q_ind++) {

@@ -71,7 +71,13 @@ if p==2:
 	    'cat '  + args.name + '_full.xmap ' + name + '_partial_filtered.xmap >' + name + '_final_alignment.xmap')
 	os.chdir( args.fandom)
 	sv_detect_cmd = 'python3 PythonScript/SV_detection_contigs.py -i ' + out + name + '_final_alignment.xmap -l 1 -c ' + c + ' -r ' + args.ref+ ' -q ' + args.query +' -g '+gene_dir+ ' -o ' +out + 'SV.txt'
+<<<<<<< HEAD
 	os.system(sv_detect_cmd)
+=======
+	print("SV detect")
+	os.system(sv_detect_cmd)
+	print("Indel detect")
+>>>>>>> merge_dev
 	indel_detect_cmd = 'python3 PythonScript/indel_detection_contigs.py -r ' + args.ref + ' -g '+gene_dir+' -c ' + c + ' -m ' + args.query + ' -a ' + out + name + '_final_alignment.xmap -o ' + out + 'indel.txt'
 	os.system(indel_detect_cmd)
 	print('Done')
