@@ -64,7 +64,7 @@ For making sure that you install FaNDOM correctly, when you are at FaNDOM direct
 If you want to run whole the pipeline for detecting SVs on assembled contigs, you can use a python script in "Pythonscript" folder named `wrapper_contigs.py` 
 -  `-q` Path to contigs file in '.cmap' file format.
 -  `-r` Path to reference file. It should be in cmap format.
--  `-f` Path to foldar that contains executable file of FaNDOM.
+-  `-f` Absolute Path to foldar that contains executable file of FaNDOM.
 -  `-t` Number of threads.
 -  `-o` Path to a directory for saving all alignments and SV calls.
 -  `-n` Name of alignment files
