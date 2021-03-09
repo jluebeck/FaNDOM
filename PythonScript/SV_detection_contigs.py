@@ -386,9 +386,28 @@ def write_sv2(list_sv):
         sv_text = sv_text + sv
     return sv_text
 
+def parse_bnx(bnxF,keep_length = False):
+    moleculeD = {}
+    with open(bnxF) as infile:
+        for line in infile:
+            if not line.startswith('#'):
+                fields = line.rstrip().rsplit("\t")
+                if line.startswith('0'):
+                    currKey = fields[1]
+                elif line.startswith('1'):
+                    if keep_length:
+                        moleculeD[currKey] = [float(x) for x in fields[1:]]
+                    else:
+                        moleculeD[currKey] = {i+1: float(fields[1:-1][i]) for i  in range(len(fields[1:-1]))}
+
+    return moleculeD
+
 
 if __name__ == '__main__':
-    mol = parse_cmap(args.query)
+    if args.query.endswith('cmap'):
+        mol = parse_cmap(args.query)
+    elif args.query.endswith('bnx'):
+        mol = parse_bnx(args.query)
     ref = parse_cmap(args.ref)
     d = parse_xmap(args.input)
     a = {}

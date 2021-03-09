@@ -1,4 +1,4 @@
-
+from bisect import bisect_left  
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-p", "--partial", help="Partial Alignment", required=True)
@@ -12,8 +12,9 @@ def parse_partial_alignments():
         for line in f:
             if not line.startswith('#'):
                 line = line.split('\t')
-                d.append(line[1])
+                d.append(int(line[1]))
     d = list(set(d))
+    d.sort()
     return d
 def remove_partial(d):
     with open(args.full,'r') as f:
@@ -23,7 +24,11 @@ def remove_partial(d):
                     g.write(line)
                 else:
                     line2 = line.strip().split('\t')
-                    if not line2[1] in d:
+                    id = int(line2[1])
+                    index = bisect_left(d, id)
+                    if index == len(d):
+                        g.write(line)
+                    elif d[index]!=id:
                         g.write(line)
                     
 if __name__ == '__main__':
