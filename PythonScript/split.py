@@ -1,6 +1,6 @@
-input_dir = '/nucleus/projects/sraeisid/Howard/de_novo_assembly/M249_DM/M249USR181005_SC1_mol_M249USR181005_SC1_RawMolecules.bnx'
-output_dir = '/nucleus/projects/sraeisid/Howard/de_novo_assembly/M249_DM/raw_mol'
-name = 'M249_DM'
+input_dir = '/nucleus/projects/sraeisid/FaNDOM/HCC827/HCC827_merged_110X_RawMolecules.bnx'
+output_dir = '/nucleus/projects/sraeisid/FaNDOM/HCC827/raw_mol'
+name = 'HCC827'
 header = ''
 print_line = ''
 i = 0
@@ -18,7 +18,7 @@ with open(input_dir, 'r') as f:
                     i=0
                     counter+=1
                     print_line = ''
-    print(header)
+    # print(header)
     with open(output_dir + '/' + name + '_' + str(counter) + '.bnx', 'w')as g:
         g.write(header)
         g.write(print_line)

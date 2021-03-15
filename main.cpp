@@ -168,9 +168,6 @@ map<int, vector<Alignment>> filt_and_aln(int thread_num, map<int,vector<double>>
         seed_batch = OMFilter(qq, a, thread_num, ref_DTI, ref_lens, ref_cmaps, mols, partial_mode);
         map<int, vector<Alignment>> curr = run_aln(ref_cmaps, mols, seed_batch, partial_mode);
         //////Log
-//        for (auto &key : curr){
-//            cout<< "used in cleanup sort " << key.first<<endl;
-//        }
         ////////
         result.insert(curr.begin(), curr.end());
     }
@@ -226,6 +223,12 @@ tuple<string,string,string,string,string,string> parse_args(int argc, char *argv
         } else if ((string(argv[i]).rfind("-no_partial", 0) == 0)) {
             partial_alignment = false;
 
+        } else if ((string(argv[i]).rfind("-penalty=", 0) == 0)) {
+            penalty_par = stoi(string(argv[i]).substr(string(argv[i]).find('=') + 1));
+
+        } else if ((string(argv[i]).rfind("-dist_scale=", 0) == 0)) {
+            dist_scale_par = stof(string(argv[i]).substr(string(argv[i]).find('=') + 1));
+
         } else if ((string(argv[i]).rfind("-multimap", 0) == 0)) {
             multimap_mols = true;
 
@@ -239,10 +242,11 @@ tuple<string,string,string,string,string,string> parse_args(int argc, char *argv
             cout << "FaNDOM version " << version << "\n";
             exit(0);
 
-        }
-        else if ((string(argv[i]).rfind("-help", 0) == 0)) {
-            cout << "Required arguments\n-r= Path to reference genome for alignment\n-q= Path to Bionano Saphyr molecules or contigs\n-sname= Prefix for output files\n";
-            cout<< "-outfmt= Specify output format for alignments. We support .fda and .xmap format\nOptional arguments (basic)\n-multimap Report multiple alignments per molecule (default: only highest scoring alignment)\n-version Print version and exit\n-t= Number of threads to use (recommend 12+)\n-padding= Additional size (in bp) around seed region to open alignment window (default: 1000)\n-no_partial= 0 if Just looking for full alignment (default: 1)\n-ref38= If you are using reference genome assembly GRCh38 set it to True (default: False)\n-rescale= True if data are raw molecule and it is necessary to rescale them (default: False)\nOptional arguments (advanced)\n-tolerance= Seeding label position error tolerance (default: 350)\n-rank= Seed ranks to consider (default: 150)\n-threshold= Seed chain mininum length (default: 3)\n-band_width= Half of band width (default 6000)\n";
+        } else if ((string(argv[i]).rfind("-help", 0) == 0)) {
+            cout
+                    << "Required arguments\n-r= Path to reference genome for alignment\n-q= Path to Bionano Saphyr molecules or contigs\n-sname= Prefix for output files\n";
+            cout
+                    << "-outfmt= Specify output format for alignments. We support .fda and .xmap format\nOptional arguments (basic)\n-multimap Report multiple alignments per molecule (default: only highest scoring alignment)\n-version Print version and exit\n-t= Number of threads to use (recommend 12+)\n-padding= Additional size (in bp) around seed region to open alignment window (default: 1000)\n-no_partial Use this flag if Just looking for full alignment (default: 1)\n-dist_scale= Distance scale penalty (default 1.15\n-penalty= Missing label penalty (default 3000)\n-rescale Use this flag if data are raw molecule and it is necessary to rescale them (default: False)\nOptional arguments (advanced)\n-tolerance= Seeding label position error tolerance (default: 350)\n-rank= Seed ranks to consider (default: 150)\n-threshold= Seed chain mininum length (default: 3)\n-band_width= Half of band width (default 6000)\n";
             exit(0);
 
         }

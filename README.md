@@ -40,15 +40,16 @@ FaNDOM outputs alignments of the OM molecules in FaNDOM's `.fda` or `.xmap` file
 - `-version` Print version and exit
 - `-t=` Number of threads to use (recommend 12+)
 - `-padding=` Additional size (in bp) around seed region to open alignment window (default: 1000)
-- `-no_partial=` 0 if Just looking for full alignment (default: 1)
-- `-ref38=` If you are using reference genome assembly GRCh38 set it to True (default: False)
-- `-rescale=` True if data are raw molecule and it is necessary to rescale them (default: False)
+- `-no_partial` Use this flag if Just looking for full alignment (default: False)
+- `-rescale` Use this flag if data are raw molecule and it is necessary to rescale them (default: False)
 
 ##### Optional arguments (advanced)
 - `-tolerance=` Seeding label position error tolerance (default: 350)
 - `-rank=` Seed ranks to consider (default: 150)
 - `-threshold=` Seed chain mininum length (default: 3)
 - `-band_width=` Half of band width (default 6000)
+- `-dist_scale=` Distance scale penalty (default 1.15)
+- `-penalty=` Missing label penalty (default 3000)
 ### Example
 `./FaNDOM -t=20 -r=reference_genomes/hg19_Merge_800_DLE.cmap -q=query/EXP_REFINEFINAL1_q.cmap -sname=output/output -outfmt=xmap`
 
@@ -64,7 +65,7 @@ For making sure that you install FaNDOM correctly, when you are at FaNDOM direct
 If you want to run whole the pipeline for detecting SVs on assembled contigs, you can use a python script in "Pythonscript" folder named `wrapper_contigs.py` 
 -  `-q` Path to contigs file in '.cmap' file format.
 -  `-r` Path to reference file. It should be in cmap format.
--  `-f` Path to foldar that contains executable file of FaNDOM.
+-  `-f` Absolute Path to foldar that contains executable file of FaNDOM.
 -  `-t` Number of threads.
 -  `-o` Path to a directory for saving all alignments and SV calls.
 -  `-n` Name of alignment files
@@ -79,7 +80,7 @@ python wrapper_contigs.py -f /home/FaNDOM -t 22 -r /home/reference_genomes/hg19_
 For making sure that you install FaNDOM correctly, when you are at FaNDOM directory run the following command:
 
 ```
-python PythonScript/wrapper_contigs.py -f $PWD -t 1 -r test_data/reference.cmap -q test_data/query.cmap -n test -o $PWD/test_data -c 19 -m 1
+python PythonScript/wrapper_contigs.py -f $PWD -t 1 -r test_data/reference.cmap -q test_data/query.cmap -n res -o $PWD/test_data -c 19 -m 1
 
 ```
 It should run pipeline for simple datasets and have the results at `test_data/res` directory.
