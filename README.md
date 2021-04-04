@@ -4,7 +4,7 @@
 ## About
 
 FaNDOM performs alignment of Bionano Saphyr optical map molecules and contigs to a reference, using a seed-based filter.
-FaNDOM is implemented in C++ and supports multithreading. Currently, FaNDOM is available for beta testing.
+FaNDOM is implemented in C++ and supports multithreading.
 
 FaNDOM is developed by Siavash Raeisi Dehkordi and Jens Luebeck.
 
@@ -62,14 +62,14 @@ For making sure that you install FaNDOM correctly, when you are at FaNDOM direct
 
 
 ## Wrapper for SV analysis of assembled contig data
-If you want to run whole the pipeline for detecting SVs on assembled contigs, you can use a python script in "Pythonscript" folder named `wrapper_contigs.py` 
+To run whole the pipeline for detecting SVs on assembled contigs, use the python script in the "Pythonscript" folder, `wrapper_contigs.py` 
 -  `-q` Path to contigs file in '.cmap' file format.
 -  `-r` Path to reference file. It should be in cmap format.
 -  `-f` Absolute Path to foldar that contains executable file of FaNDOM.
 -  `-t` Number of threads.
 -  `-o` Path to a directory for saving all alignments and SV calls.
 -  `-n` Name of alignment files
--  `-c` Assemble of reference that is used. 19 for GRCh37(hg19) and 38 for GRCh38(hg38)
+-  `-c` Assemble of reference that is used. 19 for GRCh37 (or hg19) and 38 for GRCh38 (or hg38)
 -  `-m` If you are aligning contigs having more than 300 labels, use mode 1 to preprocess input data and generate shorter contigs, otherwise use mode 2. 
 
 The output of this pipeline is in `-o`directory. 'SV.txt' Contains structural variants call, 'indel.txt' contains indel calls and alignment file ending with 'final_alignment.xmap' contains final alignment file. 
