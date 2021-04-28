@@ -50,7 +50,7 @@ if p == 1:
 	print("assemble reads2")
 	assemble_cmd = 'python PythonScript/assemble_reads.py -i ' + out + name + '_all.xmap' + ' -o ' + out + name + '_all'
 	os.system(assemble_cmd)
-	filter_partial_cmd = 'python PythonScript/filter_contig2.py -i ' + out + name + '_all_assembled.xmap ' + ' -o ' + out + name + '_final_alignment'
+	filter_partial_cmd = 'python PythonScript/filter_assembled_conitg_alignment.py -i ' + out + name + '_all_assembled.xmap ' + ' -o ' + out + name + '_final_alignment'
 	os.system(filter_partial_cmd)
 	print("SV detect")
 	sv_detect_cmd = 'python3 PythonScript/SV_detection_contigs.py -i ' + out + name + '_final_alignment.xmap -l 1 -c ' + c + ' -r=' + args.ref+ ' -q ' + args.query +' -g '+gene_dir+ ' -o ' +out + 'SV.txt'
