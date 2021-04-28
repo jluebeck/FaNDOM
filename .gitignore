@@ -20,6 +20,8 @@ log/
 .idea/jsLibraryMappings.xml
 .DS_Store
 .idea/inspectionProfiles/Project_Default.xml
+PythonScript/.idea/*
+PythonScript/.DS_Store
 
 # Sensitive or high-churn files:
 .idea/dataSources.ids
