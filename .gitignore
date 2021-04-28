@@ -13,14 +13,9 @@ cmake_install.cmake
 log/
 
 # User-specific stuff:
-.idea/workspace.xml
-.idea/tasks.xml
-.idea/dictionaries
-.idea/vcs.xml
-.idea/jsLibraryMappings.xml
 .DS_Store
-.idea/inspectionProfiles/Project_Default.xml
-PythonScript/.idea/*
+.idea/
+PythonScript/.idea/
 PythonScript/.DS_Store
 
 # Sensitive or high-churn files:
