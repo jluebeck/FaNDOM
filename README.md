@@ -83,7 +83,7 @@ python PythonScript/wrapper_contigs.py -f $PWD -t 1 -r test_data/reference.cmap 
 This should run the SV pipeline for simple datasets and save the results in the `test_data/res` directory.
 ## Python scripts
 The following scripts are used inside the SV wrapper - `wrapper_contigs.py`, and can be invoke separately if desired.
-### `autorescale.py` script
+#### `autorescale.py` script
 This script used for finding the best rescale factor for molecules. We highly recommend to use this script if you are using raw molecules.
 -  `-q` Path to molecules file. It can be bnx or cmap file.
 -  `-r` Path to reference file. It should be in cmap format.
@@ -95,7 +95,7 @@ As an example:
 ```
 python3.5 autorescale.py -q /data/molecule/a.bnx -r /data/ref/hg19_DLE.cmap -f /data/FaNDOM/ -t 10 -o /data/molecule/rescale
 ```
-### `preprocess.py` script
+#### `preprocess.py` script
 For a case you want to align very large assembled contigs which can have more than 500 labels on one contigs, at first you need to run preprocess.py on your query to separate large contigs to smaller pices and then run Fandom on it.
 -  `-q` Path to assembled contig file. It should be in '.cmap' format.
 -  `-m` Maximum size for new separated molecules in terms of number of labels. Default value is 25.
@@ -105,7 +105,7 @@ As an example:
 ```
 python preprocess.py -q H460_DLE1_EXP_REFINEFINAL1.cmap -o /Output/processed2 -m 50
 ```
-### `post_process.py` script
+#### `post_process.py` script
 This script used for remap aligments to first molecule file. For doing that you need a file ending with 'dic' that preprocess.py script made.
 -  `-f` Path to Fandom alignmrnt output.
 -  `-d` Path to pre_process.py dictionary.
@@ -114,7 +114,7 @@ As an example:
 ```
 python post_process.py -f Fandom_output.xmap -d processed_dic -o fandom_post_process
 ```
-### `assemble_reads.py` script
+#### `assemble_reads.py` script
 This script is used for assembling partial alignments to a larger one( assembling each fragment of large contigs)
 -  `-i` Path to unassembled alignmet file.
 -  `-o` Output directory for assembled alignment file.
@@ -122,7 +122,7 @@ This script is used for assembling partial alignments to a larger one( assemblin
 python assemble_reads.py -i Fandom_output.xmap -o Fandom_output_assembled.xmap
 ```
 
-### `remove_part.py` script
+#### `remove_part.py` script
 This script is used for removing partial alignments from full alignments
 -  `-f` Path to full alignments file in xmap format.
 -  `-p` Path to partial alignments file in xmap format.
@@ -130,14 +130,14 @@ This script is used for removing partial alignments from full alignments
 ```
 python post_process.py -f Fandom_output.xmap -p Fandom_output_partial.xmap -o Fandom_output_full.xmap
 ```
-### `filter_contigs.py` script
+#### `filter_contigs.py` script
 This script is used for filtering high confidence partial alignments for assembled contigs.
 -  `-i` Path to partial alignments file in xmap format.
 -  `-o` Output directory filtered partial alignments.
 ```
 python filter_contigs.py -i Fandom_output_partial.xmap -o Fandom_output_partial_filtered.xmap
 ```
-### `filter_individual.py` script
+#### `filter_individual.py` script
 This script is used for filtering high confidence partial alignments for raw molecules.
 -  `-r` Path to reference file. It should be in cmap format.
 -  `-i` Path to partial alignments file in xmap format.
@@ -145,7 +145,7 @@ This script is used for filtering high confidence partial alignments for raw mol
 ```
 python filter_individual.py -r hg19_DLE.cmap -i Fandom_output_partial.xmap -o Fandom_output_partial_filtered.xmap
 ```
-### `indel_detection_contigs.py` script
+#### `indel_detection_contigs.py` script
 This script is used for finding indels in assembled contigs alignment files.
 -  `-r` Path to reference file. It should be in cmap format.
 -  `-a` Path to alignments file in xmap format.
@@ -156,7 +156,7 @@ This script is used for finding indels in assembled contigs alignment files.
 ```
 python indel_detection_contigs.py -r hg19_DLE.cmap -g Gene_hg19.txt -a Fandom.xmap -o res/indel -c 19 -m query/query.contigs
 ```
-### `indel_detection_individual.py` script
+#### `indel_detection_individual.py` script
 This script is used for finding indels in raw molecule alignment files.
 -  `-r` Path to reference file. It should be in cmap format.
 -  `-a` Path to alignments file in xmap format.
@@ -167,7 +167,7 @@ This script is used for finding indels in raw molecule alignment files.
 python indel_detection_individual.py -r hg19_DLE.cmap -a Fandom.xmap -o res/indel -c 19 -m query/query_contigs.cmap
 ```
 
-### `SV_detection_contigs.py` script
+#### `SV_detection_contigs.py` script
 This script used for detecting potential integration points.
 -  `-i` Path to alignment file.
 -  `-l` Minimum number molecules to support a integration point. Our suggestion for contigs is 1.
