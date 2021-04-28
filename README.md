@@ -1,5 +1,5 @@
 # FaNDOM 
-**Fa**st **N**ested **D**istance aligner for **O**ptical **M**aps
+**Fa**st **N**ested **D**istance Aligner for **O**ptical **M**aps
 
 ## About
 
@@ -33,28 +33,29 @@ FaNDOM outputs alignments of the OM molecules in FaNDOM's `.fda` or `.xmap` file
 - `-r=` Path to reference genome for alignment
 - `-q=` Path to Bionano Saphyr molecules or contigs
 - `-sname=` Prefix for output files
-- `-outfmt=` Specify output format for alignments. We support `.fda`and `.xmap` format.
+- `-outfmt=` Specify output format for alignments. We support [`.fda`](#fda-file-format) and `.xmap` file formats.
 
 ##### Optional arguments (basic)
+- `-help` Print basic help for commands and exit
 - `-multimap` Report multiple alignments per molecule (default: only highest scoring alignment)
 - `-version` Print version and exit
 - `-t=` Number of threads to use (recommend 12+)
 - `-padding=` Additional size (in bp) around seed region to open alignment window (default: 1000)
-- `-no_partial` Use this flag if Just looking for full alignment (default: False)
-- `-rescale` Use this flag if data are raw molecule and it is necessary to rescale them (default: False)
+- `-no_partial` Use this flag if only looking for full alignments (default: False)
+- `-rescale` Rescale OM molecules and correct for possible scaling errors. Reccommended if supplying unassembled molecules (default: False)
 
 ##### Optional arguments (advanced)
 - `-tolerance=` Seeding label position error tolerance (default: 350)
-- `-rank=` Seed ranks to consider (default: 150)
+- `-rank=` Rank cutoff for number of seed chains to consider (default: 150)
 - `-threshold=` Seed chain mininum length (default: 3)
-- `-band_width=` Half of band width (default 6000)
-- `-dist_scale=` Distance scale penalty (default 1.15)
+- `-band_width=` Band width parameter for seed chain formation (default 6000)
+- `-dist_scale=` Distance error scaling penalty (default 1.15)
 - `-penalty=` Missing label penalty (default 3000)
 ### Example
 `./FaNDOM -t=20 -r=reference_genomes/hg19_Merge_800_DLE.cmap -q=query/EXP_REFINEFINAL1_q.cmap -sname=output/output -outfmt=xmap`
 
 
-For making sure that you install FaNDOM correctly, when you are at FaNDOM directory run the following command:
+To ensure you installed FaNDOM correctly, in the FaNDOM directory run the following command:
 ```
 ./FaNDOM -t=1 -r=test_data/reference.cmap -q=test_data/query.cmap -sname=test_data/res -outfmt=xmap
 
@@ -65,25 +66,21 @@ For making sure that you install FaNDOM correctly, when you are at FaNDOM direct
 To run whole the pipeline for detecting SVs on assembled contigs, use the python script in the "Pythonscript" folder, `wrapper_contigs.py` 
 -  `-q` Path to contigs file in '.cmap' file format.
 -  `-r` Path to reference file. It should be in cmap format.
--  `-f` Absolute Path to foldar that contains executable file of FaNDOM.
+-  `-f` Absolute path to folder that contains the FaNDOM executable.
 -  `-t` Number of threads.
 -  `-o` Path to a directory for saving all alignments and SV calls.
--  `-n` Name of alignment files
+-  `-n` Output filename of alignment files (appended to `-o`)
 -  `-c` Assemble of reference that is used. 19 for GRCh37 (or hg19) and 38 for GRCh38 (or hg38)
 -  `-m` If you are aligning contigs having more than 300 labels, use mode 1 to preprocess input data and generate shorter contigs, otherwise use mode 2. 
 
 The output of this pipeline is in `-o`directory. 'SV.txt' Contains structural variants call, 'indel.txt' contains indel calls and alignment file ending with 'final_alignment.xmap' contains final alignment file. 
-As an example:
-```
-python wrapper_contigs.py -f /home/FaNDOM -t 22 -r /home/reference_genomes/hg19_Merge_800_masked.cmap -q /home/exp_refineFinal1_sv/exp_refineFinal1_merged_q.cmap -n Covid_3_41 -o /home/res -c 19 -m 1
-```
-For making sure that you install FaNDOM correctly, when you are at FaNDOM directory run the following command:
+An example command:
 
 ```
 python PythonScript/wrapper_contigs.py -f $PWD -t 1 -r test_data/reference.cmap -q test_data/query.cmap -n res -o $PWD/test_data -c 19 -m 1
 
 ```
-It should run pipeline for simple datasets and have the results at `test_data/res` directory.
+This should run the SV pipeline for simple datasets and save the results in the `test_data/res` directory.
 ## Python scripts
 The following scripts are used inside the SV wrapper - `wrapper_contigs.py`, and can be invoke separately if desired.
 ### `autorescale.py` script
