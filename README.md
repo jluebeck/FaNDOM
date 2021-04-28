@@ -11,7 +11,9 @@ FaNDOM is developed by Siavash Raeisi Dehkordi and Jens Luebeck.
 ## Installation
 
 FaNDOM requires `cmake 3.1` or higher. This should already be satisfied on most modern Unix systems. 
-To check your cmake version, type `cmake --version`.  
+To check your cmake version, type `cmake --version`. 
+
+The SV detection python wrapper script supports python3.
 
 To install FaNDOM, do
 
