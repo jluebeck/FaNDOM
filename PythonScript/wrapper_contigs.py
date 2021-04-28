@@ -28,7 +28,7 @@ name = args.name
 p = int(args.mode)
 # p = 1
 if p == 1:
-	pre_proces_cmd = 'python PythonScript/preprocess2.py -q ' + args.query + ' -o ' + out + args.name + '_preprocess'
+	pre_proces_cmd = 'python PythonScript/preprocess.py -q ' + args.query + ' -o ' + out + args.name + '_preprocess'
 	os.system(pre_proces_cmd)
 	fandom_cmd = './FaNDOM -t=' + args.thread + ' -r=' + args.ref + ' -q=' + out + args.name + '_preprocess.cmap' + ' -sname=' + out + args.name + ' -outfmt=xmap -penalty=6000 -dist_scale=1.28'
 	os.system(fandom_cmd)
