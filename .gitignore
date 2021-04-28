@@ -2,6 +2,8 @@
 *.o
 ._*
 
+Makefile
+
 test_files/
 cmake-build-debug/
 cmake-build-default/
@@ -17,6 +19,7 @@ log/
 .idea/vcs.xml
 .idea/jsLibraryMappings.xml
 .DS_Store
+.idea/inspectionProfiles/Project_Default.xml
 
 # Sensitive or high-churn files:
 .idea/dataSources.ids
