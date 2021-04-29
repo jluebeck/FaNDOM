@@ -75,7 +75,7 @@ To run the pipeline for detecting SVs on assembled contigs, use the python scrip
 -  `-c [19 or 38]` Assemble of reference that is used. `19` for GRCh37 (hg19) and `38` for GRCh38 (hg38)
 -  `-m [1 or 2]` If you are aligning contigs having more than 300 labels, use mode `1` to preprocess input data and generate shorter contigs, otherwise use mode `2`. 
 
-*Output files from this process*: The output of this pipeline is stored in the `-o` directory. 'SV.txt' Contains the structural variant calls, 'indel.txt' contains indel calls and alignment file ending with 'final_alignment.xmap' contains final alignment file. 
+**Output files from this process**: The output of this pipeline is stored in the `-o` directory. 'SV.txt' Contains the structural variant calls, 'indel.txt' contains indel calls and alignment file ending with 'final_alignment.xmap' contains final alignment file. 
 An example command:
 
 ```
@@ -93,9 +93,9 @@ To run whole the pipeline for detecting SVs on raw molecules, use the python scr
 -  `-o` Path to a directory for saving all alignments and SV calls.
 -  `-n` Output filename of alignment files (appended to `-o`)
 -  `-c [19 or 38]` Assemble of reference that is used. `19` for GRCh37 (hg19) and `38` for GRCh38 (hg38)
--  `-m` minimum support of molecule alignments to calling the structural variations(SV). 
+-  `-m` minimum support of molecule alignments to calling the SVs. 
 
-*Output files from this process*: The output of this pipeline is stored in the in `-o` directory. It produces two folders named 'molecules' and 'alignments'. 'molecules' contains split molecules and 'alignments' contains molecule alignments and SVs. In the 'alignments' folder there is a file named 'final_alignment.xmap' containing all molecule alignments. 'SV.txt' contains the structural variants call. 
+**Output files from this process**: The output of this pipeline is stored in the in `-o` directory. It produces two folders named 'molecules' and 'alignments'. 'molecules' contains split molecules and 'alignments' contains molecule alignments and SVs. In the 'alignments' folder there is a file named 'final_alignment.xmap' containing all molecule alignments. 'SV.txt' contains the structural variants call. 
 An example command:
 
 ```
