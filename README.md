@@ -65,17 +65,17 @@ To ensure you installed FaNDOM correctly, in the FaNDOM directory run the follow
 
 
 ## Wrapper for SV analysis of assembled contig data
-To run whole the pipeline for detecting SVs on assembled contigs, use the python script in the "Pythonscript" folder, `wrapper_contigs.py` 
+To run the pipeline for detecting SVs on assembled contigs, use the python script in the "Pythonscript" folder, `wrapper_contigs.py` 
 -  `-q` Path to contigs file in '.cmap' file format.
 -  `-r` Path to reference file. It should be in cmap format.
 -  `-f` Absolute path to folder that contains the FaNDOM executable.
 -  `-t` Number of threads.
 -  `-o` Path to a directory for saving all alignments and SV calls.
 -  `-n` Output filename of alignment files (appended to `-o`)
--  `-c` Assemble of reference that is used. 19 for GRCh37 (or hg19) and 38 for GRCh38 (or hg38)
--  `-m` If you are aligning contigs having more than 300 labels, use mode 1 to preprocess input data and generate shorter contigs, otherwise use mode 2. 
+-  `-c [19 or 38]` Assemble of reference that is used. `19` for GRCh37 (hg19) and `38` for GRCh38 (hg38)
+-  `-m [1 or 2]` If you are aligning contigs having more than 300 labels, use mode `1` to preprocess input data and generate shorter contigs, otherwise use mode `2`. 
 
-The output of this pipeline is in `-o`directory. 'SV.txt' Contains structural variants call, 'indel.txt' contains indel calls and alignment file ending with 'final_alignment.xmap' contains final alignment file. 
+*Output files from this process*: The output of this pipeline is stored in the `-o` directory. 'SV.txt' Contains the structural variant calls, 'indel.txt' contains indel calls and alignment file ending with 'final_alignment.xmap' contains final alignment file. 
 An example command:
 
 ```
@@ -84,7 +84,7 @@ python PythonScript/wrapper_contigs.py -f $PWD -t 1 -r test_data/reference.cmap 
 ```
 This should run the SV pipeline for simple datasets and save the results in the `test_data/res` directory.
 
-## Wrapper for SV analysis of raw molecule data
+## Wrapper for SV analysis of unassembled molecule data
 To run whole the pipeline for detecting SVs on raw molecules, use the python script in the "Pythonscript" folder, `wrapper_individual.py`. This wrapper needs near 100GB of RAM(depends on number of molecules) to call the SV_finder. 
 -  `-q` Path to Raw molecules file in '.cmap' or '.bnx' file format.
 -  `-r` Path to reference file. It should be in cmap format.
@@ -92,10 +92,10 @@ To run whole the pipeline for detecting SVs on raw molecules, use the python scr
 -  `-t` Number of threads.
 -  `-o` Path to a directory for saving all alignments and SV calls.
 -  `-n` Output filename of alignment files (appended to `-o`)
--  `-c` Assemble of reference that is used. 19 for GRCh37 (or hg19) and 38 for GRCh38 (or hg38)
--  `-m` minimum limit of molecule alignments to calling the structural variations(SV). 
+-  `-c [19 or 38]` Assemble of reference that is used. `19` for GRCh37 (hg19) and `38` for GRCh38 (hg38)
+-  `-m` minimum support of molecule alignments to calling the structural variations(SV). 
 
-The output of this pipeline is in `-o`directory. It produced two folder named 'molecules' and 'alignments'. 'molecules' contains splited molecules and 'alignments' contains molecule alignments and SV. In the 'alignments' folder there is a file named 'final_alignment.xmap' contais all molecules alignments and  'SV.txt' Contains structural variants call. 
+*Output files from this process*: The output of this pipeline is stored in the in `-o` directory. It produces two folders named 'molecules' and 'alignments'. 'molecules' contains split molecules and 'alignments' contains molecule alignments and SVs. In the 'alignments' folder there is a file named 'final_alignment.xmap' containing all molecule alignments. 'SV.txt' contains the structural variants call. 
 An example command:
 
 ```
@@ -112,7 +112,7 @@ This script used for finding the best rescale factor for molecules. We highly re
 -  `-f` Path to foldar that contains executable file of FaNDOM.
 -  `-t` Number of threads.
 -  `-o` Path to a directory for saving the rescaled molecules file.
--  `-s` Down sample size. Default value is 500.
+-  `-s` Number of molecules to sample from. Default value is 500.
 As an example:
 ```
 python3.5 autorescale.py -q /data/molecule/a.bnx -r /data/ref/hg19_DLE.cmap -f /data/FaNDOM/ -t 10 -o /data/molecule/rescale
@@ -159,7 +159,7 @@ This script is used for filtering high confidence partial alignments for assembl
 ```
 python filter_contigs.py -i Fandom_output_partial.xmap -o Fandom_output_partial_filtered.xmap
 ```
-### `filter_individual.py` script
+#### `filter_individual.py` script
 This script is used for filtering high confidence alignments for raw molecules. We highly recommend to use this script if you want to filter out low confidence alignments.
 -  `-r` Path to reference file. It should be in cmap format.
 -  `-i` Path to partial alignments file in xmap format.
