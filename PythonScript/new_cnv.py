@@ -1,7 +1,7 @@
 from collections import defaultdict
 import argparse
 import numpy as np
-
+import json
 parser = argparse.ArgumentParser()
 parser.add_argument("-c", "--contig_query", help="contigs cmap file", required=True)
 parser.add_argument("-f", "--folderalignment", help="Folder molecule to contigs alignments", required=True)
@@ -50,6 +50,8 @@ for key in contigs:
     for key2 in contigs[key]:
         contigs[key][key2] = list(set(contigs[key][key2]))
 
+with open(alignment_dir+'/data2.json', 'w') as fp:
+    json.dump(contigs, fp)
 ###########################################################################################
 ref_cov = {}
 ref_cov = defaultdict(lambda: {}, ref_cov)

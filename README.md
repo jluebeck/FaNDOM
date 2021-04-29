@@ -139,8 +139,13 @@ This script is used for filtering high confidence partial alignments for assembl
 ```
 python filter_contigs.py -i Fandom_output_partial.xmap -o Fandom_output_partial_filtered.xmap
 ```
+<<<<<<< HEAD
 #### `filter_individual.py` script
 This script is used for filtering high confidence partial alignments for raw molecules.
+=======
+### `filter_individual.py` script
+This script is used for filtering high confidence alignments for raw molecules. We highly recommend to use this script if you want to filter out low confidence alignments.
+>>>>>>> merge_dev
 -  `-r` Path to reference file. It should be in cmap format.
 -  `-i` Path to partial alignments file in xmap format.
 -  `-o` Output directory filtered partial alignments.

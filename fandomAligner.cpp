@@ -1,8 +1,8 @@
 #include "fandomAligner.h"
 
 using namespace std;
-float dist_scale_par=1.28;
-int penalty_par=6000;
+float dist_scale_par=1.15;
+int penalty_par=3000;
 
 //fast pow function written by Martin Ankerl
 //https://martin.ankerl.com/2012/01/25/optimized-approximative-pow-in-c-and-cpp/
@@ -66,8 +66,8 @@ for (int j_ind = 0; j_ind < (b-a); j_ind++) {
 }
 
 pair<int,int> get_max_pair(const vector<vector<double>> &S, int ref_width, int mol_len) {
-    double max_score = -100000;
-    pair<int,int> max_pair = {-1,-1};
+    double max_score = 0;
+    pair<int,int> max_pair = {0,0};
     for (int j_ind = 0; j_ind < ref_width; j_ind++) {
         for (int q_ind = 0; q_ind < mol_len; q_ind++) {
             if (S[j_ind][q_ind] > max_score) {

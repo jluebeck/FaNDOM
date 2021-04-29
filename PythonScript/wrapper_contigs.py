@@ -50,14 +50,16 @@ if p == 1:
 	print("assemble reads2")
 	assemble_cmd = 'python PythonScript/assemble_reads.py -i ' + out + name + '_all.xmap' + ' -o ' + out + name + '_all'
 	os.system(assemble_cmd)
-	filter_partial_cmd = 'python PythonScript/filter_assembled_conitg_alignment.py -i ' + out + name + '_all_assembled.xmap ' + ' -o ' + out + name + '_final_alignment'
+	filter_partial_cmd = 'python PythonScript/filter_assembled_conitg_alignment.py -i ' + out + name + '_all_assembled.xmap ' + ' -o ' + out + name + '_final_alignment_untranslate'
 	os.system(filter_partial_cmd)
 	print("SV detect")
-	sv_detect_cmd = 'python3 PythonScript/SV_detection_contigs.py -i ' + out + name + '_final_alignment.xmap -l 1 -c ' + c + ' -r=' + args.ref+ ' -q ' + args.query +' -g '+gene_dir+ ' -o ' +out + 'SV.txt'
+	sv_detect_cmd = 'python3 PythonScript/SV_detection_contigs.py -i ' + out + name + '_final_alignment_untranslate.xmap -l 1 -c ' + c + ' -r=' + args.ref+ ' -q ' + args.query +' -g '+gene_dir+ ' -o ' +out + 'SV.txt'
 	os.system(sv_detect_cmd)
 	print("Indel detect")
-	indel_detect_cmd = 'python3 PythonScript/indel_detection_contigs.py -r ' + args.ref +' -g '+gene_dir+ ' -c ' + c + ' -m ' + args.query + ' -a ' + out + name + '_final_alignment.xmap -o ' + out + 'indel.txt'
+	indel_detect_cmd = 'python3 PythonScript/indel_detection_contigs.py -r ' + args.ref +' -g '+gene_dir+ ' -c ' + c + ' -m ' + args.query + ' -a ' + out + name + '_final_alignment_untranslate.xmap -o ' + out + 'indel.txt'
 	os.system(indel_detect_cmd)
+	translate_cmd = 'python3 PythonScript/translate.py -i '+ out + name + '_final_alignment_untranslate.xmap -o '+ out + name + '_final_alignment'
+	os.system(translate_cmd)
 	print('Done')
 if p==2:
 	fandom_cmd = './FaNDOM -t=' + args.thread + ' -r=' + args.ref + ' -q=' + args.query + ' -sname=' + out + args.name + ' -outfmt=xmap -penalty=6000 -dist_scale=1.28'
@@ -68,12 +70,14 @@ if p==2:
 	os.system(filter_partial_cmd)
 	os.chdir(out)
 	os.system(
-	    'cat '  + args.name + '_full.xmap ' + name + '_partial_filtered.xmap >' + name + '_final_alignment.xmap')
+	    'cat '  + args.name + '_full.xmap ' + name + '_partial_filtered.xmap >' + name + '_final_alignment_untranslate.xmap')
 	os.chdir( args.fandom)
-	sv_detect_cmd = 'python3 PythonScript/SV_detection_contigs.py -i ' + out + name + '_final_alignment.xmap -l 1 -c ' + c + ' -r ' + args.ref+ ' -q ' + args.query +' -g '+gene_dir+ ' -o ' +out + 'SV.txt'
+	sv_detect_cmd = 'python3 PythonScript/SV_detection_contigs.py -i ' + out + name + '_final_alignment_untranslate.xmap -l 1 -c ' + c + ' -r ' + args.ref+ ' -q ' + args.query +' -g '+gene_dir+ ' -o ' +out + 'SV.txt'
 	print("SV detect")
 	os.system(sv_detect_cmd)
 	print("Indel detect")
-	indel_detect_cmd = 'python3 PythonScript/indel_detection_contigs.py -r ' + args.ref + ' -g '+gene_dir+' -c ' + c + ' -m ' + args.query + ' -a ' + out + name + '_final_alignment.xmap -o ' + out + 'indel.txt'
+	indel_detect_cmd = 'python3 PythonScript/indel_detection_contigs.py -r ' + args.ref + ' -g '+gene_dir+' -c ' + c + ' -m ' + args.query + ' -a ' + out + name + '_final_alignment_untranslate.xmap -o ' + out + 'indel.txt'
 	os.system(indel_detect_cmd)
+	translate_cmd = 'python3 PythonScript/translate.py -i '+ out + name + '_final_alignment_untranslate.xmap -o '+ out + name + '_final_alignment'
+	os.system(translate_cmd)
 	print('Done')
