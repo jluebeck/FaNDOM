@@ -30,7 +30,7 @@ p = int(args.mode)
 if p == 1:
 	pre_proces_cmd = 'python PythonScript/preprocess2.py -q ' + args.query + ' -o ' + out + args.name + '_preprocess'
 	os.system(pre_proces_cmd)
-	fandom_cmd = './FaNDOM -t=' + args.thread + ' -r=' + args.ref + ' -q=' + out + args.name + '_preprocess.cmap' + ' -sname=' + out + args.name + ' -outfmt=xmap '
+	fandom_cmd = './FaNDOM -t=' + args.thread + ' -r=' + args.ref + ' -q=' + out + args.name + '_preprocess.cmap' + ' -sname=' + out + args.name + ' -outfmt=xmap -penalty=6000 -dist_scale=1.28'
 	os.system(fandom_cmd)
 	remove_part_cmd = 'python PythonScript/remove_part.py -p ' + out + args.name + '_partial.xmap -f ' + out + args.name + '.xmap -o ' + out + args.name + '_full'
 	os.system(remove_part_cmd)
@@ -60,7 +60,7 @@ if p == 1:
 	os.system(indel_detect_cmd)
 	print('Done')
 if p==2:
-	fandom_cmd = './FaNDOM -t=' + args.thread + ' -r=' + args.ref + ' -q=' + args.query + ' -sname=' + out + args.name + ' -outfmt=xmap '
+	fandom_cmd = './FaNDOM -t=' + args.thread + ' -r=' + args.ref + ' -q=' + args.query + ' -sname=' + out + args.name + ' -outfmt=xmap -penalty=6000 -dist_scale=1.28'
 	os.system(fandom_cmd)
 	remove_part_cmd = 'python PythonScript/remove_part.py -p ' + out + args.name + '_partial.xmap -f ' + out + args.name + '.xmap -o ' + out + args.name + '_full'
 	os.system(remove_part_cmd)

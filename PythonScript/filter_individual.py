@@ -5,7 +5,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--input", help="Input Xmap file", required=True)
 parser.add_argument("-o", "--output", help="Output Xmap file", required=True)
-parser.add_argument("-r", "--ref", help="Directory to Reference", required=False)
+#parser.add_argument("-r", "--ref", help="Directory to Reference", required=False)
 args = parser.parse_args()
 
 def nov_overlap(a1,a2,a3,a4):
@@ -22,7 +22,7 @@ def span_alignment(a1,a2,a3,a4):
     answer_div = float(span_area/(a4-a3))
     if answer_div >= 0.8:
         return answer_div
-    elif answer_div >= 0.6:
+    elif answer_div >= 0.5:
         if nov_overlap(a1,a2,a3,a4) >= minimum_nonoverlap_length:
             return 1
 
