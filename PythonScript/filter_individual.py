@@ -89,11 +89,9 @@ with open(args.output + '.xmap', 'w') as g:
             else:
                 g.write(line)
 
-    print('ali')
     for k in d.keys():
         d[k] = sorted(d[k], reverse=True)[:300]
 
-    print('reaz')
     for k in d.keys():
 
         # print(k)
@@ -117,7 +115,6 @@ with open(args.output + '.xmap', 'w') as g:
                                                                                                     deleted.append(a)
 
         d[k] = [x for x in d[k] if not x in deleted]
-    print('gooz')
     for k in d.keys():
         for a in d[k]:
             g.write(a[1])
