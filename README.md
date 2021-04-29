@@ -205,7 +205,7 @@ python SV_detection_contigs.py -i alignment.xmap -r hg19_DLE.cmap -g Gene_hg19.t
 
 ## `.fda` file format
 
-We define a file format for FaNDOM output, where each alignment entry contains four lines (as defined in the header):
+We define a file format for FaNDOM output, with a more informative CIGAR string than XMAP. Each alignment entry contains four lines (as defined in the header):
 
 ```
 #0      ref_id  mol_id  aln_direction   ref_start_pos   ref_end_pos     mol_start_pos   mol_end_pos     mol_length
