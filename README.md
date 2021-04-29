@@ -83,6 +83,26 @@ python PythonScript/wrapper_contigs.py -f $PWD -t 1 -r test_data/reference.cmap 
 
 ```
 This should run the SV pipeline for simple datasets and save the results in the `test_data/res` directory.
+
+## Wrapper for SV analysis of raw molecule data
+To run whole the pipeline for detecting SVs on raw molecules, use the python script in the "Pythonscript" folder, `wrapper_individual.py`. This wrapper needs near 100GB of RAM(depends on number of molecules) to call the SV_finder. 
+-  `-q` Path to Raw molecules file in '.cmap' or '.bnx' file format.
+-  `-r` Path to reference file. It should be in cmap format.
+-  `-f` Absolute path to folder that contains the FaNDOM executable.
+-  `-t` Number of threads.
+-  `-o` Path to a directory for saving all alignments and SV calls.
+-  `-n` Output filename of alignment files (appended to `-o`)
+-  `-c` Assemble of reference that is used. 19 for GRCh37 (or hg19) and 38 for GRCh38 (or hg38)
+-  `-m` minimum limit of molecule alignments to calling the structural variations(SV). 
+
+The output of this pipeline is in `-o`directory. It produced two folder named 'molecules' and 'alignments'. 'molecules' contains splited molecules and 'alignments' contains molecule alignments and SV. In the 'alignments' folder there is a file named 'final_alignment.xmap' contais all molecules alignments and  'SV.txt' Contains structural variants call. 
+An example command:
+
+```
+python PythonScript/wrapper_individual.py -f $PWD -t 10 -r referencehg38.cmap -q query.bnx -n test_molecules -o $PWD/output/ -c 38 -m 1
+
+```
+
 ## Python scripts
 The following scripts are used inside the SV wrapper - `wrapper_contigs.py`, and can be invoke separately if desired.
 #### `autorescale.py` script
