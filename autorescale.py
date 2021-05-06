@@ -53,7 +53,7 @@ parser.add_argument("-q", "--query", help="query directory", required=True)
 # Ref Dir
 parser.add_argument("-r", "--ref", help="reference directory", required=True)
 # Path to folder of FaNDOM
-# parser.add_argument("-f", "--fandom", help="FaNDOM directory", required=True)
+parser.add_argument("-f", "--fandom", help="FaNDOM directory", required=False)
 # Output Dir
 parser.add_argument("-o", "--output", help="Output directory", required=True)
 # Number of thread
@@ -61,7 +61,11 @@ parser.add_argument("-t", "--thread", help="Number of Thread", required=True)
 # Sample size
 parser.add_argument("-s", "--samplesize", help="Sample size for detecting rescale factor", required=False)
 args = parser.parse_args()
-
+fandom_dir_path = ''
+if args.fandom is not None :
+    fandom_dir_path = args.fandom
+    if fandom_dir_path[-1]!='/':
+        fandom_dir_path = fandom_dir_path + '/'
 if str(args.samplesize)!="None":
     sampleSize= int(args.samplesize)
 
@@ -113,7 +117,7 @@ for i in range(-4, 21):
                 else:
                     f.write(k + '\t'+str(length)+'\t'+str(number_label)+'\t'+str(index)+'\t1\t'+str(scaledSample[k][index])+'\t0.0\t1.0\t1.0\t17.0000\t0.0000\n')
     #Run Fandom on new resclaed molecules
-    os.system('./FaNDOM'+' -t='+args.thread+' -r='+args.ref+' -q='+output+'_a.cmap -sname='+output+'_test '+ '-outfmt=xmap -no_partial')
+    os.system(fandom_dir_path+'./FaNDOM'+' -t='+args.thread+' -r='+args.ref+' -q='+output+'_a.cmap -sname='+output+'_test '+ '-outfmt=xmap -no_partial')
     sum_score = 0
     #Sum scores of molecule
     with open(output+'_test.xmap','r') as f:
