@@ -109,7 +109,7 @@ The following scripts are used inside the SV wrapper - `wrapper_contigs.py`, and
 This script used for finding the best rescale factor for molecules. We highly recommend to use this script if you are using raw molecules.
 -  `-q` Path to molecules file. It can be bnx or cmap file.
 -  `-r` Path to reference file. It should be in cmap format.
--  `-f` Path to foldar that contains executable file of FaNDOM.
+-  `-f` Absolute Path to foldar that contains executable file of FaNDOM. Default value is current working directory.
 -  `-t` Number of threads.
 -  `-o` Path to a directory for saving the rescaled molecules file.
 -  `-s` Number of molecules to sample from. Default value is 500.
