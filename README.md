@@ -103,7 +103,7 @@ python PythonScript/wrapper_individual.py -f $PWD -t 10 -r referencehg38.cmap -q
 
 ```
 ## Video Tutorial 
-[![Everything Is AWESOME](https://imgur.com/nHIZTjy)](https://www.youtube.com/watch?v=T8Pasp3Aa9M"Everything Is AWESOME")
+<iframe width="560" height="315" src="https://www.youtube.com/embed/T8Pasp3Aa9M" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## Python scripts
 The following scripts are used inside the SV wrapper - `wrapper_contigs.py`, and can be invoke separately if desired.
