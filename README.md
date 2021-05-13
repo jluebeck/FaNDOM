@@ -103,7 +103,7 @@ python PythonScript/wrapper_individual.py -f $PWD -t 10 -r referencehg38.cmap -q
 
 ```
 ## Video Tutorial 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/T8Pasp3Aa9M" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+[![FaNDOM](https://i.imgur.com/nHIZTjy.png)](https://www.youtube.com/watch?v=T8Pasp3Aa9M "FaNDOM")
 
 ## Python scripts
 The following scripts are used inside the SV wrapper - `wrapper_contigs.py`, and can be invoke separately if desired.
