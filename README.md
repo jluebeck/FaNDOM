@@ -102,6 +102,8 @@ An example command:
 python PythonScript/wrapper_individual.py -f $PWD -t 10 -r referencehg38.cmap -q query.bnx -n test_molecules -o $PWD/output/ -c 38 -m 1
 
 ```
+## Video Tutorial 
+[![Everything Is AWESOME](https://imgur.com/nHIZTjy)](https://www.youtube.com/watch?v=T8Pasp3Aa9M"Everything Is AWESOME")
 
 ## Python scripts
 The following scripts are used inside the SV wrapper - `wrapper_contigs.py`, and can be invoke separately if desired.
