@@ -107,6 +107,14 @@ python PythonScript/wrapper_individual.py -f $PWD -t 10 -r referencehg38.cmap -q
 
 ## Python scripts
 The following scripts are used inside the SV wrapper - `wrapper_contigs.py`, and can be invoke separately if desired.
+#### `Preprocess_reference.py` script
+This script used for creating processed reference genome for FaNDOM. We highly recommend that if you want to use FaNDOM with non-human reference genome preprocessed your reference genome with this script. It merged close labels with each other.
+-  `-i` Path to input reference genome file in cmap format.
+-  `-o` Path to directory for saving processed reference in cmap format.
+As an example:
+```
+python3.5 Preprocess_reference.py -i input.cmap -o output.cmap
+```
 #### `autorescale.py` script
 This script used for finding the best rescale factor for molecules. We highly recommend to use this script if you are using raw molecules.
 -  `-q` Path to molecules file. It can be bnx or cmap file.
