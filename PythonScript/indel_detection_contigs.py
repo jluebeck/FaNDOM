@@ -317,7 +317,7 @@ def detect_indel_discordant(id_to_partial_alignment):
 
 def cluster_reads():
     with open(args.output, 'w')as file:
-        file.write("#Type\tChromosome\tRefStartPos\tRefEndPos\tPredictedSize\tSupportsId\tSupportsCount\n")
+        file.write("#Header\tType\tChromosome\tRefStartPos\tRefEndPos\tPredictedSize\tSupportsId\tSupportsCount\tGenes\n")
         id_to_partial_alignment = {}
         id_to_partial_alignment = defaultdict(lambda: defaultdict(list), id_to_partial_alignment)
         for line_t in lines_to_write:
