@@ -50,8 +50,8 @@ for key in contigs:
     for key2 in contigs[key]:
         contigs[key][key2] = list(set(contigs[key][key2]))
 
-with open(alignment_dir+'/data2.json', 'w') as fp:
-    json.dump(contigs, fp)
+# with open(alignment_dir+'/data2.json', 'w') as fp:
+#     json.dump(contigs, fp)
 ###########################################################################################
 ref_cov = {}
 ref_cov = defaultdict(lambda: {}, ref_cov)
