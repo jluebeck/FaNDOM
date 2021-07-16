@@ -10,6 +10,12 @@ parser.add_argument("-c", "--chrom", help="Chromosome Version", required=True)
 parser.add_argument("-g", "--gene", help="Gene Coodinates Dir", required=False)
 args = parser.parse_args()
 
+contig_id_map = {1: 1, 12: 2, 16: 3, 17: 4, 18: 5, 19: 6, 20: 7, 21: 8, 22: 9, 2: 10, 3: 11, 4: 12, 5: 13, 6: 14,
+                 7: 15,
+                 8: 16, 9: 17, 10: 18, 11: 19, 13: 20, 14: 21, 15: 22, 24: 23, 25: 24}
+rev_contig = {}  # exactly reverse of contig_id_map
+for chromosome in contig_id_map:
+    rev_contig[contig_id_map[chromosome]] = chromosome
 
 
 def parse_cmap(cmapf, keep_length=True):
@@ -52,6 +58,8 @@ def calculate_chr(ref_dir):
 chr_len = calculate_chr(args.ref)
 if args.chrom == 'nh':
     contig_id_map = {i:i for i in chr_len.keys()}
+    rev_contig = {i:i for i in chr_len.keys()}
+    
 # HG19
 # else:
 #     chr_len = {1: 249250621.0, 10: 135534747.0, 11: 135006516.0, 12: 133851895.0, 13: 115169878.0, 14: 107349540.0,
