@@ -16,6 +16,8 @@ gene_dir =''
 if args.chrom == '38':
     c = 'hg38'
     gene_dir = args.fandom+'/reference_genomes/Gene_hg38.txt '
+elif args.chrom == 'nh':
+	c = 'nh'
 else:
     c = 'hg19'
     gene_dir = args.fandom+'/reference_genomes/Gene_hg19.txt '
@@ -54,9 +56,13 @@ if p == 1:
 	os.system(filter_partial_cmd)
 	print("SV detect")
 	sv_detect_cmd = 'python3 PythonScript/SV_detection_contigs.py -i ' + out + name + '_final_alignment_untranslate.xmap -l 1 -c ' + c + ' -r=' + args.ref+ ' -q ' + args.query +' -g '+gene_dir+ ' -o ' +out + 'SV.txt'
+	if c=='nh':
+		sv_detect_cmd = 'python3 PythonScript/SV_detection_contigs.py -i ' + out + name + '_final_alignment_untranslate.xmap -l 1 -c ' + c + ' -r=' + args.ref+ ' -q ' + args.query + ' -o ' +out + 'SV.txt'
 	os.system(sv_detect_cmd)
 	print("Indel detect")
 	indel_detect_cmd = 'python3 PythonScript/indel_detection_contigs.py -r ' + args.ref +' -g '+gene_dir+ ' -c ' + c + ' -m ' + args.query + ' -a ' + out + name + '_final_alignment_untranslate.xmap -o ' + out + 'indel.txt'
+	if c=='nh':
+		indel_detect_cmd = 'python3 PythonScript/indel_detection_contigs.py -r ' + args.ref +' -c ' + c + ' -m ' + args.query + ' -a ' + out + name + '_final_alignment_untranslate.xmap -o ' + out + 'indel.txt'	
 	os.system(indel_detect_cmd)
 	translate_cmd = 'python3 PythonScript/translate.py -i '+ out + name + '_final_alignment_untranslate.xmap -o '+ out + name + '_final_alignment'
 	os.system(translate_cmd)
@@ -73,10 +79,14 @@ if p==2:
 	    'cat '  + args.name + '_full.xmap ' + name + '_partial_filtered.xmap >' + name + '_final_alignment_untranslate.xmap')
 	os.chdir( args.fandom)
 	sv_detect_cmd = 'python3 PythonScript/SV_detection_contigs.py -i ' + out + name + '_final_alignment_untranslate.xmap -l 1 -c ' + c + ' -r ' + args.ref+ ' -q ' + args.query +' -g '+gene_dir+ ' -o ' +out + 'SV.txt'
+	if c=='nh':
+		sv_detect_cmd = 'python3 PythonScript/SV_detection_contigs.py -i ' + out + name + '_final_alignment_untranslate.xmap -l 1 -c ' + c + ' -r ' + args.ref+ ' -q ' + args.query+ ' -o ' +out + 'SV.txt'
 	print("SV detect")
 	os.system(sv_detect_cmd)
 	print("Indel detect")
 	indel_detect_cmd = 'python3 PythonScript/indel_detection_contigs.py -r ' + args.ref + ' -g '+gene_dir+' -c ' + c + ' -m ' + args.query + ' -a ' + out + name + '_final_alignment_untranslate.xmap -o ' + out + 'indel.txt'
+	if c=='nh':
+		indel_detect_cmd = 'python3 PythonScript/indel_detection_contigs.py -r ' + args.ref +' -c ' + c + ' -m ' + args.query + ' -a ' + out + name + '_final_alignment_untranslate.xmap -o ' + out + 'indel.txt'
 	os.system(indel_detect_cmd)
 	translate_cmd = 'python3 PythonScript/translate.py -i '+ out + name + '_final_alignment_untranslate.xmap -o '+ out + name + '_final_alignment'
 	os.system(translate_cmd)
