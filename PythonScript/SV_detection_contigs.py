@@ -17,6 +17,27 @@ contig_id_map = {1: 1, 12: 2, 16: 3, 17: 4, 18: 5, 19: 6, 20: 7, 21: 8, 22: 9, 2
                  8: 16, 9: 17, 10: 18, 11: 19, 13: 20, 14: 21, 15: 22, 24: 23, 25: 24}
 limit = int(args.limit)
 
+def parse_cmap(cmapf, keep_length=True):
+    cmaps = {}
+    with open(cmapf) as infile:
+        for line in infile:
+            if line.startswith("#h"):
+                head = line.rstrip().rsplit()[1:]
+            elif not line.startswith("#"):
+                fields = line.rstrip().rsplit()
+                fD = dict(zip(head, fields))
+                if fD["CMapId"] not in cmaps:
+                    cmaps[fD["CMapId"]] = {}
+                    # contigCovs[fD["CMapId"]] = {}
+
+                # this is not a good way to parse label channel means color channel
+                if fD["LabelChannel"] == "1":
+                    cmaps[fD["CMapId"]][int(fD["SiteID"])] = float(fD["Position"])
+                    # contigCovs[fD["CMapId"]][int(fD["SiteID"])] = float(fD["Coverage"])
+
+                elif fD["LabelChannel"] == "0" and keep_length:
+                    cmaps[fD["CMapId"]][int(fD["SiteID"])] = float(fD["Position"])
+    return cmaps
 
 def calculate_chr(ref_dir):
     ans = {}
@@ -58,30 +79,6 @@ class Alignment:
     direction = ''
     align_end_ref = 0
     id = 0
-
-
-def parse_cmap(cmapf, keep_length=True):
-    cmaps = {}
-    with open(cmapf) as infile:
-        for line in infile:
-            if line.startswith("#h"):
-                head = line.rstrip().rsplit()[1:]
-            elif not line.startswith("#"):
-                fields = line.rstrip().rsplit()
-                fD = dict(zip(head, fields))
-                if fD["CMapId"] not in cmaps:
-                    cmaps[fD["CMapId"]] = {}
-                    # contigCovs[fD["CMapId"]] = {}
-
-                # this is not a good way to parse label channel means color channel
-                if fD["LabelChannel"] == "1":
-                    cmaps[fD["CMapId"]][int(fD["SiteID"])] = float(fD["Position"])
-                    # contigCovs[fD["CMapId"]][int(fD["SiteID"])] = float(fD["Coverage"])
-
-                elif fD["LabelChannel"] == "0" and keep_length:
-                    cmaps[fD["CMapId"]][int(fD["SiteID"])] = float(fD["Position"])
-    return cmaps
-
 
 def parse_xmap(xmap_dir):  # generate dictionary from each molecile id to all alignments
     d = {}
