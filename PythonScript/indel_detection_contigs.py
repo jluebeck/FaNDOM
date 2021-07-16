@@ -12,6 +12,28 @@ args = parser.parse_args()
 
 
 
+def parse_cmap(cmapf, keep_length=True):
+    cmaps = {}
+    with open(cmapf) as infile:
+        for line in infile:
+            if line.startswith("#h"):
+                head = line.rstrip().rsplit()[1:]
+            elif not line.startswith("#"):
+                fields = line.rstrip().rsplit()
+                fD = dict(zip(head, fields))
+                if fD["CMapId"] not in cmaps:
+                    cmaps[fD["CMapId"]] = {}
+                # contigCovs[fD["CMapId"]] = {}
+
+                # this is not a good way to parse label channel means color channel
+                if fD["LabelChannel"] == "1":
+                    cmaps[fD["CMapId"]][int(fD["SiteID"])] = float(fD["Position"])
+                # contigCovs[fD["CMapId"]][int(fD["SiteID"])] = float(fD["Coverage"])
+
+                elif fD["LabelChannel"] == "0" and keep_length:
+                    cmaps[fD["CMapId"]][int(fD["SiteID"])] = float(fD["Position"])
+    return cmaps
+
 def calculate_chr(ref_dir):
     ans = {}
     ref = parse_cmap(ref_dir)
@@ -40,28 +62,6 @@ if args.chrom == 'nh':
 
 scale = 50000
 
-
-def parse_cmap(cmapf, keep_length=True):
-    cmaps = {}
-    with open(cmapf) as infile:
-        for line in infile:
-            if line.startswith("#h"):
-                head = line.rstrip().rsplit()[1:]
-            elif not line.startswith("#"):
-                fields = line.rstrip().rsplit()
-                fD = dict(zip(head, fields))
-                if fD["CMapId"] not in cmaps:
-                    cmaps[fD["CMapId"]] = {}
-                # contigCovs[fD["CMapId"]] = {}
-
-                # this is not a good way to parse label channel means color channel
-                if fD["LabelChannel"] == "1":
-                    cmaps[fD["CMapId"]][int(fD["SiteID"])] = float(fD["Position"])
-                # contigCovs[fD["CMapId"]][int(fD["SiteID"])] = float(fD["Coverage"])
-
-                elif fD["LabelChannel"] == "0" and keep_length:
-                    cmaps[fD["CMapId"]][int(fD["SiteID"])] = float(fD["Position"])
-    return cmaps
 
 
 def parse_fda(fdaF):
