@@ -16,19 +16,6 @@ contig_id_map = {1: 1, 12: 2, 16: 3, 17: 4, 18: 5, 19: 6, 20: 7, 21: 8, 22: 9, 2
 rev_contig = {}  # exactly reverse of contig_id_map
 for chromosome in contig_id_map:
     rev_contig[contig_id_map[chromosome]] = chromosome
-# HG38
-if args.chrom == '38':
-    chr_len = {1: 248956422.0, 10: 133797422.0, 11: 135086622.0, 12: 133275309.0, 13: 114364328.0, 14: 107043718.0,
-               15: 101991189.0, 16: 90338345.0, 17: 83257441.0, 18: 80373285.0, 19: 58617616.0, 2: 242193529.0,
-               20: 64444167.0, 21: 46709983.0, 22: 50818468.0, 3: 198295559.0, 4: 190214555.0, 5: 181538259.0,
-               6: 170805979.0, 7: 159345973.0, 8: 145138636.0, 9: 138394717.0, 23: 156040895.0, 24: 57227415.0}
-# HG19
-else:
-    chr_len = {1: 249250621.0, 10: 135534747.0, 11: 135006516.0, 12: 133851895.0, 13: 115169878.0, 14: 107349540.0,
-               15: 102531392.0, 16: 90354753.0, 17: 81195210.0, 18: 78077248.0, 19: 59128983.0, 2: 243199373.0,
-               20: 63025520.0, 21: 48129895.0, 22: 51304566.0, 3: 198022430.0, 4: 191154276.0, 5: 180915260.0,
-               6: 171115067.0, 7: 159138663.0, 8: 146364022.0, 9: 141213431.0, 23: 155270560.0, 24: 59373566.0}
-scale = 50000
 
 
 def parse_cmap(cmapf, keep_length=True):
@@ -52,6 +39,37 @@ def parse_cmap(cmapf, keep_length=True):
                 elif fD["LabelChannel"] == "0" and keep_length:
                     cmaps[fD["CMapId"]][int(fD["SiteID"])] = float(fD["Position"])
     return cmaps
+
+def calculate_chr(ref_dir):
+    ans = {}
+    ref = parse_cmap(ref_dir)
+    for k in ref:
+        ans[int(k)] = float(list(ref[k].values())[-1])
+    return ans
+
+
+##### develope code for it
+# if args.chrom == 'hg38':
+#     # HG38
+#     chr_len = {1: 248956422.0, 10: 133797422.0, 11: 135086622.0, 12: 133275309.0, 13: 114364328.0, 14: 107043718.0,
+#                15: 101991189.0, 16: 90338345.0, 17: 83257441.0, 18: 80373285.0, 19: 58617616.0, 2: 242193529.0,
+#                20: 64444167.0, 21: 46709983.0, 22: 50818468.0, 3: 198295559.0, 4: 190214555.0, 5: 181538259.0,
+#                6: 170805979.0, 7: 159345973.0, 8: 145138636.0, 9: 138394717.0, 23: 156040895.0, 24: 57227415.0}
+chr_len = calculate_chr(args.ref)
+if args.chrom == 'nh':
+    contig_id_map = {i:i for i in chr_len.keys()}
+    rev_contig = {i:i for i in chr_len.keys()}
+    
+# HG19
+# else:
+#     chr_len = {1: 249250621.0, 10: 135534747.0, 11: 135006516.0, 12: 133851895.0, 13: 115169878.0, 14: 107349540.0,
+#                15: 102531392.0, 16: 90354753.0, 17: 81195210.0, 18: 78077248.0, 19: 59128983.0, 2: 243199373.0,
+#                20: 63025520.0, 21: 48129895.0, 22: 51304566.0, 3: 198022430.0, 4: 191154276.0, 5: 180915260.0,
+#                6: 171115067.0, 7: 159138663.0, 8: 146364022.0, 9: 141213431.0, 23: 155270560.0, 24: 59373566.0}
+
+
+scale = 50000
+
 
 
 def parse_fda(fdaF):
@@ -382,8 +400,11 @@ if __name__ == '__main__':
         mol = parse_cmap(mol)
     elif mol.endswith('.bnx'):
         mol = parse_bnx(mol)
-    genes = parse_gene(args.gene)
-
+    if args.chrom == 'nh':
+      genes = {}
+      genes = defaultdict(lambda: [], genes)
+    else:
+      genes = parse_gene(args.gene)
     svs = cluster_alignments()
     lines_to_write = []
     lines_to_write = indel_detect_concordant_alignment(lines_to_write)

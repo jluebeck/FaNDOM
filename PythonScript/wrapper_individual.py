@@ -16,6 +16,8 @@ gene_dir =''
 if args.chrom == '38':
     c = 'hg38'
     gene_dir = args.fandom+'/reference_genomes/Gene_hg38.txt '
+elif args.chrom == 'nh':
+	c = 'nh'
 else:
     c = 'hg19'
     gene_dir = args.fandom+'/reference_genomes/Gene_hg19.txt '
@@ -56,6 +58,8 @@ filter_partial_cmd = 'python PythonScript/filter_individual.py -i ' + out + 'ali
 os.system(filter_partial_cmd)
 print('SV detection')
 sv_detect_cmd = 'python3 PythonScript/SV_detection_individual.py -i ' + out + 'alignments/final_alignment_untranslate.xmap -l '+minimum_support +' -c ' + c + ' -r=' + args.ref+ ' -q ' + args.query +' -g '+gene_dir+ ' -o ' +out + 'alignments/SV.txt'
+if c=='nh':
+	sv_detect_cmd = 'python3 PythonScript/SV_detection_individual.py -i ' + out + 'alignments/final_alignment_untranslate.xmap -l '+minimum_support +' -c ' + c + ' -r=' + args.ref+ ' -q ' + args.query + ' -o ' +out + 'alignments/SV.txt'
 os.system(sv_detect_cmd)
 translate_cmd = 'python3 PythonScript/translate.py -i '+ out+'alignments/final_alignment_untranslate.xmap -o '+ out +'alignments/final_alignment'
 os.system(translate_cmd)
