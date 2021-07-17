@@ -442,7 +442,11 @@ if __name__ == '__main__':
                     if not res:
                         sv_finder(q, p, k)
     scale = 30000
-    genes = parse_gene(args.gene)
+    if args.chrom == 'nh':
+      genes = {}
+      genes = defaultdict(lambda: [], genes)
+    else:
+      genes = parse_gene(args.gene)
     gene_interupt_neighbour = 20000
 
     duplications.sort()
