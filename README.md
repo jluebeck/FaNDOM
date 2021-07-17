@@ -72,7 +72,7 @@ To run the pipeline for detecting SVs on assembled contigs, use the python scrip
 -  `-t` Number of threads.
 -  `-o` Path to a directory for saving all alignments and SV calls.
 -  `-n` Output filename of alignment files (appended to `-o`)
--  `-c [19 or 38 or nh]` Assemble of reference that is used. `19` for GRCh37 (hg19) and `38` for GRCh38 (hg38) and 'nh' for none human reference genomes
+-  `-c [19 or 38 or nh]` Assemble of reference that is used. `19` for GRCh37 (hg19) and `38` for GRCh38 (hg38) and 'nh' for non-human reference genomes
 -  `-m [1 or 2]` If you are aligning contigs having more than 300 labels, use mode `1` to preprocess input data and generate shorter contigs, otherwise use mode `2`. 
 
 **Output files from this process**: The output of this pipeline is stored in the `-o` directory. 'SV.txt' Contains the structural variant calls, 'indel.txt' contains indel calls and alignment file ending with 'final_alignment.xmap' contains final alignment file. 
@@ -92,7 +92,7 @@ To run whole the pipeline for detecting SVs on raw molecules, use the python scr
 -  `-t` Number of threads.
 -  `-o` Path to a directory for saving all alignments and SV calls.
 -  `-n` Output filename of alignment files (appended to `-o`)
--  `-c [19 or 38 or nh]` Assemble of reference that is used. `19` for GRCh37 (hg19) and `38` for GRCh38 (hg38) and 'nh' for none human reference genomes
+-  `-c [19 or 38 or nh]` Assemble of reference that is used. `19` for GRCh37 (hg19) and `38` for GRCh38 (hg38) and 'nh' for non-human reference genomes
 -  `-m` minimum support of molecule alignments to calling the SVs. 
 
 **Output files from this process**: The output of this pipeline is stored in the in `-o` directory. It produces two folders named 'molecules' and 'alignments'. 'molecules' contains split molecules and 'alignments' contains molecule alignments and SVs. In the 'alignments' folder there is a file named 'final_alignment.xmap' containing all molecule alignments. 'SV.txt' contains the structural variants call. 
@@ -183,7 +183,7 @@ This script is used for finding indels in assembled contigs alignment files.
 -  `-a` Path to alignments file in xmap format.
 -  `-o` Output directory for indel finding
 -  `-m` Path to query file in bnx or cmap file format.
--  `-c` Assemble of reference that is used. 19 for GRCh37(hg19) and 38 for GRCh38(hg38) and 'nh' for none human references
+-  `-c` Assemble of reference that is used. 19 for GRCh37(hg19) and 38 for GRCh38(hg38) and 'nh' for non-human references
 -  `-g` Gene coordinate directory for human genome
 ```
 python indel_detection_contigs.py -r hg19_DLE.cmap -g Gene_hg19.txt -a Fandom.xmap -o res/indel -c 19 -m query/query.contigs
@@ -194,7 +194,7 @@ This script is used for finding indels in raw molecule alignment files.
 -  `-a` Path to alignments file in xmap format.
 -  `-o` Output directory for indel finding
 -  `-m` Path to query file in bnx or cmap file format.
--  `-c` Assemble of reference that is used. 19 for GRCh37(hg19) and 38 for GRCh38(hg38) and 'nh' for none human references
+-  `-c` Assemble of reference that is used. 19 for GRCh37(hg19) and 38 for GRCh38(hg38) and 'nh' for non-human references
 ```
 python indel_detection_individual.py -r hg19_DLE.cmap -a Fandom.xmap -o res/indel -c 19 -m query/query_contigs.cmap
 ```
@@ -204,7 +204,7 @@ This script used for detecting potential integration points.
 -  `-i` Path to alignment file.
 -  `-l` Minimum number molecules to support a integration point. Our suggestion for contigs is 1.
 -  `-o` Output directory for list of integration points.
--  `-c` Assemble of reference that is used. 19 for GRCh37(hg19) and 38 for GRCh38(hg38) and 'nh' for nonhuman references
+-  `-c` Assemble of reference that is used. 19 for GRCh37(hg19) and 38 for GRCh38(hg38) and 'nh' for non-human references
 -  `-q` Path to query file in cmap file format.
 -  `-r` Path to reference file. It should be in cmap format.
 -  `-g` Gene coordinate directory for human genome
