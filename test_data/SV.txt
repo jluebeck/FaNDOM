@@ -1,0 +1,7 @@
+#Header	Chrom1	RefPos1	Direction1	Chrom2	RefPos2	Directio2	Type	Ids	NumSupports	GeneInterupt	GeneFusion
+1	12945000	-	1	13665000	+	Unknown	482	1		False
+1	12975000	-	1	13605000	+	Unknown	482	1		False
+1	12932320.0	+	1	13041921.0	-	duplication_inverted	482	1		False
+1	16919146.0	+	1	16979797.0	-	duplication_inverted	482	1		False
+1	13108934.0	+	1	13216784.0	-	inversion	482	1		False
+1	13325297.0	-	1	13550802.0	+	inversion	482	1		False
