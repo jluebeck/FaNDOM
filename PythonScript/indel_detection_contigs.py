@@ -400,8 +400,11 @@ if __name__ == '__main__':
         mol = parse_cmap(mol)
     elif mol.endswith('.bnx'):
         mol = parse_bnx(mol)
-    genes = parse_gene(args.gene)
-
+    if args.chrom == 'nh':
+      genes = {}
+      genes = defaultdict(lambda: [], genes)
+    else:
+      genes = parse_gene(args.gene)
     svs = cluster_alignments()
     lines_to_write = []
     lines_to_write = indel_detect_concordant_alignment(lines_to_write)
