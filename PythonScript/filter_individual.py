@@ -1,5 +1,5 @@
 from collections import defaultdict
-from scipy.stats import entropy
+# from scipy.stats import entropy
 import argparse
 
 parser = argparse.ArgumentParser()
