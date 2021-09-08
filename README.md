@@ -22,6 +22,9 @@ git clone https://github.com/jluebeck/FaNDOM
 cd FaNDOM
 cmake CMakeLists.txt && make 
 ```
+### Requirements:
+Fandom required `python3` and `numpy` package.
+
 
 ## Usage
 
@@ -212,6 +215,29 @@ As an example:
 ```
 python SV_detection_contigs.py -i alignment.xmap -r hg19_DLE.cmap -g Gene_hg19.txt -l 1 -o SV.txt -q query/query_contigs.cmap -c 19
 ```
+## Mask out low complexity regions in custome reference genome:
+
+After running `Preprocess_reference.py` script, for masking out low complexity regions, please do as follows:
+
+There is a built-in tool in RefAligner which you can use it as follows:
+
+```
+RefAligner -i refrence_genome.cmap -o filtered_reference_genome -simpleRepeatStandalone -simpleRepeatTolerance 0.1 -simpleRepeatMinEle 5 -simpleRepeatFilter 3
+```
+
+where these parameters are used for:
+Parameters:
+
+-  `-i`: input molecule file (*.bnx).
+-  `-o`: use specified prefix name for all output files. 
+-  `-simpleRepeatStandalone`: enable simple repeat detection in RefAligner.  
+-  `-simpleRepeatTolerance <X>`: how much length difference (in percentage) adjacent intervals can be tolerated, so they are considered part of the same repeat array [Default: 0.1] (i.e. 10%).
+-  `-simpleRepeatMinEle` <X>: minimum number of repeat elements required [Default: 5].
+-  `-simpleRepeatFilter <0,1,2,3>`: if non-zero, it will output filtered molecules in the output .bnx file [Default: 0].
+0 = disable repeat filter and does NOT generate a filtered molecule bnx file.
+1 = output molecules which do not contain any detected repeats (*_nonrepeat.bnx).
+2 = output molecules which contain detected repeats (*_repeat.bnx).
+3 = output all molecules but with all repeats masked (i.e. labels removed). (*_repeatmask.bnx)
 
 ## `.fda` file format
 
@@ -232,4 +258,3 @@ The `cigar` field specifies a list of tuples (tagged by the number in the alignm
 - `delta_mol`: Distance in bp between this molecule label in the alignment and the molecule label in the alignment for the previous tuple. 
 - `mol_label_diff`: Number of molecule labels between this cigar tuple and previous cigar tuple - 1 (number of skipped molecule labels).
 - `delta_difference`: `delta_mol - delta_ref`.
-
