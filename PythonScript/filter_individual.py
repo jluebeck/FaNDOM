@@ -25,6 +25,7 @@ def span_alignment(a1,a2,a3,a4):
     elif answer_div >= 0.5:
         if nov_overlap(a1,a2,a3,a4) >= minimum_nonoverlap_length:
             return 1
+    retrun 0 
 
 # d = {}
 # d = defaultdict(lambda: [], d)
