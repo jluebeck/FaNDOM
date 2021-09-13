@@ -97,7 +97,7 @@ To run whole the pipeline for detecting SVs on raw molecules, use the python scr
 -  `-n` Output filename of alignment files (appended to `-o`)
 -  `-c [19 or 38 or nh]` Assemble of reference that is used. `19` for GRCh37 (hg19) and `38` for GRCh38 (hg38) and 'nh' for non-human reference genomes
 -  `-m` minimum support of molecule alignments to calling the SVs. 
--  `--norescale` Use this flag for bypassing scale ditection. Our recommendation is use this flag when you have less than 250 molecules or you are confident with you molecules length, otherwise do not use this flag.
+-  `--norescale` Use this flag for bypassing scale detection. Our recommendation is use this flag when you have less than 250 molecules or you are confident with you molecules length, otherwise do not use this flag.
 
 **Output files from this process**: The output of this pipeline is stored in the in `-o` directory. It produces two folders named 'molecules' and 'alignments'. 'molecules' contains split molecules and 'alignments' contains molecule alignments and SVs. In the 'alignments' folder there is a file named 'final_alignment.xmap' containing all molecule alignments. 'SV.txt' contains the structural variants call. 
 An example command:
