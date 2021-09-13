@@ -10,6 +10,7 @@ parser.add_argument("-n", "--name", help="Name", required=True)
 parser.add_argument("-o", "--output", help="Output_dir", required=True)
 parser.add_argument("-c", "--chrom", help="Output_dir", required=True)
 parser.add_argument("-m", "--minimum", help="Minimum Number of support", required=True)
+parser.add_argument("--norescale", action="store_false",help="use if you want to bypass scale detection")
 args = parser.parse_args()
 c = 'hg19'
 gene_dir =''
@@ -41,7 +42,10 @@ print('Doing alignments')
 for f in files:
 	if f.startswith(name) and f.endswith('.bnx'):
 		name_alignment = f[:-4]
-		fandom_cmd = './FaNDOM -t=' + args.thread + ' -r=' + args.ref + ' -q=' + out + 'molecules/'+f + ' -sname=' + out + 'alignments/'+name_alignment +'_alignment'+ ' -outfmt=xmap -rescale'
+		if args.norescale :
+			fandom_cmd = './FaNDOM -t=' + args.thread + ' -r=' + args.ref + ' -q=' + out + 'molecules/'+f + ' -sname=' + out + 'alignments/'+name_alignment +'_alignment'+ ' -outfmt=xmap'
+		else:
+			fandom_cmd = './FaNDOM -t=' + args.thread + ' -r=' + args.ref + ' -q=' + out + 'molecules/'+f + ' -sname=' + out + 'alignments/'+name_alignment +'_alignment'+ ' -outfmt=xmap -rescale'
 		os.system(fandom_cmd)
 os.chdir(out+'alignments')
 os.system('cat *_partial.xmap > p.xmap')
