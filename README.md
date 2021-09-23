@@ -263,10 +263,10 @@ The `cigar` field specifies a list of tuples (tagged by the number in the alignm
   FaNDOM reported detected structural variations in a specific format in 'SV.txt' file as follows:
   Each structural variation contain to breakpoints that are connected to eahc other.
   - `Chrom1`: Chromosome of breakpoint1
-  - `RefPos1`: Position of breakpoint1 on Reference genome. FaNDOM cluster all breakpoints in window of 30Kbp and assume midle of window as reference position. Hence, the actual break point can be in this interval: [RefPos1 - 15Kbp, RefPos1 + 15Kbp]
+  - `RefPos1`: Position of breakpoint1 on Reference genome. FaNDOM cluster all breakpoints in window of 30Kbp and assume midle of window as reference position. Hence, the actual break point can be in this interval: '[RefPos1 - 15Kbp, RefPos1 + 15Kbp]'
   - `Direction1`: Direction of alignment that ending in breakpoint1. If it is '+', means that alignment is in forward direction and if it is '-' alignment is in reverse direction.
   - `Chrom2`: Chromosome of breakpoint2
-  - `RefPos2`: Position of breakpoint2 on Reference genome. FaNDOM cluster all breakpoints in window of 30Kbp and assume midle of window as reference position. Hence, the actual break point can be in this interval: [RefPos2 - 15Kbp, RefPos2 + 15Kbp]
+  - `RefPos2`: Position of breakpoint2 on Reference genome. FaNDOM cluster all breakpoints in window of 30Kbp and assume midle of window as reference position. Hence, the actual break point can be in this interval: '[RefPos2 - 15Kbp, RefPos2 + 15Kbp]'
   - `Direction2`: Direction of alignment that ending in breakpoint2. If it is '+', means that alignment is in forward direction and if it is '-' alignment is in reverse direction.
   - `Type`: Type of the structural variation. If it is 'Unknown', it can be inter/intra chromosomal translocation or any other type of breakpoints that Fandom is not able to classify. 
 - `Ids`: IDs of contigs/molecules that support this SV.
