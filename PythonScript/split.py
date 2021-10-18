@@ -53,7 +53,7 @@ elif input_dir.endswith('cmap'):
                 print_line = print_line + line
                 
         # print(header)
-        with open(output_dir + '/' + name + '_' + str(counter) + '.bnx', 'w')as g:
+        with open(output_dir + '/' + name + '_' + str(counter) + '.cmap', 'w')as g:
             g.write(header)
             g.write(print_line)    
 
