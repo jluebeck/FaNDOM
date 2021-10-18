@@ -40,7 +40,7 @@ files = os.listdir(out+ 'molecules/')
 # print(files)
 print('Doing alignments')
 for f in files:
-	if f.startswith(name) and f.endswith('.bnx'):
+	if f.startswith(name) and (f.endswith('.bnx') or f.endswith('.cmap')) :
 		name_alignment = f[:-4]
 		if args.norescale :
 			fandom_cmd = './FaNDOM -t=' + args.thread + ' -r=' + args.ref + ' -q=' + out + 'molecules/'+f + ' -sname=' + out + 'alignments/'+name_alignment +'_alignment'+ ' -outfmt=xmap'
