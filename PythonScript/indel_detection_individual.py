@@ -85,6 +85,12 @@ def parse_xmap(xmapf):
 
     return xmapPair
 
+def calculate_chr(ref_dir):
+    ans = {}
+    ref = parse_cmap(ref_dir)
+    for k in ref:
+        ans[int(k)] = float(list(ref[k].values())[-1])
+    return ans
 
 
 import argparse
@@ -115,6 +121,10 @@ elif mol.endswith('.bnx'):
 # HG38
 if args.chrom == '38':
     chr_len = {1: 248956422.0, 10: 133797422.0, 11: 135086622.0, 12: 133275309.0, 13: 114364328.0, 14: 107043718.0, 15: 101991189.0, 16: 90338345.0, 17: 83257441.0, 18: 80373285.0, 19: 58617616.0, 2: 242193529.0, 20: 64444167.0, 21: 46709983.0, 22: 50818468.0, 3: 198295559.0, 4: 190214555.0, 5: 181538259.0, 6: 170805979.0, 7: 159345973.0, 8: 145138636.0, 9: 138394717.0, 23: 156040895.0, 24: 57227415.0}
+elif args.chrom == 'nh':
+    chr_len = calculate_chr(args.ref)
+    contig_id_map = {i:i for i in chr_len.keys()}
+    rev_contig = {i:i for i in chr_len.keys()}
 # HG19
 else:
     chr_len = {1: 249250621.0, 10: 135534747.0, 11: 135006516.0, 12: 133851895.0, 13: 115169878.0, 14: 107349540.0,
