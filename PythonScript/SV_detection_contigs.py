@@ -56,8 +56,8 @@ if args.chrom == 'hg38':
                6: 170805979.0, 7: 159345973.0, 8: 145138636.0, 9: 138394717.0, 23: 156040895.0, 24: 57227415.0}
 
 elif args.chrom == 'nh':
-    contig_id_map = {i:i for i in chr_len.keys()}
     chr_len = calculate_chr(args.ref)
+    contig_id_map = {i:i for i in chr_len.keys()}
 # HG19
 else:
     chr_len = {1: 249250621.0, 10: 135534747.0, 11: 135006516.0, 12: 133851895.0, 13: 115169878.0, 14: 107349540.0,
