@@ -184,7 +184,7 @@ python filter_individual.py -r hg19_DLE.cmap -i Fandom_output_partial.xmap -o Fa
 #### `indel_detection_contigs.py` script
 This script is used for finding indels in assembled contigs alignment files.
 -  `-r` Path to reference file. It should be in cmap format.
--  `-a` Path to alignments file in xmap format.
+-  `-a` Path to alignments file in xmap format(untranslate).
 -  `-o` Output directory for indel finding
 -  `-m` Path to query file in bnx or cmap file format.
 -  `-c` Assemble of reference that is used. 19 for GRCh37(hg19) and 38 for GRCh38(hg38) and 'nh' for non-human references
@@ -195,7 +195,7 @@ python indel_detection_contigs.py -r hg19_DLE.cmap -g Gene_hg19.txt -a Fandom.xm
 #### `indel_detection_individual.py` script
 This script is used for finding indels in raw molecule alignment files.
 -  `-r` Path to reference file. It should be in cmap format.
--  `-a` Path to alignments file in xmap format.
+-  `-a` Path to alignments file in xmap format(untranslate).
 -  `-o` Output directory for indel finding
 -  `-m` Path to query file in bnx or cmap file format.
 -  `-c` Assemble of reference that is used. 19 for GRCh37(hg19) and 38 for GRCh38(hg38) and 'nh' for non-human references
