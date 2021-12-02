@@ -150,6 +150,7 @@ for k in xmap:
     for j in range(index_s, index_e + 1):
         a[chrom][j].append(i)
 with open(args.output,'w')as file :
+    file.write("#Header\tType\tChromosome\tRefStartPos\tRefEndPos\tSupportsIds\tSupportsCount\tPredictedSize\n")
     for k in a:
         b = a[k]
         for kk in b:
@@ -171,9 +172,11 @@ with open(args.output,'w')as file :
                             dif = ref_dist - q_dist
                             if dif < -2000:
                                 if mol[q_id][min(q_1, q_2)] > min(0.25 * mol[q_id][len(mol[q_id])],50000) and mol[q_id][max(q_1, q_2)] < max(0.75 * mol[q_id][len(mol[q_id])],  mol[q_id][len(mol[q_id])]-50000):
+                                    
                                     ans['insertion'].append([q_id, ref_1, ref_2, q_1, q_2, dif])
                             if dif > 2000:
                                 if mol[q_id][min(q_1, q_2)] > min(0.25 * mol[q_id][len(mol[q_id])],50000) and mol[q_id][max(q_1, q_2)] < max(0.75 * mol[q_id][len(mol[q_id])], mol[q_id][len(mol[q_id])]-50000):
+                                    
                                     ans['deletion'].append([q_id, ref_1, ref_2, q_1, q_2, dif])
             for i in ans:
                 if len(ans[i]) > 0:
@@ -181,27 +184,22 @@ with open(args.output,'w')as file :
                     selected = []
                     i_j = (max(1,ans[i][0][1]),min(ans[i][0][2],len(ref[str(rev_contig[k])])))
                     s = 0
-                    s2 = 0
                     for aln in ans[i]:
                         if aln[1] >= i_j[0] - 3 and aln[2] <= i_j[1] + 3:
                             i_j = (min(i_j[0], aln[1]), max(i_j[1], aln[2]))
                             selected.append(aln[0])
                             s += aln[5]
-                            s2 += aln[6]
                         else:
                             if len(selected) > 0:
                                 selected = list(set(selected))
                                 file.write(i + '\t' + str(k) + '\t' + str(ref[str(rev_contig[k])][i_j[0]]) + '\t' + str(
                                     ref[str(rev_contig[k])][i_j[1]]) + '\t' + ','.join(selected) + '\t' + str(
-                                    len(set(selected))) + '\t' + str(float(float(s) / len(selected))) + '\t' + str(
-                                    float(float(s2) / len(selected)))+'\n')
+                                    len(set(selected))) + '\t' + str(abs(float(float(s) / len(selected))))+'\n')
                             i_j = (max(1, aln[1] - 3), min(aln[2] + 3, len(ref[str(rev_contig[k])])))
                             selected = [aln[0]]
                             s = aln[5]
-                            s2 = aln[6]
                     if len(selected) > 0:
                         selected = list(set(selected))
                         file.write(i + '\t' + str(k) + '\t' + str(ref[str(rev_contig[k])][i_j[0]]) + '\t' + str(
                             ref[str(rev_contig[k])][i_j[1]]) + '\t' + ','.join(selected) + '\t' + str(
-                            len(set(selected))) + '\t' + str(float(float(s) / len(selected))) + '\t' + str(
-                            float(float(s2) / len(selected)))+'\n')
+                            len(set(selected))) + '\t' + str(abs(float(float(s) / len(selected))))+'\n')
