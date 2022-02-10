@@ -11,9 +11,8 @@ FaNDOM is developed by Siavash Raeisi Dehkordi and Jens Luebeck.
 ## Installation
 
 FaNDOM requires `cmake 3.1` or higher. This should already be satisfied on most modern Unix systems. 
-To check your cmake version, type `cmake --version`. 
+To check your cmake version, type `cmake --version`. If using the GNU GCC compiler, `GNU 5.0.0` or higher is required (also standard on most modern Unix systems).
 
-The SV detection python wrapper script requires python3.
 
 To install FaNDOM, do
 
@@ -22,8 +21,8 @@ git clone https://github.com/jluebeck/FaNDOM
 cd FaNDOM
 cmake CMakeLists.txt && make 
 ```
-### Requirements:
-Fandom required `python3` and `numpy` package.
+### Python SV module requirements:
+FaNDOM SV detection scripts require `python3` and the `numpy` package.
 
 
 ## Usage
