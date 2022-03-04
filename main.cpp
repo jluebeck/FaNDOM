@@ -173,7 +173,7 @@ map<int, vector<Alignment>> filt_and_aln(int thread_num, map<int,vector<double>>
     }
     destroyTwoDimenArrayOnHeapUsingFree(a, 55000, 8500);
     currentTime = chrono::steady_clock::now();
-    elapsedThreadTime = chrono::duration_cast<chrono::seconds>(currentTime - threadStartTime).count()/1000.;
+    elapsedThreadTime = chrono::duration_cast<chrono::milliseconds>(currentTime - threadStartTime).count()/1000.;
     logfile << "thread " << thread_num << " finished after " << elapsedThreadTime << " seconds" << endl;
 
     return result;
@@ -411,7 +411,7 @@ int main (int argc, char *argv[]) {
     vector<Alignment> current_result;
     vector<Alignment> combined_results;
     while (mol_id_queue.size() > 0) {
-        logfile << "began full alignment round at " << return_current_time_and_date() << endl;
+        logfile << "Began full alignment round at " << return_current_time_and_date() << endl;
         vector<future<map<int, vector<Alignment>>>> futs;
         vector<promise<map<int, vector<Alignment>>>> promises(n_threads);
         for (int i = 0; i < n_threads; i++) {
@@ -438,7 +438,7 @@ int main (int argc, char *argv[]) {
                 total_alns += x.second.size();
             }
         }
-        logfile << "finished full alignment round at " << return_current_time_and_date() << endl;
+        logfile << "Finished full alignment round at " << return_current_time_and_date() << endl;
     }
 
     full_outfile << flush;
@@ -470,7 +470,7 @@ int main (int argc, char *argv[]) {
             }
 
             while (mol_id_queue.size() > 0) {
-                logfile << "began partial alignment round at " << return_current_time_and_date() << endl;
+                logfile << "Began partial alignment round at " << return_current_time_and_date() << endl;
                 vector<future<map<int, vector<Alignment>>>> futs_partial;
                 vector<promise<map<int, vector<Alignment>>>> promises_partial(n_threads);
                 for (int i = 0; i < n_threads; i++) {
@@ -494,7 +494,7 @@ int main (int argc, char *argv[]) {
                         total_alns += x.second.size();
                     }
                 }
-                logfile << "finished partial alignment round at " << return_current_time_and_date() << endl;
+                logfile << "Finished partial alignment round at " << return_current_time_and_date() << endl;
             }
             cout << "Finished partial molecule alignment. \n" << total_alns << " total alignments" << endl;
         }

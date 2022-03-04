@@ -1,7 +1,6 @@
 #include "OMHelper.h"
 
 using namespace std;
-//using namespace std;
 
 //--------------------------------------------------------
 //Seeding helpers
@@ -225,16 +224,15 @@ map<int, int> calculate_length(const map<int, vector<double>> &contigs) {
 }
 
 
-//Human readable time and date
-//From bames53 on stack exchange
-//https://stackoverflow.com/questions/17223096/outputting-date-and-time-in-c-using-stdchrono
+//Human-readable time and date
 string return_current_time_and_date() {
-    auto now = std::chrono::system_clock::now();
-    auto in_time_t = std::chrono::system_clock::to_time_t(now);
-
-    stringstream ss;
-    ss << put_time(std::localtime(&in_time_t), "%Y-%m-%d %X");
-    return ss.str();
+    time_t t = time(nullptr);
+    char mbstr[100];
+    if (strftime(mbstr, sizeof(mbstr), "%A %c", localtime(&t))) {
+        return mbstr;
+    } else {
+        return "Timestamp unavailable!";
+    }
 }
 
 //check filenames

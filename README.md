@@ -11,8 +11,7 @@ FaNDOM is developed by Siavash Raeisi Dehkordi and Jens Luebeck.
 ## Installation
 
 FaNDOM requires `cmake 3.1` or higher. This should already be satisfied on most modern Unix systems. 
-To check your cmake version, type `cmake --version`. If using the GNU GCC compiler, `GNU 5.0.0` or higher is required (also standard on most modern Unix systems).
-
+To check your cmake version, type `cmake --version`. FaNDOM has been tested on Ubuntu >=16.04, Mac OSX and CentOS 7.
 
 To install FaNDOM, do
 
