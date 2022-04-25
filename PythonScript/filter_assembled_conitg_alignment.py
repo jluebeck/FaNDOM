@@ -60,7 +60,7 @@ if __name__ == '__main__':
             for alignment_i in contig_alignments[k]:
                 l = alignment_i[1].strip().split('\t')
                 l[0] = str(counter)
-                l = '\t'.join(i for i in alignment_i[1])+ '\n'
+                l = '\t'.join(i for i in l)+ '\n'
                 g.write(l)
                 counter+=1
 
