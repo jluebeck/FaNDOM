@@ -45,6 +45,7 @@ def filter_contig_alignments():
 contig_alignments = {}
 contig_alignments = defaultdict(lambda: [], contig_alignments)
 if __name__ == '__main__':
+    counter = 1
     with open(args.output + '.xmap', 'w') as g:
         with open(args.input, 'r') as f:
             for line in f:
@@ -57,4 +58,9 @@ if __name__ == '__main__':
         filter_contig_alignments()
         for k in contig_alignments.keys():
             for alignment_i in contig_alignments[k]:
+                alignment_i[1] = alignment_i[1].strip().split('\t')
+                alignment_i[1][0] = str(counter)
+                alignment_i[1] = '\t'.join(i for i in alignment_i[1])+ '\n'
                 g.write(alignment_i[1])
+                counter+=1
+
