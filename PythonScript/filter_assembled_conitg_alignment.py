@@ -58,9 +58,9 @@ if __name__ == '__main__':
         filter_contig_alignments()
         for k in contig_alignments.keys():
             for alignment_i in contig_alignments[k]:
-                alignment_i[1] = alignment_i[1].strip().split('\t')
-                alignment_i[1][0] = str(counter)
-                alignment_i[1] = '\t'.join(i for i in alignment_i[1])+ '\n'
-                g.write(alignment_i[1])
+                l = alignment_i[1].strip().split('\t')
+                l[0] = str(counter)
+                l = '\t'.join(i for i in alignment_i[1])+ '\n'
+                g.write(l)
                 counter+=1
 
