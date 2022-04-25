@@ -48,21 +48,22 @@ def calculate_chr(ref_dir):
 
 
 ##### develope code for it
-# if args.chrom == 'hg38':
-#     # HG38
-#     chr_len = {1: 248956422.0, 10: 133797422.0, 11: 135086622.0, 12: 133275309.0, 13: 114364328.0, 14: 107043718.0,
-#                15: 101991189.0, 16: 90338345.0, 17: 83257441.0, 18: 80373285.0, 19: 58617616.0, 2: 242193529.0,
-#                20: 64444167.0, 21: 46709983.0, 22: 50818468.0, 3: 198295559.0, 4: 190214555.0, 5: 181538259.0,
-#                6: 170805979.0, 7: 159345973.0, 8: 145138636.0, 9: 138394717.0, 23: 156040895.0, 24: 57227415.0}
-chr_len = calculate_chr(args.ref)
-if args.chrom == 'nh':
+if args.chrom == 'hg38':
+    # HG38
+    chr_len = {1: 248956422.0, 10: 133797422.0, 11: 135086622.0, 12: 133275309.0, 13: 114364328.0, 14: 107043718.0,
+               15: 101991189.0, 16: 90338345.0, 17: 83257441.0, 18: 80373285.0, 19: 58617616.0, 2: 242193529.0,
+               20: 64444167.0, 21: 46709983.0, 22: 50818468.0, 3: 198295559.0, 4: 190214555.0, 5: 181538259.0,
+               6: 170805979.0, 7: 159345973.0, 8: 145138636.0, 9: 138394717.0, 23: 156040895.0, 24: 57227415.0}
+
+elif args.chrom == 'nh':
+    chr_len = calculate_chr(args.ref)
     contig_id_map = {i:i for i in chr_len.keys()}
 # HG19
-# else:
-#     chr_len = {1: 249250621.0, 10: 135534747.0, 11: 135006516.0, 12: 133851895.0, 13: 115169878.0, 14: 107349540.0,
-#                15: 102531392.0, 16: 90354753.0, 17: 81195210.0, 18: 78077248.0, 19: 59128983.0, 2: 243199373.0,
-#                20: 63025520.0, 21: 48129895.0, 22: 51304566.0, 3: 198022430.0, 4: 191154276.0, 5: 180915260.0,
-#                6: 171115067.0, 7: 159138663.0, 8: 146364022.0, 9: 141213431.0, 23: 155270560.0, 24: 59373566.0}
+else:
+    chr_len = {1: 249250621.0, 10: 135534747.0, 11: 135006516.0, 12: 133851895.0, 13: 115169878.0, 14: 107349540.0,
+               15: 102531392.0, 16: 90354753.0, 17: 81195210.0, 18: 78077248.0, 19: 59128983.0, 2: 243199373.0,
+               20: 63025520.0, 21: 48129895.0, 22: 51304566.0, 3: 198022430.0, 4: 191154276.0, 5: 180915260.0,
+               6: 171115067.0, 7: 159138663.0, 8: 146364022.0, 9: 141213431.0, 23: 155270560.0, 24: 59373566.0}
 
 
 class Alignment:
@@ -79,6 +80,7 @@ class Alignment:
     direction = ''
     align_end_ref = 0
     id = 0
+    xmap_id = 0
 
 def parse_xmap(xmap_dir):  # generate dictionary from each molecile id to all alignments
     d = {}
@@ -88,6 +90,7 @@ def parse_xmap(xmap_dir):  # generate dictionary from each molecile id to all al
             if not line.startswith('#'):
                 line2 = line.strip().split('\t')
                 id = int(line2[1])
+                xmap_id = int(line2[0])
                 alignment = Alignment()
                 q = line2
                 align = q[-1]
@@ -108,6 +111,7 @@ def parse_xmap(xmap_dir):  # generate dictionary from each molecile id to all al
                 alignment.direction = q[7]
                 alignment.align_end_ref = int(float(q[6]))
                 alignment.id = str(id)
+                alignment.xmap_id = str(xmap_id)
                 # if id == 2551:
                 d[id].append(alignment)
     return d
@@ -133,11 +137,11 @@ def duplication_finder(q, p, k):
                 if p.direction == q.direction:
                     duplications.append([str(contig_id_map[p.chrom]), ref[str(p.chrom)][min(duplicated)],
                                          ref[str(p.chrom)][max(duplicated)], k, 'duplication', direction,
-                                         direction])
+                                         direction,q.xmap_id, p.xmap_id])
                 else:
                     duplications.append([str(contig_id_map[p.chrom]), ref[str(p.chrom)][min(duplicated)],
                                          ref[str(p.chrom)][max(duplicated)], k, 'duplication_inverted',
-                                         direction, opp_direction])
+                                         direction, opp_direction,q.xmap_id, p.xmap_id])
     return detected
 
 
@@ -169,7 +173,7 @@ def inversion_finder(q, p, k):
                             inversion_end = ref[str(p.chrom)][q.align_rev[min(q.align_rev.keys())]]
                         inversions.append(
                             [str(contig_id_map[p.chrom]), inversion_start, inversion_end, k, 'inversion',
-                             direction, opp_direction])
+                             direction, opp_direction, q.xmap_id, p.xmap_id])
                 if q.ref_end < p.ref_end:
                     next_in_ref = max(q.align.keys()) + 1
                     if next_in_ref in p.align.keys() or ref[str(p.chrom)][min(p.align.keys())] - \
@@ -182,7 +186,7 @@ def inversion_finder(q, p, k):
                             inversion_end = ref[str(p.chrom)][p.align_rev[min(p.align_rev.keys())]]
                         inversions.append(
                             [str(contig_id_map[p.chrom]), inversion_start, inversion_end, k, 'inversion',
-                             direction, opp_direction])
+                             direction, opp_direction, q.xmap_id, p.xmap_id])
     return detected
 
 
@@ -372,7 +376,7 @@ def write_sv(k, selected):
                 fused = 'False'
                 if len(fuse1) > 0 and len(fuse2) > 0:
                     fused = 'Gene_Fusion'
-                sv = "{chr1}\t{pos1}\t{dir1}\t{chr2}\t{pos2}\t{dir2}\t{type}\t{ids}\t{numsup}\t{interupt}\t{fuse}\n".format(
+                sv = "{chr1}\t{pos1}\t{dir1}\t{chr2}\t{pos2}\t{dir2}\t{type}\t{ids}\t{numsup}\t{interupt}\t{fuse}\t0\n".format(
                     chr1=k[0], pos1=index[0] * scale + 15000, dir1=kal[0], chr2=k[1], pos2=index[1] * scale + 15000,
                     dir2=kal[1], type='Unknown', ids=','.join(str(i) for i in set(ori[(index[0], index[1])][kal])),
                     numsup=len(set(ori[(index[0], index[1])][kal])), interupt=','.join(gene_interupt), fuse=fused)
@@ -389,10 +393,10 @@ def write_sv2(list_sv):
         gene_interupt1, _ = check_gene_interuption(chrom1, pos1, [0])
         gene_interupt2, _ = check_gene_interuption(chrom1, pos2, [0])
         gene_interupt = list(set(gene_interupt1 + gene_interupt2))
-        sv = "{chr1}\t{pos1}\t{dir1}\t{chr2}\t{pos2}\t{dir2}\t{type}\t{ids}\t{numsup}\t{interupt}\t{fuse}\n".format(
+        sv = "{chr1}\t{pos1}\t{dir1}\t{chr2}\t{pos2}\t{dir2}\t{type}\t{ids}\t{numsup}\t{interupt}\t{fuse}\t{xmap_id}\n".format(
             chr1=line[0], pos1=line[1], dir1=line[5], chr2=line[0], pos2=line[2],
             dir2=line[6], type=line[4], ids=line[3],
-            numsup=1, interupt=','.join(gene_interupt), fuse='False')
+            numsup=1, interupt=','.join(gene_interupt), fuse='False',xmap_id=str(line[7])+','+str(line[8]))
         sv_text = sv_text + sv
     return sv_text
 
@@ -453,7 +457,7 @@ if __name__ == '__main__':
 
     with open(args.output, 'w') as file:
         file.write(
-            '#Header\tChrom1\tRefPos1\tDirection1\tChrom2\tRefPos2\tDirectio2\tType\tIds\tNumSupports\tGeneInterupt\tGeneFusion\n')
+            '#Header\tChrom1\tRefPos1\tDirection1\tChrom2\tRefPos2\tDirectio2\tType\tIds\tNumSupports\tGeneInterupt\tGeneFusion\txmap_ids\n')
         for k in a:
             if len(a[k]) > 0:
                 selected, ori, count_matrix = cluster_sv(k)
